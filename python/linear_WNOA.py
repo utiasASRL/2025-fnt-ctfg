@@ -136,25 +136,6 @@ for k in range(K):
             vel_Sigma_interp[j] = vel_Sigma[k+1]
         else:
             # Setup
-            # Psi = gp_cov(Qc, t_interp[j], t[k]) @ gp_trans(t[k+1], t_interp[j]).T @ gp_cov_inv(Qc, t[k+1], t[k])
-            # Lambda = gp_trans(t_interp[j], t[k]) - Psi @ gp_trans(t[k+1], t[k])
-            
-            # # Mean
-            # x1 = np.array([[pos[k]], [vel[k]]]).reshape(2, 1)
-            # x2 = np.array([[pos[k+1]], [vel[k+1]]]).reshape(2, 1)
-            # x = Lambda @ x1 + Psi @ x2
-            # pos_interp[j] = x[0, 0]
-            # vel_interp[j] = x[1, 0]
-
-            # # Covariance
-            # Sigma_k = Sigma[2*k:2*k+4, 2*k:2*k+4]
-            # A = np.linalg.inv(gp_cov_inv(Qc, t_interp[j], t[k]) + gp_trans(t[k+1], t_interp[j]).T @ gp_cov_inv(Qc, t[k+1], t_interp[j]) @ gp_trans(t[k+1], t_interp[j]))
-            # B = np.block([Lambda, Psi])
-            # Sigma_j = A + B @ Sigma_k @ B.T
-            # pos_Sigma_interp[j] = Sigma_j[0, 0]
-            # vel_Sigma_interp[j] = Sigma_j[1, 1]
-
-            # Setup
             Sigma_cond = np.linalg.inv(gp_cov_inv(Qc, t_interp[j], t[k]) + gp_trans(t[k+1], t_interp[j]).T @ gp_cov_inv(Qc, t[k+1], t_interp[j]) @ gp_trans(t[k+1], t_interp[j]))
             Psi = Sigma_cond @ gp_trans(t[k+1], t_interp[j]).T @ gp_cov_inv(Qc, t[k+1], t_interp[j])
             Lambda = Sigma_cond @ gp_cov_inv(Qc, t_interp[j], t[k]) @ gp_trans(t_interp[j], t[k])

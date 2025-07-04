@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber main"] 0 "main.bcf" "main.bbl" "main" 1751664829.8843 0
+["biber main"] 0 "main.bcf" "main.bbl" "main" 1751665569.7201 0
   "main.bcf" 0 -1 0 "pdflatex"
   "sample-now.bib" 0 -1 0 ""
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1751664827.09512 "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" "main.pdf" "main" 1751664829.88455 0
+["pdflatex"] 1751665566.90332 "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" "main.pdf" "main" 1751665569.72034 0
   "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" 1751633848.97957 4096 b0e392f1b35019b846853742d5255c52 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1202520719 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
@@ -276,9 +276,9 @@
   "NOWFnT-data.tex" 1751633848.96293 3562 3bd6a217e554c712b3b24b7db5918bbd ""
   "ROB-journaldata.tex" 1751633848.96301 1570 ff2ea2b628c7309e34a53c4d4c094e1c ""
   "chap1.tex" 1751633848.9633 161 efd7594dde1761c24a36691e2edc607c ""
-  "chap2.tex" 1751664372.62024 12147 1ef4c53e54f89dae490563cc95037700 ""
-  "chap3.tex" 1751664826.99098 10592 d52b45df49cbfa34699d2929fa6a8bf7 ""
-  "chap4.tex" 1751633848.96353 138 6d835d301841bdea68c3056a311bd491 ""
+  "chap2.tex" 1751665563.9716 12141 f7b7f8a6b388e9753180f7dccb7220d7 ""
+  "chap3.tex" 1751665563.9724 10586 c2125832d5dc322e52c566b35acfc1f0 ""
+  "chap4.tex" 1751665563.85492 134 b893c9c77907652201a84c4ca9e4d0ac ""
   "chap5.tex" 1751633848.96359 144 300172b5613836218f46e5c1cf36fd98 ""
   "chap6.tex" 1751633848.96365 208 2dad34770c7356d5d59e7b68e8296ed5 ""
   "chap7.tex" 1751633848.96371 63 63f4757bae6239f6aa6ff288a7e594c9 ""
@@ -302,11 +302,11 @@
   "main-nowechapter.tex" 1751633866.6877 59 aca81cffdea4a520e07cb3500b2345a8 ""
   "main-nowplain.tex" 1751633866.68793 56 7455b33f5d846a6483076c17dfc26d48 ""
   "main-nowsample.tex" 1751633866.6872 57 afade65ca9640b16b71ca6e5be337e88 ""
-  "main.aux" 1751664829.4972 56009 64d3919e1925466f17fd883ee5b13609 "pdflatex"
+  "main.aux" 1751665569.3318 56009 f6fde6bfeb6f25d52732820843c4c45e "pdflatex"
   "main.bbl" 1751633869.8598 0 d41d8cd98f00b204e9800998ecf8427e "biber main"
-  "main.run.xml" 1751664829.68952 2345 afd9497d06cb95b0afb9f2d571dc0a74 "pdflatex"
+  "main.run.xml" 1751665569.52679 2345 afd9497d06cb95b0afb9f2d571dc0a74 "pdflatex"
   "main.tex" 1751633848.97957 4096 b0e392f1b35019b846853742d5255c52 ""
-  "main.toc" 1751664829.68958 2136 bddfabbf552fa51c29766c57f1d69a56 "pdflatex"
+  "main.toc" 1751665569.52685 2136 bddfabbf552fa51c29766c57f1d69a56 "pdflatex"
   "notation_header.tex" 1751633848.97966 3884 9bc39a4b1bff561944a1be52008f890b ""
   "now_logo.pdf" 1751633848.98025 7507 a6bf3a4be4f282af5b0ed01753ac1912 ""
   "nowfnt-biblatex.sty" 1751633848.98035 5036 2cc234812210613db3bcfe070ab52804 ""
