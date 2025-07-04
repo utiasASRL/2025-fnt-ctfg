@@ -1,0 +1,140 @@
+% !Mode:: "TeX:DE:UTF-8:Main"
+%
+\DocumentMetadata{
+  lang        = en,
+  pdfversion  = 2.0,
+  pdfstandard = A-2b,
+  testphase   = 
+    {phase-III,
+     title,
+     table
+	}  
+}
+
+%JOURNAL CODE  SEE DOCUMENTATION
+\documentclass[ROB,biber]{nowfnt} % creates the journal version, needs biber version
+%wrapper for book and ebook are created automatically.
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{amssymb,amsfonts,amscd,amsthm}
+\usepackage[printonlyused,withpage]{acronym}
+% \usepackage{natbib}
+% \usepackage{enumerate}
+
+% Location of figures
+ \graphicspath{{figs/}} 
+
+% load the notation header
+\input{notation_header}
+
+% a few definitions that are *not* needed in general:
+\newcommand{\ie}{\emph{i.e.}}
+\newcommand{\eg}{\emph{e.g.}}
+\newcommand{\etc}{\emph{etc}}
+\newcommand{\now}{\textsc{now}}
+
+%ARTICLE TITLE
+\title{Smoothing Out the Edges: Continuous-Time Estimation with Gaussian Process Motion Priors on Factor Graphs}
+
+
+%ARTICLE SUB-TITLE
+\subtitle{}
+
+
+%AUTHORS FOR COVER PAGE 
+% separate authors by \and, item by \\
+% Don't use verbatim or problematic symbols.
+% _ in mail address should be entered as \_
+% Pay attention to large mail-addresses ...
+
+%if there are many author twocolumn mode can be activated.
+%\booltrue{authortwocolumn} %SEE DOCUMENTATION
+\maintitleauthorlist{
+Timothy D. Barfoot \\
+{\sffamily\bfseries Connor Holmes} \\
+{\sffamily\bfseries Zi Cong Guo} \\
+{\sffamily\bfseries Sven Lilge} \\
+University of Toronto \\
+\and
+Frank Dellaert \\
+Georgia Institute of Technology
+}
+
+%ISSUE DATA AS PROVIDED BY NOW
+\issuesetup
+{%
+ copyrightowner={T.~D.~Barfoot, C.~Holmes, Z.~C.~Guo, S.~Lilge, and F.~Dellaert},
+ volume        = xx,
+ issue         = xx,
+ pubyear       = 2025,
+ isbn          = xxx-x-xxxxx-xxx-x,
+ eisbn         = xxx-x-xxxxx-xxx-x,
+ doi           = 10.1561/XXXXXXXXX,
+ firstpage     = 1, %Explain
+ lastpage      = 18 
+ }
+
+%BIBLIOGRAPHY FILE
+%\addbibresource{sample.bib}
+%\addbibresource{testfnt.bib}
+\addbibresource{sample-now.bib}
+
+\usepackage{mwe}
+
+%AUTHORS FOR ABSTRACT PAGE
+\author[1]{Barfoot, Timothy D.}
+\author[1]{Holmes, Connor}
+\author[1]{Guo, Zi Cong}
+\author[1]{Lilge, Sven}
+\author[2]{Dellaert, Frank}
+
+\affil[1]{University of Toronto; tim.barfoot@utoronto.ca}
+\affil[2]{Georgia Institute of Technology; frank.dellaert@cc.gatech.edu}
+
+\articledatabox{\nowfntstandardcitation}
+
+\acrodef{BA}{Bundle Adjustment}
+\acrodef{SLAM}{Simultaneous Localization and Mapping}
+\acrodef{STEAM}{simultaneous trajectory estimation and mapping}
+\acrodef{SDP}{Semidefinite Program}
+\acrodef{IRLS}{Iteratively Reweighted Least-Squares}
+\acrodef{PSD}{positive-semidefinite}
+\acrodef{GP}{Gaussian Process}
+\acrodef{WNOA}{White Noise on Acceleration}
+\acrodef{RTS}{Rauch-Tung-Striebel}
+\acrodef{KF}{Kalman filter}
+\acrodef{SDE}{stochastic differential equation}
+\acrodef{GN}{Gauss-Newton}
+\acrodef{MAP}{maximum a posteriori}
+\acrodef{BCH}{Baker-Campbell-Hausdorff}
+
+
+
+\begin{document}
+
+\makeabstracttitle
+
+\begin{abstract}
+Continuous-time state estimation is gaining in popularity due to its abilities to provide smooth solutions, handle asynchronous sensors, and interpolate between data points.  While there are two main paradigms, {\em parametric} (e.g., temporal basis functions, splines) and {\em nonparametric} (Gaussian processes), the latter has seen less adoption despite its technical advantages and relative ease of implementation.  In this article, we seek to rectify this situation by providing a new simplified explanation of GP continuous-time estimation rooted in the language of {\em factor graphs}, which have become the de facto estimation paradigm in much of robotics.  To simplify onboarding, we also provide three working examples implemented in the popular GTSAM estimation framework.  We hope the article improves understanding and lowers the bar to entry into this exciting topic. 
+
+\end{abstract}
+
+
+\input{chap1} 
+\input{chap2}
+\input{chap3}
+\input{chap4}
+\input{chap5}
+\input{chap6}
+\input{chap7}
+
+%BACKMATTER SEE DOCUMENTATION
+\backmatter  % references, restarts sample
+
+\chapter{Appendices}
+
+\printbibliography
+
+\end{document}

@@ -1,0 +1,140 @@
+%!TEX root =  FnTarticle.tex
+
+\chapter{Estimation Background}
+In this chapter, we will first introduce factor graphs as a general tool for formulating estimation problems.  Following this, we will work through the specific example of classic discrete-time filtering/smoothing.  We will later show that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.
+
+\section{Factor Graphs and the Elimination Algorithm}
+\label{sec:fg}
+
+Under construction.
+
+\section{Gaussian Factors, Elimination, Fusion}
+\label{sec:elimfus}
+
+Now that we understand factor graphs and the general strategy for carrying out estimation, we show that when our factors are Gaussian we can carry out elimination in closed form.  We know that a Gaussian density has the form
+\begin{equation}
+p(\mbf{x}) \propto \exp\left( -\frac{1}{2} (\mbf{x} - \mbs{\mu})^T \mbs{\Sigma}^{-1} (\mbf{x} - \mbs{\mu}) \right) = \exp\left( -\frac{1}{2} || \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma} \right).
+\end{equation}
+To economize notation, when labelling our factors, we will only use the $|| \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma}$ part, corresponding to a term in the negative-log likelihood cost that we are seeking to minimize.  We may also sometimes write $p(\mbf{x}) \sim \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$ as a shorthand.
+
+\begin{figure}[t]
+     \includegraphics[width=\textwidth]{gausselim.pdf}
+     \caption{With Gaussian factors, eliminating $\mbf{x}$ results in a new Gaussian factor and a Gaussian conditional density for $\mbf{x}$.}
+     \label{fig:gausselim}
+\end{figure}
+
+Consider the situation on the left of Figure~\ref{fig:gausselim}; we have $\mbf{x}$ linked to two other variables via Gaussian factors (i.e., $\mbf{x}$'s separator).  When we eliminate $\mbf{x}$, this results in the situation on the right, with a new binary factor between the separator variables as well as a Gaussian conditional density for $\mbf{x}$.  Note, we assume that $\mbf{u}_1$ depends on $\mbf{x}_1$ and $\mbf{u}_2$ depends on $\mbf{x}_2$, typically linearly, but the elimination procedure still works if $\mbf{x}$ has a binary factor on one side and a unary factor on the other. 
+
+The Gaussian elimination in Figure~\ref{fig:gausselim} follows from the very handy sum-of-squares identity,
+\begin{equation}
+|| \mbf{u}_1 - \mbf{A}_1 \mbf{x} ||^2_{\mbf{Q}_1} + || \mbf{u}_2 - \mbf{A}_2 \mbf{x} ||^2_{\mbf{Q}_2}  = || \mbf{A}_1^{-1} \mbf{u}_1 - \mbf{A}_2^{-1} \mbf{u}_2 ||^2_{\mbf{Q}_{12}} + || \mbf{u} - \mbf{x} ||^2_\mbf{Q},
+\end{equation}
+where $\mbf{Q}_{12}$, $\mbf{Q}$, $\mbf{u}$,  are defined in Figure~\ref{fig:gausselim} and $\mbf{A}_1$ and $\mbf{A}_2$ are for now assumed invertible.  We will use this closed-form Gaussian elimination time and again in what follows.  
+
+\begin{figure}[h]
+     \centering
+     \includegraphics[width=0.8\textwidth]{gaussfusion.pdf}
+     \caption{We can fuse multiple Gaussian factors into a single one in order to declutter our factor graph.}
+     \label{fig:gaussfusion}
+\end{figure}
+
+Another operation that we will perform frequently with Gaussian factors is fusion.  By this we mean lumping together multiple factors into a single one as depicted in Figure~\ref{fig:gaussfusion} for unary factors.  In fact, it is a well-known result that we can fuse an arbitrary number of Gaussians in this way, allowing us to declutter our factor graph.
+
+We are now prepared to discuss classic discrete-time estimation from a factor-graph perspective.
+
+\section{Linear Discrete-Time Estimation}
+\label{sec:ldte}
+
+Classic discrete-time state estimation has a chain-like factor graph as depicted in Figure~\ref{fig:dtfg}.  There is a unary initial-condition factor capturing what we know about the state at the initial time, binary motion-model factors predicting how the system moves from one discrete time to the next, and unary measurement factors that tell us something about the state at each discrete time. 
+
+\begin{figure}[b]
+     \centering
+     \includegraphics[width=0.95\textwidth]{dtfg.pdf}
+     \caption{Factor graph for classic discrete-time filtering/smoothing estimators.}
+     \label{fig:dtfg}
+\end{figure}
+
+For example, we might have a stochastic linear system of the form
+\beqn{linsys}
+\mbf{x}_k & = & \mbf{A}_{k,k-1} \mbf{x}_{k-1} + \mbf{v}_k + \mbf{w}_k,  \\
+\mbf{y}_k & = & \mbf{C}_k \mbf{x}_k + \mbf{n}_k,
+\eeqn
+where $k \in 0 \ldots K$ is the discrete-time index, $\mbf{x}_k$ is the state, $\mbf{v}_k$ is an input/command, $\mbf{y}_k$ is an output/measurement, $\mbf{w}_k \sim \mathcal{N}(\mbf{0}, \mbf{Q}_k)$ is Gaussian process noise, and $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k)$ is Gaussian measurement noise.  We additionally assume that at $k=0$ the initial condition is drawn from a Gaussian, $\mbf{x}_0 \sim \mathcal{N}\left(\pri{\mbf{x}}_0, \pri{\mbf{P}}_0\right)$.  In this case, we can populate our factor graph as in Figure~\ref{fig:dtfg2}, where all of the factors are now Gaussian.  
+
+An important point to make when looking at Figure~\ref{fig:dtfg2} is that the factor graph has a lot of structure in the form of sparsity.  Not all nodes are connected to all other nodes; rather, each node is connected only to its temporal neighbours.  This sparsity arises because $\mbf{x}$ is a {\em Markovian} state for~\eqref{eq:linsys}.  In other words, it captures everything we need to know to predict the next state of the system.  
+
+Our state-estimation problem is now to use the initial-state knowledge, $\pri{\mbf{x}}_0$, the inputs, $\mbf{v}_k$, and the measurements, $\mbf{y}_k$, to work out the likelihood of $\mbf{x}$ taking on all possible values.   This can be done exactly for this linear-Gaussian system; later for nonlinear systems we will require some approximations.  We will show that by using a combination of the Gaussian elimination and fusion operations from Section~\ref{sec:elimfus}, we can recover the classic \ac{RTS} smoother, the forward pass of which is the famous \ac{KF}.
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=\textwidth]{dtfg2.pdf}
+     \caption{Populated factor graph for the discrete-time estimation of the linear system in~\eqref{eq:linsys}.}
+     \label{fig:dtfg2}
+\end{figure}
+
+Looking to Figure~\ref{fig:dtfg2}, our estimation game plan will be to first fuse the two unary factors on $\mbf{x}_0$, then eliminate $\mbf{x}_0$, then repeat this process with $\mbf{x}_1$ and so on until we arrive at $\mbf{x}_K$.  The result of this forward pass will be a Bayes net.  After this we will carry out a backward pass to work out the posterior densities for $\mbf{x}_K$ all the way back to $\mbf{x}_0$.
+
+\begin{figure}[p]
+     \centering
+     \includegraphics[width=\textwidth]{dtfg3.pdf}
+     \caption{Result after fusing the two unary factors on $\mbf{x}_0$ in Figure~\ref{fig:dtfg2}.}
+     \label{fig:dtfg3}
+\end{figure}
+\begin{figure}[p]
+     \centering
+     \includegraphics[width=\textwidth]{dtfg4.pdf}
+     \caption{Result after eliminating $\mbf{x}_0$ from the factor graph in Figure~\ref{fig:dtfg3}.}
+     \label{fig:dtfg4}
+\end{figure}
+\begin{figure}[p]
+     \centering
+     \hspace*{0.5in}\includegraphics[width=0.87\textwidth]{dtfg5.pdf}
+     \caption{Result after fusing the two unary factors on $\mbf{x}_1$ in Figure~\ref{fig:dtfg4} and then also eliminating $\mbf{x}_1$.}
+     \label{fig:dtfg5}
+\end{figure}
+
+Figure~\ref{fig:dtfg3} shows the result of fusing the two unary factors on $\mbf{x}_0$ into a single Gaussian factor.  Figure~\ref{fig:dtfg4} then shows the result of eliminating $\mbf{x}_0$ from the factor graph, resulting in a new unary factor on $\mbf{x}_1$ as well as the conditional density for $\mbf{x}_0$.  We now notice that the remaining factor graph looks identical to the one we started with, only shifted forward by one time step.  Figure~\ref{fig:dtfg5} shows what happens after another round of fusing the unary factors on $\mbf{x}_1$ then eliminating $\mbf{x}_1$.  If we keep applying this same procedure all the way to time step $K$, our factor graph is completely eliminated and we are left with the Bayes net in Figure~\ref{fig:dtfg6}.  We can then work backward from $\mbf{x}_K$ back to $\mbf{x}_0$ using the conditional densities to compute the posterior densities for each state.
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=0.85\textwidth]{dtfg6.pdf}
+     \caption{After eliminating all the variables in a forward pass, we are left with a Bayes net.  We can then carry out a backward pass to calculate the posterior densities on all the variables.}
+     \label{fig:dtfg6}
+\end{figure}
+
+After some algebraic manipulations, it can be shown that this procedure is identical to the classic \ac{RTS} smoother, consisting of the same forward and backward passes:
+\begin{subequations}
+\label{eq:rts}
+\begin{eqnarray}
+\mbox{forward:} \quad\;\;\; & & \nonumber \\
+\mbox{($k=1\ldots K$)} \; & & \nonumber \\
+\pri{\mbf{P}}_{k,f} & = & \mbf{A}_{k,k-1} \est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T + \mbf{Q}_k, \\
+\pri{\mbf{x}}_{k,f} & = & \mbf{A}_{k,k-1} \est{\mbf{x}}_{k-1,f} + \mbf{v}_k, \\
+\mbf{K}_k & = & \pri{\mbf{P}}_{k,f} \mbf{C}_k^T \left( \mbf{C}_k \pri{\mbf{P}}_{k,f} \mbf{C}_k^T + \mbf{R}_k \right)^{-1}, \\
+\est{\mbf{P}}_{k,f} & = & \left( \mbf{1} - \mbf{K}_k \mbf{C}_k \right) \pri{\mbf{P}}_{k,f}, \\
+\est{\mbf{x}}_{k,f} & = & \pri{\mbf{x}}_{k,f} + \mbf{K}_k \left( \mbf{y}_k - \mbf{C}_k \pri{\mbf{x}}_{k,f} \right), \\
+\mbox{backward:}\quad & & \nonumber \\
+\mbox{($k=K\ldots 1$)} \; & & \nonumber \\
+\est{\mbf{x}}_{k-1} & = & \est{\mbf{x}}_{k-1,f} + \left(\est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T \pri{\mbf{P}}_{k,f}^{-1} \right)\left( \est{\mbf{x}}_k - \pri{\mbf{x}}_{k,f} \right), \qquad\quad \\
+\est{\mbf{P}}_{k-1} & = & \est{\mbf{P}}_{k-1,f} + \left( \est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T \pri{\mbf{P}}_{k,f}^{-1}\right) \left( \est{\mbf{P}}_k - \pri{\mbf{P}}_{k,f} \right) \nonumber \\  &  & \qquad\qquad\qquad\quad \times \; \left( \est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T \pri{\mbf{P}}_{k,f}^{-1}\right)^T \label{eq:rtsbackcov3},
+\end{eqnarray}
+\end{subequations}
+which are initialized with 
+\begin{subequations}
+\begin{eqnarray}
+\est{\mbf{P}}_{0,f} & = & ( \mbf{1} - \mbf{K}_0 \mbf{C}_0 ) \pri{\mbf{P}}_0, \\
+\est{\mbf{x}}_{0,f} & = & \pri{\mbf{x}}_0 + \mbf{K}_0 ( \mbf{y}_0 - \mbf{C}_0 \pri{\mbf{x}}_0), \\
+\est{\mbf{x}}_K & = & \est{\mbf{x}}_{K,f}, \\
+\est{\mbf{P}}_K & = & \est{\mbf{P}}_{K,f},
+\end{eqnarray}
+\end{subequations}
+and $\mbf{K}_0 = \pri{\mbf{P}}_{0} \mbf{C}_0^T \left( \mbf{C}_0 \pri{\mbf{P}}_{0} \mbf{C}_0^T + \mbf{R}_0 \right)^{-1}$.  The forward pass is the very famous \acf{KF}, which we now understand from a factor-graph perspective.  Thus, the $\mathcal{N}\left(\est{\mbf{x}}_{k,f}, \est{\mbf{P}}_{k,f} \right)$ quantities can be referred to as {\em filtered} (accounting only for up-to-the-present measurements) while the $\mathcal{N}\left( \est{\mbf{x}}_k, \est{\mbf{P}}_k \right)$ quantities are {\em smoothed} (accounting for all measurements: past, present, and future); see Figure~\ref{fig:filtersmoother}.
+
+\begin{figure}[h]
+     \centering
+     \includegraphics[width=0.95\textwidth]{filtersmoother.pdf}
+     \caption{Contrasting filtering vs. smoothing.  We are primarily interested in smoothing in this article.}
+     \label{fig:filtersmoother}
+\end{figure}
+
+It turns out that this discrete-time estimation setup is completely compatible with extending our results to continuous time, we just need to fill in the details of~\eqref{eq:linsys} in the right way.  This will be the subject of the next chapter.

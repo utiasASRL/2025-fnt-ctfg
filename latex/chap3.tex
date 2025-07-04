@@ -1,0 +1,44 @@
+%!TEX root =  FnTarticle.tex
+
+\chapter{Continuous-Time Linear Systems}
+
+In this chapter, we show how to carry out so-called {\em continuous-time} estimation.  What we really mean by this is that we have some measurements at specific times that we should use to estimate the trajectory and then report the estimate at some query times; the query times and the estimation times need not be the same.  Figure~\ref{fig:ctfg} shows the situation we are interested in, with a single query time.
+
+\begin{figure}[h]
+     \centering
+     \includegraphics[width=0.95\textwidth]{ctfg.pdf}
+     \caption{A continuous-time estimation problem with measurements at discrete times and a single query time.  We refer to this as `continuous-time' because the query(ies) could be at any time along the trajectory.}
+     \label{fig:ctfg}
+\end{figure}
+
+We will see that we can recycle what we learned in the previous chapter for discrete-time estimation when approaching the continuous-time problem in Figure~\ref{fig:ctfg}.  In a nutshell, we can break the problem down into two main steps:
+\begin{enumerate}
+\item {\em main solve}: solve for the states at the measurement times
+\item {\em interpolation}: solve for the states at the query times
+\end{enumerate}
+The key to this decomposition is to again use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}.  The remaining factor graph is now identical in structure to the one treated in the previous chapter; we can therefore solve at the measurement times and then the query time.  The next two sections work through the details.
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=0.95\textwidth]{ctfg2.pdf}
+     \caption{The same factor graph as Figure~\ref{fig:ctfg} with the state at the query time, $\mbf{x}_\tau$, eliminated.}
+     \label{fig:ctfg2}
+\end{figure}
+
+\section{Main Solve}
+
+The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  This is precisely the problem discussed in the previous chapter and so we already know how to carry this out.  However, we would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated directly) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ solved indirectly), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
+
+We previously had a discrete-time motion model, but now we will start with a generic continuous-time one:
+\begin{equation}\label{eq:linsysct}
+\dot{\mbf{x}}(t) = \mbf{A} \mbf{x}(t) + \mbf{v}(t) + \mbf{L} \mbf{w}(t),
+\end{equation}
+where $\mbf{x}(t)$ is the state, $\mbf{v}(t)$ the input, and $\mbf{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbf{Q}_C \delta(t-t^\prime))$ a white-noise process.  For example if we choose the coefficient matrices to be $\mbf{A} = \bbm 0 & 1 \\ 0 & 0 \ebm$ and $\mbf{L} = \bbm 0 \\ 1 \ebm$ and set the inputs to zero, $\mbf{v}(t) = \mbf{0}$, then our state represents position and velocity, $\mbf{x}(t) = \bbm p(t) \\ \dot{p}(t) \ebm$, and our motion model becomes {\em \ac{WNOA}}:
+\begin{equation}
+\bbm \dot{p}(t) \\ \ddot{p}(t) \ebm = \bbm 0 & 1 \\ 0 & 0 \ebm \bbm p(t) \\ \dot{p}(t) \ebm + \bbm 0 \\ 1 \ebm w(t) \quad \Rightarrow \quad \ddot{p}(t) = w(t).
+\end{equation}
+For now we will work with~\eqref{eq:linsysct} due to its generality, but our examples will often use the specific case of \ac{WNOA}.
+
+Our next task is to use the motion model of~\eqref{eq:linsysct} to fill in the details of the motion-model factors in Figure~\ref{fig:ctfg2}.
+
+\section{Interpolation}

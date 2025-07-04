@@ -1,0 +1,127 @@
+%!TEX root =  book.tex
+% Math definitions (for use with the notation appendix)
+%\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
+%\newcommand{\abs}[1]{\left\vert#1\right\vert}
+%\newcommand{\set}[1]{\left\{#1\right\}}
+%\newcommand{\Real}{\mathbb R}
+%\newcommand{\Complex}{\mathbb C}
+%\newcommand{\eps}{\varepsilon}
+%\newcommand{\To}{\longrightarrow}
+%\newcommand{\Ker}{\textup{Ker}}
+%\newcommand{\Img}{\textup{Img}}
+\newcommand{\diag}{\textup{diag}}
+%\newcommand{\circulant}{\textup{circ}}
+\newcommand{\bcf}{\;\mbox{\boldmath ${\cal F}$\unboldmath}}
+%\def\Vec#1{\!\!\hbox{$#1$\kern-0.38em\lower0.85em\hbox{$\vec{}\,$}}\,}%
+\newcommand{\bbm}{\begin{bmatrix}}
+\newcommand{\ebm}{\end{bmatrix}}
+%%\DeclareMathAlphabet{\mbf}{OT1}{ptm}{b}{n}
+\newcommand{\mbf}{\mathbf}
+%
+%\DeclareFontFamily{OT1}{pzc}{}
+%\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.10] pzcmi7t}{}
+%\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+%
+\newcommand{\mbs}[1]{{\boldsymbol{#1}}}
+\def\ep{\epsilon}
+\def\la{\lambda}
+\def\om{\omega}
+\newcommand{\qc}[1]{{#1}^+}
+\newcommand{\qo}[1]{{#1}^\oplus}
+\newcommand{\qi}[1]{{#1}^{\scalebox{0.5}{$-1$}}}
+%\newcommand{\eff}{\boxplus}
+%\newcommand{\ess}{\boxtimes}
+%\newcommand{\Tss}{\boxdot}
+%%\newcommand{\pfs}{\boxminus}
+%%\newcommand{\psf}{\Box}
+%\newcommand{\pftm}{\odot}
+%\newcommand{\pftp}{\circledcirc}
+%\newcommand{\qm}{+}
+%\newcommand{\qp}{\oplus}
+%\newcommand{\eqm}{\otimes}
+%\newcommand{\eqp}{\circledast}
+%
+%\newcommand{\mn}[3]{{#1}^{{#2}{#3}}}
+%\newcommand{\rmn}[2]{\mn{\mathbb{R}}{#1}{#2}}
+%
+%\newenvironment{prf}[1]
+%    {\textit{Proof#1:}}
+%    {~\hfill $\blacksquare$\\}
+%
+%% Tim's Math Defs
+%%\newcommand{\bcf}{\;\mbox{\boldmath ${\cal F}$\unboldmath}}
+%%\def\Vec#1{\!\!\hbox{$#1$\kern-0.38em\lower0.85em\hbox{$\vec{}\,$}}\,}%
+\renewcommand{\Vec}[1]{\underrightarrow{#1}}
+%%\newcommand{\bbm}{\begin{bmatrix}}
+%%\newcommand{\ebm}{\end{bmatrix}}
+%%\DeclareMathAlphabet{\mbf}{OT1}{ptm}{b}{n}
+%%\newcommand{\mbs}[1]{{\boldsymbol{#1}}}
+%%\def\ep{\epsilon}
+%%\def\la{\lambda}
+%%\def\om{\omega}
+%%\newcommand{\qc}[1]{{#1}^+}
+%%\newcommand{\qo}[1]{{#1}^\oplus}
+%%\newcommand{\qi}[1]{{#1}^{\scalebox{0.5}{$-1$}}}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\bdis}{\begin{displaymath}}
+\newcommand{\edis}{\end{displaymath}}
+%\newcommand{\beps}{\mbox{\boldmath $\epsilon$\unboldmath}}
+\newcommand{\bomg}{\mbox{\boldmath $\omega$\unboldmath}}
+\newcommand{\bfr}{\mbf{r}}
+\newcommand{\bfa}{\mbf{a}}
+%\newcommand{\bfv}{\mbf{v}}
+\newcommand{\bfone}{\mbf{1}}
+%\newcommand{\bftwo}{\mbf{2}}
+\newcommand{\bfs}{\mbf{s}}
+\newcommand{\bfzero}{\mbf{0}}
+\newcommand{\bfC}{\mbf{C}}
+\newcommand{\bfS}{\mbf{S}}
+\newcommand{\bu}{{\scalebox{0.5}{\mbox{$\bullet$}}}}
+\newcommand{\ci}{{\scalebox{0.5}{\mbox{$\circ$}}}}
+\newcommand{\cjda}[1]{{#1}^\bu}
+\newcommand{\cjdb}[1]{{#1}^\ci}
+\newcommand{\cjdaa}[1]{{#1}^{\bu\bu}}
+\newcommand{\cjdbb}[1]{{#1}^{\ci\ci}}
+\def \bfth{\boldsymbol{\theta}}
+%\def \bfep{\boldsymbol{\epsilon}}
+\newcommand{\beqn}[1]{\begin{subequations}\label{eq:#1}\begin{eqnarray}}
+\newcommand{\eeqn}{\end{eqnarray}\end{subequations}}
+%
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{corollary}{Corollary}
+%\newtheorem{remark}{Remark}
+%\newtheorem{example}{Example}
+%
+\newcommand{\est}[1]{\hat{#1}}
+\newcommand{\pri}[1]{\check{#1}}
+%
+%% Lie stuff
+\newcommand{\wdg}{\wedge}
+\newcommand{\uwdg}{\vee}
+\newcommand{\Wdg}{\curlywedge}
+\newcommand{\uWdg}{\curlyvee}
+%
+%% TRO paper
+\newcommand{\pfs}{\odot}
+\newcommand{\psf}{\circledcirc}
+%%\newcommand{\eff}{\wedge}
+%
+\newcommand{\Tbig}{\mbs{\mathcal{T}}}
+\newcommand{\nTbig}{\widetilde{\mbs{\mathcal{T}}}}
+\newcommand{\Tsmall}{\mbf{T}}
+\newcommand{\nTsmall}{\widetilde{\mbf{T}}}
+%
+\newcommand{\Rbig}{\mbs{\mathcal{R}}}
+%
+\newcommand{\Jsmall}{\mbf{J}}
+\newcommand{\Jbig}{\mbs{\mathcal{J}}}
+%
+\newcommand{\lop}{\langle \! \langle}
+\newcommand{\rop}{\rangle \! \rangle}
+
+
+
+
+
