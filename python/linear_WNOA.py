@@ -213,12 +213,14 @@ plt.plot(t, vel, 'b.', label=None)
 plt.plot(t, vel + 3 * np.sqrt(vel_Sigma), 'b.', label=None, alpha=0.2)
 plt.plot(t, vel - 3 * np.sqrt(vel_Sigma), 'b.', label=None, alpha=0.2)
 plt.xlabel(r'$t$ [s]')
-plt.ylabel(r'$v$ [m/s]')
+plt.ylabel(r'$\dot{p}$ [m/s]')
 plt.legend()
 
 plt.tight_layout()
-plt.show()
+plt.show(block=False)
 
+# Export the plot to a PDF file
+plt.savefig('linear_WNOA_example.pdf', format='pdf', bbox_inches='tight')
 
 
 

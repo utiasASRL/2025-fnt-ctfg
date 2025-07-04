@@ -598,6 +598,14 @@ INPUT ./figs/ctfg2.pdf
 INPUT ./figs/ctfg2.pdf
 INPUT ./figs/ctfg2.pdf
 INPUT ./figs/ctfg2.pdf
+INPUT ./figs/gausselim2.pdf
+INPUT ./figs/gausselim2.pdf
+INPUT ./figs/gausselim2.pdf
+INPUT ./figs/gausselim2.pdf
+INPUT ./figs/linear_WNOA_example.pdf
+INPUT ./figs/linear_WNOA_example.pdf
+INPUT ./figs/linear_WNOA_example.pdf
+INPUT ./figs/linear_WNOA_example.pdf
 INPUT ./chap4.tex
 INPUT ./chap4.tex
 INPUT ./chap4.tex
@@ -636,10 +644,12 @@ INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pf
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx8.pfb

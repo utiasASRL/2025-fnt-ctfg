@@ -2,12 +2,12 @@
 
 \chapter{Continuous-Time Linear Systems}
 
-In this chapter, we show how to carry out so-called {\em continuous-time} estimation.  What we really mean by this is that we have some measurements at specific times that we should use to estimate the trajectory at some query times; the query times and the estimation times need not be the same.  Figure~\ref{fig:ctfg} shows the situation in which we are interested, with a single query time.
+In this chapter, we show how to carry out so-called {\em continuous-time} estimation.  What we really mean by this is that we have some measurements at some times that we should use to estimate the trajectory at some (possibly distinct) query times. Figure~\ref{fig:ctfg} shows the situation in which we are interested, with a single query time.  We will focus on how to implement this in a factor-graph framework; however, we will show the idea is identical to \ac{GP} regression in the next chapter.
 
 \begin{figure}[b]
      \centering
      \includegraphics[width=0.95\textwidth]{ctfg.pdf}
-     \caption{A continuous-time estimation problem with measurements at discrete times and a single query time.  We refer to this as `continuous-time' because the query(ies) could be at any time along the trajectory.}
+     \caption{A continuous-time estimation problem with measurements at discrete times and a single query time.  We refer to this as `continuous-time' because the query(s) could be at any time along the trajectory.}
      \label{fig:ctfg}
 \end{figure}
 
@@ -41,14 +41,72 @@ For now we will work with~\eqref{eq:linsysct} due to its generality, but our exa
 
 Our next task is to use the motion model of~\eqref{eq:linsysct} to fill in the details of the motion-model factors in Figure~\ref{fig:ctfg2}. Postponing the derivations to the next chapter for now, we assert that the required details are of the form 
 \beqn{}
-\mbf{v}_k & = &  \int_{t_{k-1}}^{t_k} \exp\left( \mbs{A} (t_k - s) \right) \mbs{v}(s) \, ds,   \\
-\mbf{Q}_k & = &  \int_{t_{k-1}}^{t_k} \exp\left( \mbs{A} (t_k - s) \right) \mbs{L} \mbs{Q} \mbs{L}^T \exp\left( \mbs{A} (t_k - s)\right)^T \, ds,  \quad\;\;\;   \\
-\mbf{A}_{k,k-1} & = &  \exp\left( \mbs{A} (t_k - t_{k-1}) \right) .
+\mbf{v}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{v}(s) \, ds,   \\
+\mbf{Q}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{L} \mbs{Q} \mbs{L}^T \exp\left( \mbs{A} (t_{k} - s)\right)^T \, ds,  \quad\;\;\;   \\
+\mbf{A}_{k,k-1} & = &  \exp\left( \mbs{A} \, t_{k,k-1} \right),
 \eeqn
-These equations are essentially (stochastically) integrating the motion model over the time interval, $[t_{k-1}, t_k]$, between two measurements.  We can often simplify these expressions for particular choices of $\mbs{A}$, $\mbs{L}$, and $\mbs{v}(t)$; for example, for \ac{WNOA} we have $\mbf{v}_k = \mbf{0}$ and
+with $t_{k,k-1} = t_{k} - t_{k-1}$.  
+These equations are essentially (stochastically) integrating the motion model over the time interval, $[t_{k-1}, t_{k}]$, between two measurements.  We can often simplify these expressions for particular choices of $\mbs{A}$, $\mbs{L}$, and $\mbs{v}(t)$; for example, for \ac{WNOA} we have $\mbf{v}_{k,k-1} = \mbf{0}$ and
 \begin{equation}
-\mbf{Q}_k = \bbm \frac{1}{3} \Delta t_{k,k-1}^3 \mbs{Q} & \frac{1}{2} \Delta t_{k,k-1}^2 \mbs{Q} \\  \frac{1}{2} \Delta t_{k,k-1}^2 \mbs{Q} & \Delta t_{k,k-1} \mbs{Q} \ebm, \;\; \mbf{A}_{k,k-1} = \bbm \mbf{I} & \Delta t_{k,k-1} \mbf{I} \\ \mbf{0} & \mbf{I} \ebm,
+\mbf{Q}_{k,k-1} = \bbm \frac{1}{3}  t_{k,k-1}^3 \mbs{Q} & \frac{1}{2} t_{k,k-1}^2 \mbs{Q} \\  \frac{1}{2} t_{k,k-1}^2 \mbs{Q} &  t_{k,k-1} \mbs{Q} \ebm, \;\; \mbf{A}_{k,k-1} = \bbm \mbf{I} &  t_{k,k-1} \mbf{I} \\ \mbf{0} & \mbf{I} \ebm,
 \end{equation}
-with $\Delta t_{k,k-1} = t_k - t_{k-1}$.  This is everything we need to populate the motion-model factors in Figure~\ref{fig:dtfg2}.
+This is everything we need to populate the motion-model factors in Figure~\ref{fig:dtfg2}.  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  The next section shows how to use these states to solve for the states at the query times.
 
 \section{Interpolation}
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=0.95\textwidth]{gausselim2.pdf}
+     \caption{Elimination of the query state, $\mbf{x}_\tau$, from the factor graph in Figure~\ref{fig:ctfg2}.  The result is a new factor graph with a binary factor between the measurement states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, and a Gaussian conditional density for the query state.}
+     \label{fig:gausselim2}
+\end{figure}
+
+The second phase of our strategy is to solve for the state at the query time, $\mbf{x}_\tau$, in Figure~\ref{fig:ctfg2}.  This is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the sum-of-squares identity in~\eqref{eq:sumofsquares} to write
+\begin{multline}
+|| \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_k - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbs{\mu} - \mbf{x}_\tau ||^2_\mbs{\Sigma},
+\end{multline}
+where $\mbs{\mu}$ and $\mbs{\Sigma}$ are the mean and covariance of the Gaussian conditional density for $\mbf{x}_\tau$ and are given in Figure~\ref{fig:gausselim2}, which depicts our elimination graphically.  Critically, the new binary factor between the measurement states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, is identical to the form we would have used had we constructed it directly between these states to begin with; this ensures the presence/absence of the query state does not affect the solution.
+
+We want the posterior estimate for the query state, $p(\mbf{x}_\tau | \mbf{v}, \mbf{y})$, whereas we have the conditional density, $p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$.  We must therefore convolve the conditional density with the posterior for the separator states as follows:
+\beqn{}
+p(\mbf{x}_\tau | \mbf{v}, \mbf{y}) & = & \mathcal{N}\left( \est{\mbf{x}}_\tau, \est{\mbf{P}}_\tau \right) \\ 
+& = &  \int p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) p(\mbf{x}_{k-1}, \mbf{x}_{k} | \mbf{v}, \mbf{y}) \, d\mbf{x}_{k-1} d\mbf{x}_{k}. \quad
+\eeqn
+The marginal for the separator states must be extracted from the main solve (e.g., the \ac{RTS} smoother) and is given by
+\begin{equation}
+p(\mbf{x}_{k-1}, \mbf{x}_{k} | \mbf{v}, \mbf{y}) = \mathcal{N}\left(\bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{k} \ebm, \bbm \est{\mbf{P}}_{k-1} & \est{\mbf{P}}_{k,k-1}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k} \ebm\right).
+\end{equation}
+Carrying out the convolution gives us the marginal posterior for the query state:
+\beqn{}
+\est{\mbf{x}}_\tau & = & \mbs{\eta} + \bbm \mbs{\Lambda} & \mbs{\Psi} \ebm \bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{k} \ebm,  \\
+\est{\mbf{P}}_\tau & = & \mbs{\Sigma} + \bbm \mbs{\Lambda} & \mbs{\Psi} \ebm \bbm \est{\mbf{P}}_{k-1} & \est{\mbf{P}}_{k,k-1}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k} \ebm \bbm \mbs{\Lambda}^T \\ \mbs{\Psi}^T \ebm,
+\eeqn
+where
+\beqn{}
+\mbs{\eta} & = & \mbs{\Sigma} \left(\mbf{Q}_{\tau,k-1}^{-1} \mbf{v}_{\tau,k-1} - \mbf{A}_{k,\tau}^T \mbf{Q}_{k,\tau}^{-1} \mbf{v}_{k,\tau} \right), \\
+\mbs{\Lambda} & = & \mbs{\Sigma} \mbf{Q}_{\tau,k-1}^{-1} \mbf{A}_{\tau,k-1}, \\ 
+\mbs{\Psi} & = & \mbs{\Sigma} \mbf{A}_{k,\tau}^T \mbf{Q}_{k,\tau}^{-1}.
+\eeqn
+We can carry out this type of query for as many query times as we like.  The complexity of each query is $O(1)$, since we only need the marginal of the separator states from the main solve.
+
+\section{Example}
+
+As a simple example of our continuous-time estimation framework, we consider a system that moves according to a sinusoid,
+\begin{equation}
+p(t) = \sin(t),
+\end{equation}
+and only noisy measurements of this position are available at discrete times.  Our estimator does not know the true motion model, but instead models it as \ac{WNOA} with zero inputs.  The estimator therefore assumes the following system model:
+\beqn{}
+\bbm \dot{p}(t) \\ \ddot{p}(t) \ebm & = & \bbm 0 & 1 \\ 0 & 0 \ebm \bbm p(t) \\ \dot{p}(t) \ebm + \bbm 0 \\ 1 \ebm w(t), \\
+y_k & = & \bbm 1 & 0 \ebm \bbm p(t_k) \\ \dot{p}(t_k) \ebm + n_k.
+\eeqn
+We follow the procedure outlined in the previous sections: (i) solve for the state at the measurement times, then (ii) interpolate at some query times.  Figure~\ref{fig:linear_WNOA_example} shows the results.
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=\textwidth]{linear_WNOA_example.pdf}
+     \caption{The ground truth sinusoidal trajectory is shown in green.  Noisy position-only measurements are shown in red.  Our continuous-time solver first computes the solution at the measurement times (blue dots) and then interpolates (both mean and covariance) at several query times between the measurements times (blue line).  We see that the solution is smooth and continuous, as expected, following the ground truth closely.}
+     \label{fig:linear_WNOA_example}
+\end{figure}
+
+The next chapter will show that the continuous-time estimation framework we have developed here is identical to \ac{GP} regression, which is a powerful and popular method for continuous-time estimation.  The reader not interested in the details of \ac{GP} regression can skip the next chapter.
