@@ -27,9 +27,9 @@ Consider the situation on the left of Figure~\ref{fig:gausselim}; we have $\mbf{
 
 The Gaussian elimination in Figure~\ref{fig:gausselim} follows from the very handy sum-of-squares identity,
 \begin{equation}\label{eq:sumofsquares}
-|| \mbf{u}_1 - \mbf{A}_1 \mbf{x} ||^2_{\mbf{Q}_1} + || \mbf{u}_2 - \mbf{A}_2 \mbf{x} ||^2_{\mbf{Q}_2}  = || \mbf{A}_1^{-1} \mbf{u}_1 - \mbf{A}_2^{-1} \mbf{u}_2 ||^2_{\mbf{Q}_{12}} + || \mbf{u} - \mbf{x} ||^2_\mbf{Q},
+|| \mbf{u}_1 - \mbf{A}_1 \mbf{x} ||^2_{\mbf{Q}_1} + || \mbf{u}_2 - \mbf{A}_2 \mbf{x} ||^2_{\mbf{Q}_2}  = || \mbf{A}_1^{-1} \mbf{u}_1 - \mbf{A}_2^{-1} \mbf{u}_2 ||^2_{\mbf{Q}_{12}} + || \mbf{x} - \mbs{\mu}||^2_\mbs{\Sigma},
 \end{equation}
-where $\mbf{Q}_{12}$, $\mbf{Q}$, $\mbf{u}$,  are defined in Figure~\ref{fig:gausselim} and $\mbf{A}_1$ and $\mbf{A}_2$ are for now assumed invertible.  We will use this closed-form Gaussian elimination time and again in what follows.  
+where $\mbf{Q}_{12}$, $\mbs{\Sigma}$, $\mbs{\mu}$,  are defined in Figure~\ref{fig:gausselim} and $\mbf{A}_1$ and $\mbf{A}_2$ are for now assumed invertible.  We will use this closed-form Gaussian elimination time and again in what follows.  
 
 \begin{figure}[h]
      \centering

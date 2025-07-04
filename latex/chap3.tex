@@ -63,7 +63,7 @@ This is everything we need to populate the motion-model factors in Figure~\ref{f
 
 The second phase of our strategy is to solve for the state at the query time, $\mbf{x}_\tau$, in Figure~\ref{fig:ctfg2}.  This is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the sum-of-squares identity in~\eqref{eq:sumofsquares} to write
 \begin{multline}
-|| \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_k - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbs{\mu} - \mbf{x}_\tau ||^2_\mbs{\Sigma},
+|| \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_k - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbf{x}_\tau - \mbs{\mu} ||^2_\mbs{\Sigma},
 \end{multline}
 where $\mbs{\mu}$ and $\mbs{\Sigma}$ are the mean and covariance of the Gaussian conditional density for $\mbf{x}_\tau$ and are given in Figure~\ref{fig:gausselim2}, which depicts our elimination graphically.  Critically, the new binary factor between the measurement states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, is identical to the form we would have used had we constructed it directly between these states to begin with; this ensures the presence/absence of the query state does not affect the solution.
 
