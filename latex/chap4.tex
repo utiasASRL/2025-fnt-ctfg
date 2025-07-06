@@ -135,3 +135,24 @@ Or, breaking it down by time steps,
 \est{\mbf{x}} = \mbox{arg}\min_{\mbf{x}} || \pri{\mbf{x}}_0 - \mbf{x}_0 ||^2_{\pri{\mbf{P}}_0} + \sum_{k=1}^K || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} \\ + \sum_{k=0}^K || \mbf{y}_k - \mbf{C}_k \mbf{x}_k||^2_{\mbf{R}_k}.
 \end{multline}
 Each of these terms accounts for exactly one factor in Figure~\ref{fig:dtfg2}.  Therefore, solving at the measurement times is equivalent to our earlier factor-graph formulation for the main solve.
+
+\section{Querying is $O(1)$}
+
+Next, we will show that querying the trajectory at any time $\tau$ is an $O(1)$ operation.  To do this, we will use the interpolation equations~\eqref{eq:gpinterp}, where we notice that the product $\pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}$ plays a critical role.  To simplify matters, let us assume that we have only a single query time, $t_{k-1} < \tau < t_k$.  Then we can show that
+\begin{multline}
+\pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1} = \Bigl[ \, \mbf{0} \;\;\; \cdots \;\;\;  \mbf{0} \;\;\; \underbrace{\mbf{A}_{\tau,k-1} - \mbf{Q}_{\tau,k-1} \mbf{A}_{k,\tau}^T \mbf{Q}_{k,k-1}^{-1} \mbf{A}_{k,k-1}}_{\mbs{\Lambda}_\tau\; \mbox{\small block column $k-1$}}  \\  \cdots \;\;\;  \underbrace{\mbf{Q}_{\tau,k} \mbf{A}_{k,\tau}^T \mbf{Q}_{k,k-1}^{-1}}_{\mbs{\Psi}_\tau,\;\mbox{\small block column $k$}}  \;\;\; \mbf{0} \;\;\; \cdots \;\;\; \mbf{0}  \, \Bigr],
+\end{multline}
+so that only block-columns $k-1$ and $k$ are non-zero.  This means that we only require the marginal associated with the joint density of $\mbf{x}_{k-1}$ and $\mbf{x}_k$ to compute the query at time $\tau$:
+\beqn{}
+\est{\mbf{x}}_\tau & = & \pri{\mbf{x}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{1} \ebm - \bbm \pri{\mbf{x}}_{k-1} \\  \pri{\mbf{x}}_{k} \ebm \right), \label{eq:meaninterp} \\
+\est{\mbf{P}}_\tau & = & \pri{\mbf{P}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{P}}_{k-1,k-1} & \est{\mbf{P}}_{k-1,k}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k,k} \ebm \right.  \label{eq:covinterp} \\ & & \qquad\qquad\qquad\qquad \quad\left. - \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \right) \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm. \nonumber
+\eeqn
+It turns out this is identical to~\eqref{eq:fgquery}, which requires that we show
+\beqn{}
+\mbs{\eta}_t & = & \pri{\mbf{x}}_\tau - \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \pri{\mbf{x}}_{k-1} \\  \pri{\mbf{x}}_{k} \ebm, \\
+\mbs{\Sigma}_t & = & \pri{\mbf{P}}_\tau - \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm,
+\eeqn
+left an exercise for the reader.  
+
+This means that using the traditional \ac{GP} interpolation equations is exactly equivalent to our factor-graph elimination approach from the previous chapter.  We argue that the factor-graph approach is more intuitive because the sparse structure of the problem is plain to see; the separator for $\mbf{x}_\tau$ is clearly $\{ \mbf{x}_{k-1}, \mbf{x}_k\}$, so that the query will clearly be an $O(1)$ operation. 
+
