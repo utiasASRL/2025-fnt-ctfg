@@ -611,6 +611,9 @@ INPUT ./chap4.tex
 INPUT ./chap4.tex
 INPUT ./chap4.tex
 INPUT chap4.tex
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmr10.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/rm-lmbx9.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/rm-lmbx5.tfm
 INPUT ./chap5.tex
 INPUT ./chap5.tex
 INPUT ./chap5.tex
@@ -626,6 +629,7 @@ INPUT ./chap7.tex
 INPUT ./chap7.tex
 INPUT ./chap7.tex
 INPUT chap7.tex
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT main.aux
 INPUT /usr/local/texlive/2025/texmf-dist/tex/latex/tagpdf/latex-list-css.html
 INPUT /usr/local/texlive/2025/texmf-dist/tex/latex/tagpdf/latex-list-css.html
@@ -653,6 +657,7 @@ INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pf
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmbx8.pfb
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmex10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmmi6.pfb

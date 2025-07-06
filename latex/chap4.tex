@@ -2,6 +2,136 @@
 
 \chapter{Connection to Gaussian-Process Regression}
 
+\ac{GP} regression is a popular method for function approximation that fits with the Bayesian estimation paradigm \citep{rasmussen06}.  In this chapter, we will show that the continuous-time estimation framework we have developed in the previous chapter is identical to \ac{GP} regression.  This means that the factor-graph framework we have developed is also a powerful tool for \ac{GP} regression (with our particular choice of kernels).  We primarily follow \citet{barfoot_ser24} in this chapter.
 
-\section{Kernel Trick}
+\section{Brief Derivation of GP Regression}
+
+In general, we can consider systems with a continuous-time \ac{GP} prior and a discrete-time, linear measurement model:
+\beqn{}
+\mbf{x}(t) & \sim & \mathcal{GP}( \pri{\mbf{x}}(t), \pri{\mbf{P}}(t,t^\prime) ), \qquad t_0 < t,t^\prime, \\
+\mbf{y}_k & = & \mbf{C}_k\mbf{x}(t_k) + \mbf{n}_k, \qquad t_0 < t_1 < \cdots < t_K,
+\eeqn 
+where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. Initially, $\mbf{x}(0) = \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$; it captures our prior belief about the likelihood of all possible trajectories that the state could take. 
+
+We consider that we want to query the state at a number of times ($\tau_0 < \tau_1< \ldots < \tau_J$) that may or may not be different from the measurement times ($t_0 < t_1 < \ldots < t_K$). 
+The joint density between the state (at the query times) and the measurements (at the measurement times) is written as
+\begin{equation}\label{eq:gaussjoint}
+p\left( \bbm   \mbf{x}_\tau \\ \mbf{y} \ebm \right) = \mathcal{N} \left( \bbm   \pri{\mbf{x}}_\tau  \\ \mbf{C} \pri{\mbf{x}} \ebm, \bbm  \pri{\mbf{P}}_{\tau\tau} & \pri{\mbf{P}}_\tau \mbf{C}^T \\ \mbf{C} \pri{\mbf{P}}_\tau^T &   \mbf{R} + \mbf{C} \pri{\mbf{P}}\mbf{C}^T \ebm  \right),
+\end{equation}
+where
+\begin{gather*}
+\mbf{x} = \bbm \mbf{x}(t_0) \\ \vdots \\ \mbf{x}(t_K) \ebm,  \quad \pri{\mbf{x}} = \bbm \pri{\mbf{x}}(t_0)  \\ \vdots \\ \pri{\mbf{x}}(t_K) \ebm, \quad \mbf{x}_\tau = \bbm \mbf{x}(\tau_0) \\ \vdots \\ \mbf{x}(\tau_J) \ebm,  \quad \pri{\mbf{x}}_\tau = \bbm \pri{\mbf{x}}(\tau_0) \\ \vdots \\ \pri{\mbf{x}}(\tau_J) \ebm, \\
+\mbf{y} = \bbm \mbf{y}_0 \\ \vdots \\ \mbf{y}_K \ebm,  \quad \mbf{C} = \mbox{diag}\left( \mbf{C}_0, \ldots, \mbf{C}_K \right), \quad \mbf{R} = \mbox{diag}\left( \mbf{R}_0, \ldots, \mbf{R}_K \right), \\
+\pri{\mbf{P}} = \bbm \pri{\mbf{P}}(t_i, t_j) \ebm_{ij}, \quad \pri{\mbf{P}}_\tau = \bbm \pri{\mbf{P}}(\tau_i, t_j) \ebm_{ij}, \quad \pri{\mbf{P}}_{\tau\tau} = \bbm \pri{\mbf{P}}(\tau_i, \tau_j) \ebm_{ij}.
+\end{gather*}
+In \ac{GP} regression, the matrix, $\pri{\mbf{P}}$, is known as the \index{kernel matrix} {\em kernel matrix} and comprises evaluations of the kernel covariance function between all pairs of measurement times.  Factoring~\eqref{eq:gaussjoint}, we can show that
+\begin{multline}
+\label{eq:gpquerytimes}
+p(\mbf{x}_\tau | \mbf{y}) = \mathcal{N}\biggl( \underbrace{\pri{\mbf{x}}_\tau + \pri{\mbf{P}}_{\tau} \mbf{C}^T( \mbf{C} \pri{\mbf{P}} \mbf{C}^T + \mbf{R})^{-1} (\mbf{y} - \mbf{C}\pri{\mbf{x}} )}_{\est{\mbf{x}}_{\tau}, \;\mbox{\small mean}}, \biggr. \\ \biggl. 
+\underbrace{\pri{\mbf{P}}_{\tau\tau} - \pri{\mbf{P}}_\tau \mbf{C}^T ( \mbf{C} \pri{\mbf{P}} \mbf{C}^T + \mbf{R}  )^{-1} \mbf{C} \pri{\mbf{P}}_\tau^T }_{\est{\mbf{P}}_{\tau\tau}, \;\mbox{\small covariance}}\biggr),
+\end{multline}
+for the density of the predicted state at the query times, given the measurements.  
+
+The expression simplifies further if we take the query times to be exactly the same as the measurement times (i.e., $\tau_k = t_k, K=J$).  This implies that 
+\begin{equation}
+\pri{\mbf{P}} = \pri{\mbf{P}}_\tau = \pri{\mbf{P}}_{\tau\tau},
+\end{equation}
+and then we can write
+\begin{multline}
+\label{eq:gpmeastimes2}
+p(\mbf{x} | \mbf{y}) = \mathcal{N}\biggl( \underbrace{\pri{\mbf{x}} + \pri{\mbf{P}} \mbf{C}^T( \mbf{C} \pri{\mbf{P}} \mbf{C}^T + \mbf{R})^{-1} (\mbf{y} - \mbf{C}\pri{\mbf{x}} )}_{\est{\mbf{x}}, \;\mbox{\small mean}}, \biggr. \\ \biggl.
+\underbrace{\pri{\mbf{P}} - \pri{\mbf{P}} \mbf{C}^T ( \mbf{C} \pri{\mbf{P}} \mbf{C}^T + \mbf{R}  )^{-1} \mbf{C} \pri{\mbf{P}}^T }_{\est{\mbf{P}}, \;\mbox{\small covariance}}\biggr).
+\end{multline}
+We can rearrange this using the {\em matrix-inversion lemma} so that
+\begin{multline}
+\label{eq:gpmeastimes}
+p(\mbf{x} | \mbf{y}) = \mathcal{N}\biggl(  \underbrace{\left( \pri{\mbf{P}}^{-1} + \mbf{C}^T \mbf{R}^{-1} \mbf{C} \right)^{-1} \left( \pri{\mbf{P}}^{-1} \pri{\mbf{x}}  + \mbf{C}^T \mbf{R}^{-1}\mbf{y} \right)}_{\est{\mbf{x}}, \;\mbox{\small mean}}, \biggr. \\ \biggl.\underbrace{\left( \pri{\mbf{P}}^{-1} + \mbf{C}^T \mbf{R}^{-1} \mbf{C} \right)^{-1} }_{\est{\mbf{P}}, \;\mbox{\small covariance}} \biggr).
+\end{multline}
+Further rearranging the mean expression, we have a linear system for $\est{\mbf{x}}$:
+\begin{equation}
+\label{eq:gpgnlin}
+ \left( \pri{\mbf{P}}^{-1} + \mbf{C}^T \mbf{R}^{-1} \mbf{C} \right) \, \est{\mbf{x}} =  \pri{\mbf{P}}^{-1} \pri{\mbf{x}} + \mbf{C}^T \mbf{R}^{-1}\mbf{y}.
+\end{equation}
+The solution to this linear system gives us the estimate of the state at the measurement times.
+
+If, after solving for the estimate at the measurement times, we later want to query the state at some other times of interest ($\tau_0 < \tau_1< \ldots < \tau_J$), we can use the \ac{GP}  interpolation equations \citep{rasmussen06} to do so:
+\begin{subequations}
+\label{eq:gpinterp}
+\begin{eqnarray}
+\est{\mbf{x}}_\tau & = & \pri{\mbf{x}}_\tau + \left( \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1} \right) (\est{\mbf{x}} - \pri{\mbf{x}}), \\
+\est{\mbf{P}}_{\tau\tau} & = & \pri{\mbf{P}}_{\tau\tau} + \left( \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}\right) \left( \est{\mbf{P}} - \pri{\mbf{P}} \right) \left( \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}\right)^T.
+\end{eqnarray}
+\end{subequations}
+This is linear interpolation in the state variable (but not necessarily in time).  
+
+In general, this \index{Gaussian process} \ac{GP} approach has complexity $O(K^3 + K^2J)$ since the initial solve is $O(K^3)$ and the query is $O(K^2J)$; this is quite expensive, and next we will seek to improve the cost by exploiting the structure of the matrices involved.
+
 \section{Exactly Sparse Kernels}
+
+Looking at~\eqref{eq:gpgnlin}, we see that the {\em inverse kernel matrix}, $\pri{\mbf{P}}^{-1}$, appears on the left-hand side.  Naively choosing a \ac{GP} kernel function could result in this matrix being dense and therefore the solution expensive.  Instead, we will select our kernel function carefully so that the inverse kernel matrix is {\em exactly sparse}.
+
+We base our kernel prior on a \ac{LTI}\footnote{We could also make this equation time-varying \citep{barfoot_ser24} but leave it time-invariant in the interest of simplicity.} \acf{SDE}:
+\begin{equation}
+\dot{\mbs{x}}(t) = \mbs{A} \mbs{x}(t) + \mbs{v}(t) + \mbs{L} \mbs{w}(t),
+\end{equation}
+with
+\begin{equation}
+\mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \, \delta(t-t^\prime)),
+\end{equation}
+a (stationary) zero-mean \index{Gaussian process} \ac{GP} with (symmetric, positive-definite) \index{power spectral density matrix} {\em power spectral density matrix}, $\mbs{Q}$.  This is the same motion model that we introduced in~\eqref{eq:linsysct}.
+
+Referring to \citep{barfoot_ser24}, we can show that the solution to this \ac{SDE} is a \ac{GP} with the following kernel function:
+\begin{multline}
+\mbs{x}(t) \sim \mathcal{GP} \biggl(  \underbrace{\mbs{\Phi}(t,t_0)\pri{\mbf{x}}_0 + \int_{t_0}^t \mbs{\Phi}(t,s) \mbs{v}(s) \, ds}_{\pri{\mbf{x}}(t)},  \\ \underbrace{\mbs{\Phi}(t,t_0) \pri{\mbf{P}}_0 \mbs{\Phi}(t^\prime,t_0)^T + \int_{t_0}^{\min(t,t^\prime)} \mbs{\Phi}(t,s) \mbs{L}\mbs{Q}\mbs{L}^T \mbs{\Phi}(t^\prime,s)^T  \, ds}_{\pri{\mbf{P}}(t,t^\prime)} \biggr),
+\end{multline}
+where $\mbs{\Phi}(t,s)$ is known as the {\em transition function}.  In our case, the system is \ac{LTI} and so the transition function is given by
+\begin{equation}
+\mbs{\Phi}(t,s) = \exp\left( \mbs{A}(t-s) \right).
+\end{equation}
+Evaluating this kernel function at the measurement times allows us to write our prior as a joint Gaussian density:
+\begin{equation}
+\label{eq:gpprior}
+p(\mbf{x}) = \mathcal{N}(\pri{\mbf{x}}, \pri{\mbf{P}}) = \mathcal{N} \left( \mbf{A} \mbf{v}, \mbf{A} \mbf{Q} \mbf{A}^T \right),
+\end{equation}
+where
+\begin{gather}
+\mbf{v} = \bbm \pri{\mbf{x}}_0 \\ \mbf{v}_{1,0} \\ \vdots \\ \mbf{v}_{K,K-1} \ebm, \quad 
+\mbf{Q} = \diag\left( \pri{\mbf{P}}_0, \mbf{Q}_{1,0}, \mbf{Q}_{2,1}, \ldots, \mbf{Q}_{K,K-1} \right), \\
+\mbf{v}_{k,k-1} = \int_{t_{k-1}}^{t_k} \mbs{\Phi}(t_k,s) \mbs{v}(s) \, ds, \\
+\mbf{Q}_{k,k-1} = \int_{t_{k-1}}^{t_k} \mbs{\Phi}(t_k,s) \mbs{L} \mbs{Q} \mbs{L}^T \mbs{\Phi}(t_k,s)^T \, ds, \nonumber \\
+ \mbf{A} = \bbm \mbf{1} &  &  &  &   & \\
+\mbf{A}_{1,0} & \mbf{1} &  &  &  &  \\
+\mbf{A}_{2,0} & \mbf{A}_{2,1} & \mbf{1} & &  &  \\
+\vdots & \vdots & \vdots & \ddots &  & \\
+\mbf{A}_{K-1,0} & \mbf{A}_{K-1,1} & \mbf{A}_{K-1,2} & \cdots & \mbf{1} &  \\
+\mbf{A}_{K,0} & \mbf{A}_{K,1} & \mbf{A}_{K,2} & \cdots & \mbf{A}_{K,K-1} & \mbf{1}
+\ebm, \nonumber
+\end{gather}
+and we have simplified notation by writing $\mbf{A}_{k,\ell} = \mbs{\Phi}(t_k, t_\ell)$.
+
+Substituting our specific prior into~\eqref{eq:gpgnlin}, the linear system that we need to solve becomes
+\begin{equation}
+\label{eq:gpgnlinsparse}
+\left( \mbf{A}^{-T} \mbf{Q}^{-1} \mbf{A}^{-1} + \mbf{C}^T \mbf{R}^{-1} \mbf{C} \right) \, \est{\mbf{x}} =  \mbf{A}^{-T} \mbf{Q}^{-1} \mbf{v} + \mbf{C}^T \mbf{R}^{-1}\mbf{y},
+\end{equation}
+which as yet does not seem to offer any advantage over~\eqref{eq:gpgnlin}.  However, it turns out that $\mbf{A}^{-1}$ has the special form
+\begin{equation}
+\mbf{A}^{-1} = \bbm \mbf{1} &  & &  &  &  \\
+-\mbf{A}_{1,0} & \mbf{1} &  &  &  &  \\
+& -\mbf{A}_{2,1} & \mbf{1} & &  &  \\
+ &  & -\mbf{A}_{3,2} & \ddots &  &  \\
+ &  & & \ddots & \mbf{1} &  \\
+ &  &  &  & -\mbf{A}_{K,K-1} & \mbf{1}
+\ebm.
+\end{equation}
+Since $\mbf{A}^{-1}$ has only the main diagonal and the one below non-zero, and $\mbf{Q}^{-1}$ is block-diagonal, the inverse kernel matrix $\pri{\mbf{P}}^{-1} = (\mbf{A}\mbf{Q}\mbf{A}^T)^{-1} = \mbf{A}^{-T} \mbf{Q}^{-1} \mbf{A}^{-1}$ is exactly block-tridiagonal.  Since $\mbf{C}^T \mbf{R}^{-1} \mbf{C}$ is block-diagonal, it means the left-hand side of~\eqref{eq:gpgnlinsparse} is also block-tridiagonal.  This means that we can solve the linear system in $O(K)$ time instead of $O(K^3)$ for a dense inverse kernel matrix.  This has been made possible by our specific choice of kernel function, built from an \ac{LTI} \ac{SDE}.
+
+We can also view~\eqref{eq:gpgnlinsparse} as the solution to the following least-squares optimization problem:
+\begin{equation}
+\est{\mbf{x}} = \mbox{arg}\min_{\mbf{x}} || \mbf{v} - \mbf{A}^{-1}\,\mbf{x} ||^2_{\mbf{Q}} + || \mbf{y} - \mbf{C}\mbf{x}||^2_{\mbf{R}}.
+\end{equation}
+Or, breaking it down by time steps, 
+\begin{multline}
+\est{\mbf{x}} = \mbox{arg}\min_{\mbf{x}} || \pri{\mbf{x}}_0 - \mbf{x}_0 ||^2_{\pri{\mbf{P}}_0} + \sum_{k=1}^K || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} \\ + \sum_{k=0}^K || \mbf{y}_k - \mbf{C}_k \mbf{x}_k||^2_{\mbf{R}_k}.
+\end{multline}
+Each of these terms accounts for exactly one factor in Figure~\ref{fig:dtfg2}.  Therefore, solving at the measurement times is equivalent to our earlier factor-graph formulation for the main solve.
