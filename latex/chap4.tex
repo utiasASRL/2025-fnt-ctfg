@@ -54,7 +54,7 @@ Further rearranging the mean expression, we have a linear system for $\est{\mbf{
 \end{equation}
 The solution to this linear system gives us the estimate of the state at the measurement times.
 
-If, after solving for the estimate at the measurement times, we later want to query the state at some other times of interest ($\tau_0 < \tau_1< \ldots < \tau_J$), we can use the \ac{GP}  interpolation equations \citep{rasmussen06} to do so:
+If, after solving for the estimate at the measurement times, we later want to query the state at some other times of interest ($\tau_0 < \tau_1< \ldots < \tau_J$), we can use the classic \ac{GP}  interpolation equations \citep{rasmussen06} to do so:
 \begin{subequations}
 \label{eq:gpinterp}
 \begin{eqnarray}
@@ -64,7 +64,7 @@ If, after solving for the estimate at the measurement times, we later want to qu
 \end{subequations}
 This is linear interpolation in the state variable (but not necessarily in time).  
 
-In general, this \index{Gaussian process} \ac{GP} approach has complexity $O(K^3 + K^2J)$ since the initial solve is $O(K^3)$ and the query is $O(K^2J)$; this is quite expensive, and next we will seek to improve the cost by exploiting the structure of the matrices involved.
+In general, this \index{Gaussian process} \ac{GP} approach has complexity $O(K^3 + K^2J)$ since the initial solve is $O(K^3)$ (for an arbitrary kernel function such as squared exponential) and the query is $O(K^2J)$; this is quite expensive, and next we will seek to improve the cost by designing a special kernel function.
 
 \section{Exactly Sparse Kernels}
 
