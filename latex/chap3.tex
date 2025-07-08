@@ -42,7 +42,7 @@ For now we will work with~\eqref{eq:linsysct} due to its generality, but our exa
 
 We know from Sections~\ref{sec:fgelimfus} and~\ref{sec:ldte} and that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
 \begin{multline}
-     \phi(\mbf{x}_k, \mbf{x}_{k-1}) \propto -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ = || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
+     \phi(\mbf{x}_k, \mbf{x}_{k-1}) = -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ \propto || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
 \end{multline}
 To fill in the details, we need to (stochastically) integrate the motion model in~\eqref{eq:linsysct} over the time interval, $[t_{k-1}, t_{k}]$.  It can be shown that the solution to this \ac{SDE} is given by
 \begin{equation}
