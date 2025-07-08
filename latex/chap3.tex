@@ -60,7 +60,7 @@ with $t_{k,k-1} = t_{k} - t_{k-1}$.  We can often simplify these expressions for
 \end{equation}
 This is everything we need to populate the motion-model factors in Figure~\ref{fig:dtfg2}.  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  The next section shows how to use these states to solve for the states at the query times.
 
-\section{Interpolation}
+\section{Basic Interpolation}
 
 \begin{figure}[t]
      \centering
@@ -69,7 +69,7 @@ This is everything we need to populate the motion-model factors in Figure~\ref{f
      \label{fig:gausselim2}
 \end{figure}
 
-The second phase of our strategy is to solve for the state at the query time, $\mbf{x}_\tau$, in Figure~\ref{fig:ctfg2}.  This is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the sum-of-squares identity in~\eqref{eq:sumofsquares} to write
+The second phase of our strategy is to solve for the state at the query time, $\mbf{x}_\tau$, in Figure~\ref{fig:ctfg2}. In this section, we assume the query state does not have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the sum-of-squares identity in~\eqref{eq:sumofsquares} to write
 \begin{multline}
 || \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbf{x}_\tau - \mbs{\mu}_\tau ||^2_{\mbs{\Sigma}_\tau},
 \end{multline}
@@ -97,6 +97,15 @@ where
 \eeqn
 We can carry out this type of query for as many query times as we like.  The complexity of each query is $O(1)$, since we only need the marginal of the separator states from the main solve.
 
+\section{Advanced Interpolation}
+
+Under construction:
+\begin{itemize}
+\item discuss how to eliminate a state that does have measurements associated with it
+\item discuss that this can be used to remove states from the main solve
+\item use a pose-to-landmark measurements as an example to set up for SLAM
+\end{itemize}
+
 \section{Example}
 
 As a simple example of our continuous-time estimation framework, we consider a system that moves according to a sinusoid,
@@ -118,3 +127,4 @@ We follow the procedure outlined in the previous sections: (i) solve for the sta
 \end{figure}
 
 The next chapter will show that the continuous-time estimation framework we have developed here is identical to \ac{GP} regression, which is a powerful and popular method for function approximation.  The reader not interested in the details of \ac{GP} regression can skip the next chapter.
+
