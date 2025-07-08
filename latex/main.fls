@@ -561,6 +561,7 @@ INPUT ./figs/dtfg.pdf
 INPUT ./figs/dtfg.pdf
 INPUT ./figs/dtfg.pdf
 INPUT ./figs/dtfg.pdf
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmbx10.tfm
 INPUT ./figs/dtfg2.pdf
 INPUT ./figs/dtfg2.pdf
 INPUT ./figs/dtfg2.pdf

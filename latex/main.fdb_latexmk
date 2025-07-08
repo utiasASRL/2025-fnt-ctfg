@@ -1,13 +1,13 @@
 # Fdb version 4
-["biber main"] 1751830615.03894 "main.bcf" "main.bbl" "main" 1751837306.09303 0
+["biber main"] 1751830615.03894 "main.bcf" "main.bbl" "main" 1752009213.65908 0
   "book.bib" 1751633848.96321 88095 df3966b6fbb08bc1d88e1b13dae86aa0 ""
-  "main.bcf" 1751837305.93811 116130 4f2016aa1d0ca481bbf72a4319a1fcd5 "pdflatex"
+  "main.bcf" 1752009213.51935 116130 4f2016aa1d0ca481bbf72a4319a1fcd5 "pdflatex"
   "pubs.bib" 1751063124.82412 616643 4386ddb9259c524d7f4fc3268d45ecd1 ""
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1751837302.84752 "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" "main.pdf" "main" 1751837306.09325 0
+["pdflatex"] 1752009210.39774 "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" "main.pdf" "main" 1752009213.6593 0
   "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" 1751830871.77308 4166 0915030e72b93ef0a3aed47af8a443ba ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1202520719 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
@@ -24,6 +24,7 @@
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm" 1246382020 940 75ac932a52f80982a9f8ea75d03a34cf ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm" 1246382020 940 228d6584342e91276bf566bcf9716b83 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmr10.tfm" 1136768653 1296 45809c5a464d5f32c8f98ba97c1bb47f ""
+  "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmbx10.tfm" 1254269338 12076 b54175e02101bea1addf6b2d0197ed12 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm" 1254269338 11276 116dd5bea6621ce4a1999f96d876084c ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmr10.tfm" 1254269338 12056 7e13df7fe4cbce21b072ba7c4f4deb6e ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmr17.tfm" 1254269338 12156 ca1ae6a3c8564e89597f1f993fba1608 ""
@@ -282,8 +283,8 @@
   "NOWFnT-data.tex" 1751633848.96293 3562 3bd6a217e554c712b3b24b7db5918bbd ""
   "ROB-journaldata.tex" 1751633848.96301 1570 ff2ea2b628c7309e34a53c4d4c094e1c ""
   "chap1.tex" 1751633848.9633 161 efd7594dde1761c24a36691e2edc607c ""
-  "chap2.tex" 1751665563.9716 12141 f7b7f8a6b388e9753180f7dccb7220d7 ""
-  "chap3.tex" 1751836560.93436 10695 8874b813ffcd9f2ec37b4e309b1981d3 ""
+  "chap2.tex" 1752008506.05377 12143 008bf0d7140427a02ad8412468fd9917 ""
+  "chap3.tex" 1752009206.94953 11057 2d805e411d76a3e6ac1880b988429b6d ""
   "chap4.tex" 1751837302.62181 14564 3a335c6da67d3dcd027fa091b97d9c0a ""
   "chap5.tex" 1751633848.96359 144 300172b5613836218f46e5c1cf36fd98 ""
   "chap6.tex" 1751633848.96365 208 2dad34770c7356d5d59e7b68e8296ed5 ""
@@ -308,11 +309,11 @@
   "main-nowechapter.tex" 1751633866.6877 59 aca81cffdea4a520e07cb3500b2345a8 ""
   "main-nowplain.tex" 1751633866.68793 56 7455b33f5d846a6483076c17dfc26d48 ""
   "main-nowsample.tex" 1751633866.6872 57 afade65ca9640b16b71ca6e5be337e88 ""
-  "main.aux" 1751837305.66226 67273 2752aef87a89c45512b146e24040856c "pdflatex"
+  "main.aux" 1752009213.22775 67290 d55708a560a8617588eaa27def09289d "pdflatex"
   "main.bbl" 1751830616.47212 3561 646c3284735d537118f432ad38a4bec3 "biber main"
-  "main.run.xml" 1751837305.93883 2367 8ed89bd5d8a0965a1de817fb296aa71b "pdflatex"
+  "main.run.xml" 1752009213.51994 2367 8ed89bd5d8a0965a1de817fb296aa71b "pdflatex"
   "main.tex" 1751830871.77308 4166 0915030e72b93ef0a3aed47af8a443ba ""
-  "main.toc" 1751837305.93891 2290 c8c5cc299c885d23e2d38341ec0b1a5e "pdflatex"
+  "main.toc" 1752009213.52 2290 3bd01c9e34c0173ece8378e73682e4f7 "pdflatex"
   "notation_header.tex" 1751633848.97966 3884 9bc39a4b1bff561944a1be52008f890b ""
   "now_logo.pdf" 1751633848.98025 7507 a6bf3a4be4f282af5b0ed01753ac1912 ""
   "nowfnt-biblatex.sty" 1751633848.98035 5036 2cc234812210613db3bcfe070ab52804 ""

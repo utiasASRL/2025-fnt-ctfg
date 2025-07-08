@@ -40,14 +40,21 @@ where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \m
 \end{equation}
 For now we will work with~\eqref{eq:linsysct} due to its generality, but our examples will often use the specific case of \ac{WNOA}.
 
-Our next task is to use the motion model of~\eqref{eq:linsysct} to fill in the details of the motion-model factors in Figure~\ref{fig:ctfg2}. Postponing the derivations to the next chapter for now, we assert that the required details are of the form 
+We know from Sections~\ref{sec:fgelimfus} and~\ref{sec:ldte} and that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
+\begin{multline}
+     \phi(\mbf{x}_k, \mbf{x}_{k-1}) \propto -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ = || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
+\end{multline}
+To fill in the details, we need to (stochastically) integrate the motion model in~\eqref{eq:linsysct} over the time interval, $[t_{k-1}, t_{k}]$.  It can be shown that the solution to this \ac{SDE} is given by
+\begin{equation}
+p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) = \mathcal{N}\left(\mbf{A}_{k,k-1} \mbf{x}_{k-1} + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1} \right),
+\end{equation}
+where
 \beqn{}
 \mbf{v}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{v}(s) \, ds,   \\
 \mbf{Q}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{L} \mbs{Q} \mbs{L}^T \exp\left( \mbs{A} (t_{k} - s)\right)^T \, ds,  \quad\;\;\;   \\
 \mbf{A}_{k,k-1} & = &  \exp\left( \mbs{A} \, t_{k,k-1} \right),
 \eeqn
-with $t_{k,k-1} = t_{k} - t_{k-1}$.  
-These equations are essentially (stochastically) integrating the motion model over the time interval, $[t_{k-1}, t_{k}]$, between two measurements.  We can often simplify these expressions for particular choices of $\mbs{A}$, $\mbs{L}$, and $\mbs{v}(t)$; for example, for \ac{WNOA} we have $\mbf{v}_{k,k-1} = \mbf{0}$ and
+with $t_{k,k-1} = t_{k} - t_{k-1}$.  We can often simplify these expressions for particular choices of $\mbs{A}$, $\mbs{L}$, and $\mbs{v}(t)$; for example, for \ac{WNOA} we have $\mbf{v}_{k,k-1} = \mbf{0}$ and
 \begin{equation}
 \mbf{Q}_{k,k-1} = \bbm \frac{1}{3}  t_{k,k-1}^3 \mbs{Q} & \frac{1}{2} t_{k,k-1}^2 \mbs{Q} \\  \frac{1}{2} t_{k,k-1}^2 \mbs{Q} &  t_{k,k-1} \mbs{Q} \ebm, \;\; \mbf{A}_{k,k-1} = \bbm \mbf{I} &  t_{k,k-1} \mbf{I} \\ \mbf{0} & \mbf{I} \ebm,
 \end{equation}
