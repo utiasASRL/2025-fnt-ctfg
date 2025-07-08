@@ -17,7 +17,7 @@ We will see that we can recycle what we learned in the previous chapter for disc
 \item {\em main solve}: solve for the states at the measurement times
 \item {\em interpolation}: solve for the states at the query times
 \end{enumerate}
-The key to this decomposition is to again use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}.  The remaining factor graph is now identical in structure to the one treated in the previous chapter; we can therefore solve at the measurement times and then the query time.  The next two sections work through the details.
+The key to this decomposition is to again use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}.  The remaining factor graph is now identical in structure to the one treated in the previous chapter; we can therefore solve at the measurement times and then the query time.  Importantly, the main solve step is completely agnostic to the query times, meaning we can select as many query times as we like after the main solve. The next two sections work through the details.
 
 \begin{figure}[t]
      \centering
