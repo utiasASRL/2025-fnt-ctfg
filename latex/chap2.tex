@@ -1,17 +1,35 @@
 %!TEX root =  main.tex
 
 \chapter{Factor Graph Background}
-In this chapter, we will first introduce factor graphs as a general tool for formulating estimation problems.  Following this, we will work through the specific example of classic discrete-time filtering/smoothing.  We will later show that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.
+In this chapter, we will first introduce factor graphs as a general tool for formulating estimation problems.  Following this, we will work through the specific example of classic discrete-time filtering/smoothing.  We will later show that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
 
 \section{Factor Graphs and the Elimination Algorithm}
 \label{sec:fg}
 
-Under construction:
-\begin{itemize}
-\item give the general ideas of factoring the posterior then negative-log likelihood cost, then the optimization problem
-\item discuss elimination in general
-\item discuss fusion in general 
-\end{itemize}
+Typically in state estimation we are interested in computing a posterior density of the form
+\begin{equation}
+p(\mbf{x} | \mbf{v}, \mbf{y}),
+\end{equation}
+where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ldots, t_K$, $\mbf{v} = (\mbf{v}_0, \ldots, \mbf{v}_K)$ is a set of inputs/commands, and $\mbf{y} = (\mbf{y}_0, \ldots, \mbf{y}_K)$ is a set of measurements.  In most practical scenarios, we can factor this posterior density into a product of factors, each of which depends on only a subset of the variables in the problem.  For example, we might have
+\begin{equation}
+p(\mbf{x} | \mbf{v}, \mbf{y}) \propto \underbrace{p(\mbf{x}_0)}_{\phi(\mbf{x}_0)} \prod_{k=1}^K \underbrace{p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi(\mbf{x}_{k-1},\mbf{x}_k)} \prod_{k=0}^K \underbrace{p(\mbf{y}_k | \mbf{x}_k)}_{\varphi(\mbf{x}_k)}.
+\end{equation}
+where each $\phi(\cdot)$, is a {\em factor} of the posterior density.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
+
+The normalization constant associated with this factorization is typically expensive to compute so we often satisfy ourselves with finding the $\mbf{x}$ that maximizes the posterior density, or equivalently the $\mbf{x}$ that minimizes the negative log-likelihood cost:
+\begin{equation}\label{eq:cost}
+\mathcal{C}(\mbf{x}) = -\log \phi(\mbf{x}_0) - \sum_{k=1}^K \log \phi(\mbf{x}_k, \mbf{x}_{k-1}) - \sum_{k=0}^K \log \varphi(\mbf{x}_k).
+\end{equation}
+This is a common approach in estimation,referred to as \ac{MAP} estimation.
+
+\begin{figure}[t]
+     \includegraphics[width=\textwidth]{dtfg1.pdf}
+     \caption{A simple factor graph for a classic estimation problem.  The unary factor on $\mbf{x}_0$ represents the prior knowledge about the initial state, the binary factors represent the motion model, and the unary factors represent the measurements.  In practice, we can have much more complicated factor graphs with loops.}
+     \label{fig:dtfg1}
+\end{figure}
+
+We can visually understand the factors by assembling them into a {\em factor graph}, which is a bipartite graph with two types of nodes: variable nodes and factor nodes.  The variable nodes represent the variables in the problem, such as $\mbf{x}_0, \ldots, \mbf{x}_K$, and the factor nodes represent the factors, such as $\phi(\mbf{x}_0)$, $\phi(\mbf{x}_{k-1},\mbf{x}_k)$, and $\varphi(\mbf{x}_k)$.  The edges connect variable nodes to factor nodes, indicating which variables are involved in each factor.  This graphical representation allows us to see the dependencies between variables and factors in a very intuitive way.  Figure~\ref{fig:dtfg1} shows a simple factor graph for a classic discrete-time estimation problem.
+
 
 \section{Gaussian Factors, Elimination, Fusion}
 \label{sec:fgelimfus}
@@ -20,7 +38,7 @@ Now that we understand factor graphs and the general strategy for carrying out e
 \begin{equation}
 p(\mbf{x}) \propto \exp\left( -\frac{1}{2} (\mbf{x} - \mbs{\mu})^T \mbs{\Sigma}^{-1} (\mbf{x} - \mbs{\mu}) \right) = \exp\left( -\frac{1}{2} || \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma} \right).
 \end{equation}
-To economize notation, when labelling our factors, we will only use the $|| \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma}$ part, corresponding to a term in the negative-log likelihood cost that we are seeking to minimize.  We may also sometimes write $p(\mbf{x}) \sim \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$ as a shorthand.
+After taking the negative logarithm, we will only need the $|| \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma}$ part, which forms a term in the negative-log likelihood cost that we are seeking to minimize.  We may also sometimes write $p(\mbf{x}) \sim \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$ as a shorthand for Gaussian densities.
 
 \begin{figure}[t]
      \includegraphics[width=\textwidth]{gausselim.pdf}
@@ -50,14 +68,14 @@ We are now prepared to discuss classic discrete-time estimation from a factor-gr
 \section{Linear Discrete-Time Estimation}
 \label{sec:ldte}
 
-Classic discrete-time state estimation has a chain-like factor graph as depicted in Figure~\ref{fig:dtfg}.  There is a unary initial-condition factor capturing what we know about the state at the initial time, binary motion-model factors predicting how the system moves from one discrete time to the next, and unary measurement factors that tell us something about the state at each discrete time. 
+Classic discrete-time state estimation has a chain-like factor graph as depicted in Figure~\ref{fig:dtfg1}.  There is a unary initial-condition factor capturing what we know about the state at the initial time, binary motion-model factors predicting how the system moves from one discrete time to the next, and unary measurement factors that tell us something about the state at each discrete time. 
 
-\begin{figure}[b]
-     \centering
-     \includegraphics[width=0.95\textwidth]{dtfg.pdf}
-     \caption{Factor graph for classic discrete-time filtering/smoothing estimators.}
-     \label{fig:dtfg}
-\end{figure}
+% \begin{figure}[b]
+%      \centering
+%      \includegraphics[width=0.95\textwidth]{dtfg.pdf}
+%      \caption{Factor graph for classic discrete-time filtering/smoothing estimators.}
+%      \label{fig:dtfg}
+% \end{figure}
 
 For example, we might have a stochastic linear system of the form
 \beqn{linsys}
@@ -68,7 +86,7 @@ where $k \in 0 \ldots K$ is the discrete-time index, $\mbf{x}_k$ is the state, $
 
 An important point to make when looking at Figure~\ref{fig:dtfg2} is that the factor graph has a lot of structure in the form of sparsity.  Not all nodes are connected to all other nodes; rather, each node is connected only to its temporal neighbours.  This sparsity arises because $\mbf{x}$ is a {\em Markovian} state for~\eqref{eq:linsys}.  In other words, it captures everything we need to know to predict the next state of the system.  
 
-Our state-estimation problem is now to use the initial-state knowledge, $\pri{\mbf{x}}_0$, the inputs, $\mbf{v}_{k,k-1}$, and the measurements, $\mbf{y}_k$, to work out the likelihood of $\mbf{x}$ taking on all possible values.   This can be done exactly for this linear-Gaussian system; later for nonlinear systems we will require some approximations.  We will show that by using a combination of the Gaussian elimination and fusion operations from Section~\ref{sec:elimfus}, we can recover the classic \ac{RTS} smoother, the forward pass of which is the famous \ac{KF}.
+Our state-estimation problem is now to use the initial-state knowledge, $\pri{\mbf{x}}_0$, the inputs, $\mbf{v}_{k,k-1}$, and the measurements, $\mbf{y}_k$, to work out the likelihood of $\mbf{x}$ taking on all possible values.   This can be done exactly for this linear-Gaussian system; later for nonlinear systems we will require some approximations.  We will show that by using a combination of the Gaussian elimination and fusion operations from Section~\ref{sec:fgelimfus}, we can recover the classic \ac{RTS} smoother, the forward pass of which is the famous \ac{KF}.
 
 \begin{figure}[t]
      \centering
