@@ -1,12 +1,12 @@
 %!TEX root =  main.tex
 
 \chapter{Factor Graph Background}
-In this chapter, we will first introduce factor graphs as a general tool for formulating estimation problems.  Following this, we will work through the specific example of classic discrete-time filtering/smoothing.  We will later show that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
+In this chapter, we will first introduce factor graphs as a general tool for formulating estimation problems.  Following this, we will work through the specific example of classic discrete-time filtering/smoothing.  We will later show that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction to factor graphs, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
 
 \section{Factor Graphs and the Elimination Algorithm}
 \label{sec:fg}
 
-Typically in state estimation we are interested in computing a posterior density of the form
+Typically in state estimation, we are interested in computing a posterior density representing the likelihood of a state given some inputs and measurements of the form
 \begin{equation}
 p(\mbf{x} | \mbf{v}, \mbf{y}),
 \end{equation}
@@ -30,6 +30,35 @@ This is a common approach in estimation, referred to as \ac{MAP} estimation.
 
 We can visually understand the factors by assembling them into a {\em factor graph}, which is a bipartite graph with two types of nodes: variable nodes and factor nodes.  The variable nodes represent the variables in the problem, such as $\mbf{x}_0, \ldots, \mbf{x}_K$, and the factor nodes represent the factors, such as $\phi(\mbf{x}_0)$, $\phi(\mbf{x}_{k-1},\mbf{x}_k)$, and $\varphi(\mbf{x}_k)$.  The edges connect variable nodes to factor nodes, indicating which variables are involved in each factor.  This graphical representation allows us to see the dependencies between variables and factors in a very intuitive way.  Figure~\ref{fig:dtfg1} shows a simple factor graph for a classic discrete-time estimation problem.
 
+\section{The Elimination Algorithm}
+
+While it is possible to minimize the cost function in~\eqref{eq:cost} directly using matrix algebra, we here lean into the factor-graph representation and present the general {\em elimination algorithm}, an equivalent way to solve the minimization problem.  The key idea is to eliminate one variable at a time, updating the factors accordingly.  Once we have eliminated all variables, our factor graph has been transformed into another graph called a {\em Bayes net}; there is then a simple procedure to compute the desired posterior density from the Bayes net.
+
+Mathematically, the elimination algorithm starts from a factor graph and ends with a new factorization of the posterior in the form
+\begin{equation}\label{eq:elimfactors}
+p(\mbf{x}) = p(\mbf{x}_0 | \mbf{s}_0) p(\mbf{x}_1 | \mbf{s}_1) \cdots p(\mbf{x}_K) = \prod_{k=0}^K p(\mbf{x}_k | \mbf{s}_k),
+\end{equation}
+where $\mbf{s}_k$ is the {\em separator} for $\mbf{x}_k$, defined as the set of variables on which $\mbf{x}_k$ is conditioned after it is eliminated.  Without loss of generality, here $k=0\ldots K$ is the order in which the variables have been eliminated. It is important to note that each variable's separator cannot include any variables that have already been eliminated, which means that once all the conditional densities are computed, we can work backwards from $K$ to $0$ to compute the posterior densities for each variable.  
+
+Each step of the elimination algorithm consists of three operations:  (i) select a variable to eliminate, (ii) multiply all factors involving that variable together to form the {\em product factor}, and (iii) factor the product factor into a conditional density on the eliminated variable and a new factor on the separator variables.  The new factor is then added to the factor graph, and the eliminated variable is removed from the graph.  This process is repeated until all variables have been eliminated.  
+
+In a bit more detail, consider the example factor graph on the left of Figure~\ref{fig:elim}.  Suppose we select $\mbf{x}_k$ as the variable to eliminate, then the product factor is given by
+\begin{equation}
+\psi(\mbf{x}_k, \mbf{s}_k) = \phi(\mbf{x}_k) \phi(\mbf{x}_k, \mbf{x}_i) \phi(\mbf{x}_k, \mbf{x}_j),
+\end{equation}
+where $\mbf{x}_i$ and $\mbf{x}_j$ are two other variables that share factors with $\mbf{x}_k$; the separator for $\mbf{x}_k$ is then $\mbf{s}_k = \{ \mbf{x}_i, \mbf{x}_j \}$.  The product factor is then factored into a conditional density on $\mbf{x}_k$ and a new factor on the separator variables:
+\begin{equation}
+\psi(\mbf{x}_k, \mbf{s}_k) = p(\mbf{x}_k | \mbf{s}_k) \, \phi(\mbf{s}_k).
+\end{equation}
+The key to this last factorization is that $\phi(\mbf{s}_k)$ has no dependence on $\mbf{x}_k$; it is in fact the factor that would result if $\mbf{x}_k$ were {\em marginalized} from factor graph. After all variables have been eliminated, we are left with a graph with only directed arrows called the Bayes net.
+
+\begin{figure}[t]
+     \includegraphics[width=\textwidth]{elim.pdf}
+     \caption{Example of the elimination algorithm.  The left shows the factor graph before elimination, the middle shows the product factor formed by multiplying all factors involving $\mbf{x}_k$, and the right shows the result of eliminating $\mbf{x}_k$ from the factor graph, resulting in a new factor on the separator variables and a conditional density for $\mbf{x}_k$.}
+     \label{fig:elim}
+\end{figure}
+
+The elimination algorithm is quite powerful in that it can be applied to any factor graph.  However, it is particularly useful for problems with a lot of structure, such as those arising in robotics, as we can exploit the sparsity of the factor graph in the various operations.  Here, we will only need to work with factors and densities that are Gaussian, and we use the next section to show that the elimination algorithm can be carried out in closed form when the factors are Gaussian.  This will allow us to carry out estimation efficiently and effectively.
 
 \section{Gaussian Factors, Elimination, Fusion}
 \label{sec:fgelimfus}
@@ -38,7 +67,7 @@ Now that we understand factor graphs and the general strategy for carrying out e
 \begin{equation}
 p(\mbf{x}) \propto \exp\left( -\frac{1}{2} (\mbf{x} - \mbs{\mu})^T \mbs{\Sigma}^{-1} (\mbf{x} - \mbs{\mu}) \right) = \exp\left( -\frac{1}{2} || \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma} \right).
 \end{equation}
-After taking the negative logarithm, we will only need the $|| \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma}$ part, which forms a term in the negative-log likelihood cost that we are seeking to minimize.  We may also sometimes write $p(\mbf{x}) \sim \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$ as a shorthand for Gaussian densities.
+After taking the negative logarithm, we will only need the $|| \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma}$ part, which forms a term in the negative-log likelihood cost that we are seeking to minimize; we will often then label our factors on our factor graphs using this cost term for simplicity.  We may also sometimes write $p(\mbf{x}) \sim \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$ as a shorthand for Gaussian densities.
 
 \begin{figure}[t]
      \includegraphics[width=\textwidth]{gausselim.pdf}
@@ -54,7 +83,7 @@ The Gaussian elimination in Figure~\ref{fig:gausselim} follows from the very han
 \end{equation}
 where $\mbf{Q}_{12}$, $\mbs{\Sigma}$, $\mbs{\mu}$,  are defined in Figure~\ref{fig:gausselim} and $\mbf{A}_1$ and $\mbf{A}_2$ are for now assumed invertible.  We will use this closed-form Gaussian elimination time and again in what follows.  
 
-\begin{figure}[h]
+\begin{figure}[t]
      \centering
      \includegraphics[width=0.8\textwidth]{gaussfusion.pdf}
      \caption{We can fuse multiple Gaussian factors into a single one in order to declutter our factor graph.}

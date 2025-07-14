@@ -547,6 +547,10 @@ INPUT ./figs/dtfg1.pdf
 INPUT ./figs/dtfg1.pdf
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmsso10.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc
+INPUT ./figs/elim.pdf
+INPUT ./figs/elim.pdf
+INPUT ./figs/elim.pdf
+INPUT ./figs/elim.pdf
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib10.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib10.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib7.tfm
