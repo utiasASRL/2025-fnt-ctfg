@@ -2,6 +2,90 @@
 
 \chapter{Continuous-Time Systems on Lie Groups}
 
-\section{Background}
+In this chapter, we will adapt the factor-graph approach to continuous-time systems on Lie groups, which is a common representation for robot motion.  To do so will require some approximation, but we will show that the approximation is very good in practice.  
+
+\section{Background on Lie Groups}
+
+To be filled in last after the next sections are written so that we see what is actually needed.
+
+\section{Motion Priors on Lie Groups}
+
+For Lie groups, a kinematic motion model is typically of the form
+\begin{equation}
+\dot{\mbs{T}}(t) = \mbs{T}(t) \mbs{\varpi}(t)^\wdg,
+\end{equation}
+where $\mbs{T}(t)$ is the kinematic configuration expressed in some Lie group (e.g., $SE(3)$), $\mbs{\varpi}(t)$ is the generalized velocity (e.g., $\mathbb{R}^6$ twist for $SE(3)$), and $\wdg$ is the wedge operator for the Lie group. The challenge with this model is that not only is it nonlinear, the state does not live in a vector space.  Alternatively, we could write this same motion model in the Lie algebra as
+\begin{equation}
+\dot{\mbs{\xi}}(t) = \mbs{J}(\mbs{\xi}(t))^{-1} \mbs{\varpi}(t),
+\end{equation}
+where $\mbs{\xi}(t)$ is the state in the Lie algebra (i.e., $\mbs{T}(t) = \mbox{Exp}(\mbs{\xi}(t))$) and $\mbs{J}(\mbs{\xi}(t))$ is the (right) Jacobian of the exponential map from the Lie algebra to the Lie group.  The state now lives in vector space, but the motion model is still nonlinear. 
+
+To directly leverage our earlier results, where we employed linear systems to build our motion priors, we could choose a linear motion model in the Lie algebra.  For example, a \ac{WNOA} model can be written down as
+\begin{equation}
+\ddot{\mbs{\xi}}(t) = \mbs{w}(t),
+\end{equation}
+where $\mbs{w}(t)$ is a white-noise process.  As a first-order system, this can be written as
+\begin{equation}
+\begin{bmatrix}
+\dot{\mbs{\xi}}(t) \\
+\ddot{\mbs{\xi}}(t)
+\end{bmatrix} = 
+\begin{bmatrix}
+\mbf{0} & \mbf{I} \\
+\mbf{0} & \mbf{0}
+\end{bmatrix}
+\begin{bmatrix}
+\mbs{\xi}(t) \\
+\dot{\mbs{\xi}}(t)
+\end{bmatrix} +
+\begin{bmatrix}
+\mbf{0} \\
+\mbf{I}
+\end{bmatrix}
+\mbs{w}(t), 
+\end{equation}
+which matches the form we assumed in~\eqref{eq:linsysct}.  This linear model is only useful near the identity element of the Lie group, so we will need several of these motion models initiated at key times along the trajectory.  In general, we assume that we can write a motion model as
+\begin{equation}
+\dot{\mbs{\gamma}}(t) = \mbs{A} \mbs{\gamma}(t) + \mbs{v}(t) + \mbs{L} \mbs{w}(t),
+\end{equation}
+where $\mbs{\gamma}(t)$ is a stacking of $\mbs{\xi}(t)$ and an appropriate number of its derivatives. This looks just like the models we were using for our linear systems.
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=\textwidth]{lgfg.pdf}
+     \caption{General form of a motion prior defined over a Lie group trajectory.  Between each pair of measurement times, we use a linear motion model in the Lie algebra.}
+     \label{fig:lgfg}
+\end{figure}
+
+To stitch several of these models together, for example one per measurement time, we can redefine $\mbs{\xi}(t)$ to be
+\begin{equation}
+\mbs{\xi}_k(t) = \mbox{Log} \left(\mbs{T}_k^{-1} \mbs{T}(t)\right),
+\end{equation}
+where $\mbs{T}_k$ is the Lie group element at the $k$th measurement time.  Then, from one measurement time to the next, we can write
+\begin{multline}
+p\left(\mbs{\gamma}_{k-1}(t_k) | \mbs{\gamma}_{k-1}(t_{k-1}), \mbf{v}_{k,k-1}\right) \\ = \mathcal{N}\left( \mbf{A}_{k,k-1} \mbs{\gamma}_{k-1}(t_{k-1}) + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1}\right),
+\end{multline}
+recalling our linear results to compute $\mbf{A}_{k,k-1}$, $\mbf{v}_{k,k-1}$, and $\mbf{Q}_{k,k-1}$.  Our negative log-likelihood cost term is then
+\begin{equation}
+|| \mbs{\gamma}_{k-1}(t_k) - \mbf{A}_{k,k-1} \mbs{\gamma}_{k-1}(t_{k-1}) - \mbf{v}_{k,k-1} ||_{\mbf{Q}_{k,k-1}}^2.
+\end{equation}
+We can leave our motion model in this form and rely on the chain rule during optimization, but we can also work directly with the Lie group elements by substituting out the $\mbs{\gamma}_k(t)$ variables.  For example, if we want to use \ac{WNOA} as our motion model, we can substitute in the definitions of $\mbs{\xi}_k(t)$ to see that
+\begin{equation}
+\mbs{\gamma}_{k-1}(t) = \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}(t)\right) \\ \mbs{J}\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}(t)\right)\right)^{-1} \mbs{\varpi}(t) \ebm,
+\end{equation}
+and in turn
+\begin{equation}
+\mbs{\gamma}_{k-1}(t_k) = \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right) \\ \mbs{J}\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right)\right)^{-1} \mbs{\varpi}_k \ebm, \quad \mbs{\gamma}_{k-1}(t_{k-1}) = \bbm \mbf{0} \\ \mbs{\varpi}_{k-1} \ebm.
+\end{equation}
+Putting it all together, the negative log-likelihood cost term becomes
+\begin{equation}
+\left|\left| \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right) - t_{k,k-1} \mbs{\varpi}_{k-1} \\ \mbs{J}\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right)\right)^{-1} \mbs{\varpi}_k - \mbs{\varpi}_{k-1} \ebm \right|\right|_{\mbf{Q}_{k,k-1}}^2.
+\end{equation}
+The top row is comparing the change in $\mbs{T}(t)$ to the generalized velocity times the time difference, while the bottom row is essentially comparing the generalized velocity at the two times.  Figure~\ref{fig:lgfg} shows the general form of a motion prior defined over a Lie group trajectory.
+
+
 \section{Main Solve}
+
 \section{Interpolation}
+
+\section{Example}

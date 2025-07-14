@@ -626,6 +626,10 @@ INPUT ./chap5.tex
 INPUT ./chap5.tex
 INPUT ./chap5.tex
 INPUT chap5.tex
+INPUT ./figs/lgfg.pdf
+INPUT ./figs/lgfg.pdf
+INPUT ./figs/lgfg.pdf
+INPUT ./figs/lgfg.pdf
 INPUT ./chap6.tex
 INPUT ./chap6.tex
 INPUT ./chap6.tex
@@ -653,6 +657,7 @@ INPUT main.run.xml
 OUTPUT main.run.xml
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb
@@ -685,4 +690,5 @@ INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsso10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy6.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/lm/lmsy8.pfb
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/type1/public/pdftex/pdftexspace.pfb
