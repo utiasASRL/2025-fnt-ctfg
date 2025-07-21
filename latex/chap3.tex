@@ -60,7 +60,7 @@ with $t_{k,k-1} = t_{k} - t_{k-1}$.  We can often simplify these expressions for
 \end{equation}
 This is everything we need to populate the motion-model factors in Figure~\ref{fig:dtfg2}.  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  The next section shows how to use these states to solve for the states at the query times.
 
-\section{Basic Interpolation}
+\section{After-the-Fact Querying}
 
 \begin{figure}[t]
      \centering
@@ -97,14 +97,29 @@ where
 \eeqn
 We can carry out this type of query for as many query times as we like.  The complexity of each query is $O(1)$, since we only need the marginal of the separator states from the main solve.
 
-\section{Advanced Interpolation}
+\section{During-Main-Solve Querying}
 
-Under construction:
+The previous section discussed how to carry out interpolation for after-the-fact trajectory queries at times that did not have measurements associated with them.  We may also be interested in interpolation during the main solve in order to reduce the number of states in the factor graph.  For example, in Figure~\ref{fig:gausselim3} we may want to eliminate several states that do have measurements associated with them: $\mbf{x}_{\tau_1}, \ldots \mbf{x}_{\tau_N}$.  Eliminating all of these states en masse results in the factor graph in the bottom-left of the figure.  The resulting conditional density will be for the joint variable $\mbf{x}_{\tau_{1:N}}$, meaning it includes the full covariance between all the eliminated states.  If the cross-covariances are not required, we can drop these and only compute individual marginal conditional densities as in the bottom-right of the figure.  
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=0.95\textwidth]{gausselim3.pdf}
+     \caption{To reduce the number of states in the factor graph during the main solve, we can eliminate several states at once, even if they have measurements associated with them.  An example of this is classic IMU preintegration.}
+     \label{fig:gausselim3}
+\end{figure}
+
+There are a few use cases we can imagine for this type of grouped-state elimination:
 \begin{itemize}
-\item discuss how to eliminate a state that does have measurements associated with it
-\item discuss that this can be used to remove states from the main solve
-\item use a pose-to-landmark measurements as an example to set up for SLAM
+\item For a linear system, if we can find several places in the trajectory to carry out group-state eliminate, these calculations could potentially be done in parallel and then the main solve would also be much faster as the remaining factor graph would be much smaller.
+
+\item If we actually have a nonlinear system that has been linearized, we may still want to group-state eliminate several states at once (e.g., classic IMU preintegration), and then we will need the marginal conditionals to update the operating points of the linearizations for the next iteration.  The main solve might carry out several iterations with the grouped elimination only updating its operating point at a lower frequency.
 \end{itemize}
+
+Without showing all the details, the main tool that we need to carry out any Gaussian grouped-state elimination is the following:
+\begin{multline}
+\underbrace{\left\| \bbm \mbf{x} \\ \mbf{s} \ebm - \bbm \mbs{\mu}_x \\ \mbs{\mu}_s \ebm \right\|^2_{\bbm \mbs{\Sigma}_{xx} & \mbs{\Sigma}_{xs} \\ \mbs{\Sigma}_{sx} & \mbs{\Sigma}_{ss} \ebm} }_{-\log p(\mbf{x}, \mbf{s})} \\ = \underbrace{|| \mbf{x} - \mbs{\mu}_x - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} (\mbf{s} - \mbs{\mu}_s) ||^2_{\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}}}_{-\log p(\mbf{x} | \mbf{s})} + \underbrace{|| \mbf{s} - \mbs{\mu}_s ||^2_{\mbs{\Sigma}_{ss}}}_{-\log p(\mbf{s})}. \\
+\end{multline}
+Here $\mbf{x}$ is the grouped-state to be eliminated and $\mbf{s}$ is the separator state.  The term on the left is the (negative log of the) {\em product factor}.  The second term is the (negative log of the) {\em conditional density} and the third term is the (negative log of the) {\em residual factor} on the separator.  This expression can be used to carry out any Gaussian elimination, including the grouped-state elimination in Figure~\ref{fig:gausselim3}.  If we do not want the full covariance between the eliminated states, we can compute only the desired diagonal blocks of $\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}$, resulting in the marginal conditional densities for each of the eliminated states.
 
 \section{Example}
 

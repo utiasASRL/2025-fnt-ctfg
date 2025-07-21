@@ -20,11 +20,11 @@ The normalization constant associated with this factorization is typically expen
 \begin{equation}\label{eq:cost}
 \mathcal{C}(\mbf{x}) = -\log \phi(\mbf{x}_0) - \sum_{k=1}^K \log \phi(\mbf{x}_k, \mbf{x}_{k-1}) - \sum_{k=0}^K \log \varphi(\mbf{x}_k).
 \end{equation}
-This is a common approach in estimation, referred to as \ac{MAP} estimation.
+This is a common approach in estimation, referred to as {\em \ac{MAP}} estimation.
 
 \begin{figure}[t]
      \includegraphics[width=\textwidth]{dtfg1.pdf}
-     \caption{A simple factor graph for a classic estimation problem.  The unary factor on $\mbf{x}_0$ represents the prior knowledge about the initial state, the binary factors represent the motion model, and the unary factors represent the measurements.  In practice, we can have much more complicated factor graphs with loops.}
+     \caption{A simple factor graph for a classic estimation problem.  The unary factor on $\mbf{x}_0$ represents the prior knowledge about the initial state, the binary factors represent the motion model, and the remaining unary factors represent the measurements.  In practice, we can have much more complicated factor graphs with loops.}
      \label{fig:dtfg1}
 \end{figure}
 
@@ -40,7 +40,7 @@ p(\mbf{x}) = p(\mbf{x}_0 | \mbf{s}_0) p(\mbf{x}_1 | \mbf{s}_1) \cdots p(\mbf{x}_
 \end{equation}
 where $\mbf{s}_k$ is the {\em separator} for $\mbf{x}_k$, defined as the set of variables on which $\mbf{x}_k$ is conditioned after it is eliminated.  Without loss of generality, here $k=0\ldots K$ is the order in which the variables have been eliminated. It is important to note that each variable's separator cannot include any variables that have already been eliminated, which means that once all the conditional densities are computed, we can work backwards from $K$ to $0$ to compute the posterior densities for each variable.  
 
-Each step of the elimination algorithm consists of three operations:  (i) select a variable to eliminate, (ii) multiply all factors involving that variable together to form the {\em product factor}, and (iii) factor the product factor into a conditional density on the eliminated variable and a new factor on the separator variables.  The new factor is then added to the factor graph, and the eliminated variable is removed from the graph.  This process is repeated until all variables have been eliminated.  
+Each step of the elimination algorithm consists of three operations:  (i) select a variable to eliminate, (ii) multiply all factors involving that variable together to form the {\em product factor}, and (iii) factor the product factor into a {\em conditional density} on the eliminated variable and a {\em residual factor} on the separator variables.  The new factor is then added to the factor graph, and the eliminated variable is removed from the graph.  This process is repeated until all variables have been eliminated.  
 
 In a bit more detail, consider the example factor graph on the left of Figure~\ref{fig:elim}.  Suppose we select $\mbf{x}_k$ as the variable to eliminate, then the product factor is given by
 \begin{equation}
