@@ -680,7 +680,10 @@ if plotting:
     for i in range(3, 6):
         plt.subplot(2, 3, i+1)
         plt.ylim(-0.4, 0.4)
-    plt.show(block=False)  
+    plt.show(block=False)
+    
+    # Export the plot to a PDF file
+    plt.savefig('se3_velocity_example.pdf', format='pdf', bbox_inches='tight')  
 
     # Show the 3D plotter
     plotter.show()

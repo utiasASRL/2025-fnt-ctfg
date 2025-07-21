@@ -103,7 +103,7 @@ The previous section discussed how to carry out interpolation for after-the-fact
 
 \begin{figure}[t]
      \centering
-     \includegraphics[width=0.95\textwidth]{gausselim3.pdf}
+     \includegraphics[width=0.90\textwidth]{gausselim3.pdf}
      \caption{To reduce the number of states in the factor graph during the main solve, we can eliminate several states at once, even if they have measurements associated with them.  An example of this is classic IMU preintegration.}
      \label{fig:gausselim3}
 \end{figure}
@@ -119,7 +119,7 @@ Without showing all the details, the main tool that we need to carry out any Gau
 \begin{multline}
 \underbrace{\left\| \bbm \mbf{x} \\ \mbf{s} \ebm - \bbm \mbs{\mu}_x \\ \mbs{\mu}_s \ebm \right\|^2_{\bbm \mbs{\Sigma}_{xx} & \mbs{\Sigma}_{xs} \\ \mbs{\Sigma}_{sx} & \mbs{\Sigma}_{ss} \ebm} }_{-\log p(\mbf{x}, \mbf{s})} \\ = \underbrace{|| \mbf{x} - \mbs{\mu}_x - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} (\mbf{s} - \mbs{\mu}_s) ||^2_{\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}}}_{-\log p(\mbf{x} | \mbf{s})} + \underbrace{|| \mbf{s} - \mbs{\mu}_s ||^2_{\mbs{\Sigma}_{ss}}}_{-\log p(\mbf{s})}. \\
 \end{multline}
-Here $\mbf{x}$ is the grouped-state to be eliminated and $\mbf{s}$ is the separator state.  The term on the left is the (negative log of the) {\em product factor}.  The second term is the (negative log of the) {\em conditional density} and the third term is the (negative log of the) {\em residual factor} on the separator.  This expression can be used to carry out any Gaussian elimination, including the grouped-state elimination in Figure~\ref{fig:gausselim3}.  If we do not want the full covariance between the eliminated states, we can compute only the desired diagonal blocks of $\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}$, resulting in the marginal conditional densities for each of the eliminated states.
+Here $\mbf{x}$ is the grouped-state to be eliminated and $\mbf{s}$ is the separator state.  The term on the left is the (negative log of the) {\em product factor} in a standardized form.  The second term is the (negative log of the) {\em conditional density} and the third term is the (negative log of the) {\em residual factor} on the separator.  This expression can be used to carry out any Gaussian elimination, including the grouped-state elimination in Figure~\ref{fig:gausselim3}.  If we do not want the full covariance between the eliminated states, we can compute only the desired diagonal blocks of $\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}$, resulting in the marginal conditional densities for each of the individual eliminated states.
 
 \section{Example}
 

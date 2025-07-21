@@ -198,7 +198,7 @@ plt.ylabel(r'$\dot{p}$ [m/s]')
 plt.legend()
 
 plt.tight_layout()
-plt.show(block=False)
+plt.show(block=True)
 
 # Export the plot to a PDF file
 plt.savefig('linear_WNOA_example.pdf', format='pdf', bbox_inches='tight')

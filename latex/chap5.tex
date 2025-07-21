@@ -53,7 +53,7 @@ where $\mbs{\gamma}(t)$ is a stacking of $\mbs{\xi}(t)$ and an appropriate numbe
 \begin{figure}[t]
      \centering
      \includegraphics[width=\textwidth]{lgfg.pdf}
-     \caption{General form of a motion prior defined over a Lie group trajectory.  Between each pair of measurement times, we use a linear motion model in the Lie algebra.}
+     \caption{General form of a motion prior defined over a Lie group trajectory.  Between each pair of measurement times, we use a linear motion model in the Lie algebra.  The variables for which we are actually optimizing live in the Lie group.}
      \label{fig:lgfg}
 \end{figure}
 
@@ -66,8 +66,8 @@ where $\mbs{T}_k$ is the Lie group element at the $k$th measurement time.  Then,
 p\left(\mbs{\gamma}_{k-1}(t_k) | \mbs{\gamma}_{k-1}(t_{k-1}), \mbf{v}_{k,k-1}\right) \\ = \mathcal{N}\left( \mbf{A}_{k,k-1} \mbs{\gamma}_{k-1}(t_{k-1}) + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1}\right),
 \end{multline}
 recalling our linear results to compute $\mbf{A}_{k,k-1}$, $\mbf{v}_{k,k-1}$, and $\mbf{Q}_{k,k-1}$.  Our negative log-likelihood cost term is then
-\begin{equation}
-|| \mbs{\gamma}_{k-1}(t_k) - \mbf{A}_{k,k-1} \mbs{\gamma}_{k-1}(t_{k-1}) - \mbf{v}_{k,k-1} ||_{\mbf{Q}_{k,k-1}}^2.
+\begin{equation}\label{eq:lgmp}
+|| \underbrace{\mbs{\gamma}_{k-1}(t_k) - \mbf{A}_{k,k-1} \mbs{\gamma}_{k-1}(t_{k-1}) - \mbf{v}_{k,k-1}}_{\mbf{e}_{k,k-1}} ||_{\mbf{Q}_{k,k-1}}^2.
 \end{equation}
 We can leave our motion model in this form and rely on the chain rule during optimization, but we can also work directly with the Lie group elements by substituting out the $\mbs{\gamma}_k(t)$ variables.  For example, if we want to use \ac{WNOA} as our motion model, we can substitute in the definitions of $\mbs{\xi}_k(t)$ to see that
 \begin{equation}
@@ -81,10 +81,20 @@ Putting it all together, the negative log-likelihood cost term becomes
 \begin{equation}
 \left|\left| \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right) - t_{k,k-1} \mbs{\varpi}_{k-1} \\ \mbs{J}\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right)\right)^{-1} \mbs{\varpi}_k - \mbs{\varpi}_{k-1} \ebm \right|\right|_{\mbf{Q}_{k,k-1}}^2.
 \end{equation}
-The top row is comparing the change in $\mbs{T}(t)$ to the generalized velocity times the time difference, while the bottom row is essentially comparing the generalized velocity at the two times.  Figure~\ref{fig:lgfg} shows the general form of a motion prior defined over a Lie group trajectory.
-
+The top row is comparing the change in $\mbs{T}(t)$ to the generalized velocity times the time difference, while the bottom row is essentially comparing the generalized velocity at the two times.  Figure~\ref{fig:lgfg} shows the general form of a motion prior defined over a Lie-group trajectory.
 
 \section{Main Solve}
+
+To make use of our earlier results involving linear systems, we will need to somehow linearize our motion model defined over a Lie group.  To do this we assume that we can carry out perturbations of the Lie group element and the generalized velocity and its derivatives as follows:
+\begin{equation}
+\mbs{T}_k = \mbs{T}_{{\rm op},k} \mbox{Exp}(\mbs{\ep}_k), \quad \mbs{\varpi}_k = \mbs{\varpi}_{{\rm op},k} + \mbs{\eta}_k, \ldots
+\end{equation}
+where $\mbf{x}_{{\rm op},k} = \{\mbs{T}_{{\rm op},k}, \mbs{\varpi}_{{\rm op},k}, \ldots \}$ is the operating point of the linearization and $\mbs{\varepsilon}_k = (\mbs{\ep}_k, \mbs{\eta}_k, \ldots)$ is the perturbation.  
+
+We assume then that we can linearize the error term in~\eqref{eq:lgmp} as
+\begin{equation}
+\mbf{e}_{k,k-1} \approx \mbf{e}_{{\rm op},k,k-1} + \mbf{F}_{k,k-1} \mbs{\varepsilon}_{k-1} - \mbf{E}_k \mbs{\varepsilon}_k,
+\end{equation}
 
 \section{Interpolation}
 
