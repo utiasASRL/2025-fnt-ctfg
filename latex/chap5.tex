@@ -87,15 +87,43 @@ The top row is comparing the change in $\mbs{T}(t)$ to the generalized velocity 
 
 To make use of our earlier results involving linear systems, we will need to somehow linearize our motion model defined over a Lie group.  To do this we assume that we can carry out perturbations of the Lie group element and the generalized velocity and its derivatives as follows:
 \begin{equation}
-\mbs{T}_k = \mbs{T}_{{\rm op},k} \mbox{Exp}(\mbs{\ep}_k), \quad \mbs{\varpi}_k = \mbs{\varpi}_{{\rm op},k} + \mbs{\eta}_k, \ldots
+\mbs{T}_k = \mbs{T}_{{\rm op},k} \mbox{Exp}(\mbs{\ep}_k), \quad \mbs{\varpi}_k = \mbs{\varpi}_{{\rm op},k} + \mbs{\eta}_k, \quad \ldots
 \end{equation}
 where $\mbf{x}_{{\rm op},k} = \{\mbs{T}_{{\rm op},k}, \mbs{\varpi}_{{\rm op},k}, \ldots \}$ is the operating point of the linearization and $\mbs{\varepsilon}_k = (\mbs{\ep}_k, \mbs{\eta}_k, \ldots)$ is the perturbation.  
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=0.95\textwidth]{ctfg3.pdf}
+     \caption{Linearized Lie-group motion prior.  The factor graph is now expressed over the perturbation states rather than the original Lie group variables.  We can use our linear system results to solve this factor graph, then iterate to improve the linearization.}
+     \label{fig:ctfg3}
+\end{figure}
 
 We assume then that we can linearize the error term in~\eqref{eq:lgmp} as
 \begin{equation}
 \mbf{e}_{k,k-1} \approx \mbf{e}_{{\rm op},k,k-1} + \mbf{F}_{k,k-1} \mbs{\varepsilon}_{k-1} - \mbf{E}_k \mbs{\varepsilon}_k,
 \end{equation}
+where $\mbf{F}_{k,k-1}$ and $\mbf{E}_k$ are the Jacobians of the error term with respect to the perturbations.  Figure~\ref{fig:ctfg3} shows the linearized factor graph, which is now expressed over the perturbation states rather than the original Lie group variables.  We can use our linear system results to solve this factor graph, then iterate to convergence.  At each iteration, after finding the optimal perturbations, we update the operating points $\mbf{x}_{{\rm op},k}$ and recompute the Jacobians $\mbf{F}_{k,k-1}$ and $\mbf{E}_k$; in detail the update scheme is
+\begin{equation}
+\mbs{T}_{{\rm op},k} \leftarrow \mbs{T}_{{\rm op},k} \mbox{Exp}(\mbs{\ep}_k), \quad \mbs{\varpi}_{{\rm op},k} \leftarrow \mbs{\varpi}_{{\rm op},k} + \mbs{\eta}_k, \quad \ldots
+\end{equation}
+which ensures the Lie group element remains in the Lie group.
+
+
 
 \section{Interpolation}
 
 \section{Example}
+
+\begin{figure}[p]
+     \centering
+     \includegraphics[width=\textwidth]{se3_trajectory_example.png}
+     \caption{Example of $SE(3)$ state estimation with a \ac{WNOA} motion prior.  The red frames are noisy pose measurements.  The dark blue frame and ellipsoids are the main solve.  The light blue frames and ellipsoids are the interpolated states.  The green frames are the ground truth.}
+     \label{fig:se3_trajectory_example}
+\end{figure}
+
+\begin{figure}[p]
+     \centering
+     \includegraphics[width=\textwidth]{se3_velocity_example.pdf}
+     \caption{Generalized velocities associated with Figure~\ref{fig:se3_trajectory_example}.  The velocity is estimated at each measurement time and shown as blue dots including covariance. The interpolated velocities and covariances are shown as the solid line.  The green line is the ground truth velocity.}
+     \label{fig:se3_velocity_example}
+\end{figure}
