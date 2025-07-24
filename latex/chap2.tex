@@ -70,21 +70,27 @@ p(\mbf{x}) \propto \exp\left( -\frac{1}{2} (\mbf{x} - \mbs{\mu})^T \mbs{\Sigma}^
 \end{equation}
 After taking the negative logarithm, we will only need the $|| \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma}$ part, which forms a term in the negative-log likelihood cost that we are seeking to minimize; we will often then label our factors on our factor graphs using this cost term for simplicity.  We may also sometimes write $p(\mbf{x}) \sim \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$ as a shorthand for Gaussian densities.
 
+In general, we can use the following relationship to carry out elimination when all the factors are Gaussian:
+\begin{multline}\label{eq:gausselim}
+\underbrace{\left\| \bbm \mbf{x} \\ \mbf{s} \ebm - \bbm \mbs{\mu}_x \\ \mbs{\mu}_s \ebm \right\|^2_{\bbm \mbs{\Sigma}_{xx} & \mbs{\Sigma}_{xs} \\ \mbs{\Sigma}_{sx} & \mbs{\Sigma}_{ss} \ebm} }_{-\log p(\mbf{x}, \mbf{s})} \\ = \underbrace{|| \mbf{x} - \mbs{\mu}_x - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} (\mbf{s} - \mbs{\mu}_s) ||^2_{\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}}}_{-\log p(\mbf{x} | \mbf{s})} + \underbrace{|| \mbf{s} - \mbs{\mu}_s ||^2_{\mbs{\Sigma}_{ss}}}_{-\log p(\mbf{s})}. \\
+\end{multline}
+Here $\mbf{x}$ is the state to be eliminated and $\mbf{s}$ is the separator state.  The term on the left is the (negative log of the) {\em product factor} in a standardized form.  The second term is the (negative log of the) {\em conditional density} and the third term is the (negative log of the) {\em residual factor} on the separator.  This expression can be used to carry out any Gaussian elimination, including grouped-state elimination. 
+
 \begin{figure}[t]
      \includegraphics[width=\textwidth]{gausselim.pdf}
-     \caption{With Gaussian factors, eliminating $\mbf{x}$ results in a new Gaussian factor and a Gaussian conditional density for $\mbf{x}$.}
+     \caption{With Gaussian factors, eliminating $\mbf{x}$ results in a new Gaussian factor and a Gaussian conditional density for $\mbf{x}$.  This is a specific example of the general Gaussian elimination formula in~\eqref{eq:gausselim}.}
      \label{fig:gausselim}
 \end{figure}
 
-Consider the situation on the left of Figure~\ref{fig:gausselim}; we have $\mbf{x}$ linked to two other variables via Gaussian factors (i.e., $\mbf{x}$'s separator).  When we eliminate $\mbf{x}$, this results in the situation on the right, with a new binary factor between the separator variables as well as a Gaussian conditional density for $\mbf{x}$.  Note, we assume that $\mbf{u}_1$ depends on $\mbf{x}_1$ and $\mbf{u}_2$ depends on $\mbf{x}_2$, typically linearly, but the elimination procedure still works if $\mbf{x}$ has a binary factor on one side and a unary factor on the other. 
+For example, consider the situation on the left of Figure~\ref{fig:gausselim}; we have $\mbf{x}$ linked to two other variables via Gaussian factors (i.e., $\mbf{x}$'s separator).  When we eliminate $\mbf{x}$, this results in the situation on the right, with a new binary factor between the separator variables as well as a Gaussian conditional density for $\mbf{x}$.  Note, we assume that $\mbf{u}_1$ depends on $\mbf{x}_1$ and $\mbf{u}_2$ depends on $\mbf{x}_2$, typically linearly, but the elimination procedure still works if $\mbf{x}$ has a binary factor on one side and a unary factor on the other. 
 
-The Gaussian elimination in Figure~\ref{fig:gausselim} follows from the very handy sum-of-squares identity,
-\begin{equation}\label{eq:sumofsquares}
-|| \mbf{u}_1 - \mbf{A}_1 \mbf{x} ||^2_{\mbf{Q}_1} + || \mbf{u}_2 - \mbf{A}_2 \mbf{x} ||^2_{\mbf{Q}_2}  = || \mbf{A}_1^{-1} \mbf{u}_1 - \mbf{A}_2^{-1} \mbf{u}_2 ||^2_{\mbf{Q}_{12}} + || \mbf{x} - \mbs{\mu}||^2_\mbs{\Sigma},
-\end{equation}
-where $\mbf{Q}_{12}$, $\mbs{\Sigma}$, $\mbs{\mu}$,  are defined in Figure~\ref{fig:gausselim} and $\mbf{A}_1$ and $\mbf{A}_2$ are for now assumed invertible.  We will use this closed-form Gaussian elimination time and again in what follows.  
+% The Gaussian elimination in Figure~\ref{fig:gausselim} follows from the very handy sum-of-squares identity,
+% \begin{equation}\label{eq:sumofsquares}
+% || \mbf{u}_1 - \mbf{A}_1 \mbf{x} ||^2_{\mbf{Q}_1} + || \mbf{u}_2 - \mbf{A}_2 \mbf{x} ||^2_{\mbf{Q}_2}  = || \mbf{A}_1^{-1} \mbf{u}_1 - \mbf{A}_2^{-1} \mbf{u}_2 ||^2_{\mbf{Q}_{12}} + || \mbf{x} - \mbs{\mu}||^2_\mbs{\Sigma},
+% \end{equation}
+% where $\mbf{Q}_{12}$, $\mbs{\Sigma}$, $\mbs{\mu}$,  are defined in Figure~\ref{fig:gausselim} and $\mbf{A}_1$ and $\mbf{A}_2$ are for now assumed invertible.  We will use this closed-form Gaussian elimination time and again in what follows.  
 
-\begin{figure}[t]
+\begin{figure}[b]
      \centering
      \includegraphics[width=0.8\textwidth]{gaussfusion.pdf}
      \caption{We can fuse multiple Gaussian factors into a single one in order to declutter our factor graph.}
@@ -114,16 +120,16 @@ For example, we might have a stochastic linear system of the form
 \eeqn
 where $k \in 0 \ldots K$ is the discrete-time index, $\mbf{x}_k$ is the state, $\mbf{v}_{k,k-1}$ is an input/command, $\mbf{y}_k$ is an output/measurement, $\mbf{w}_{k,k-1} \sim \mathcal{N}(\mbf{0}, \mbf{Q}_{k,k-1})$ is Gaussian process noise, and $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k)$ is Gaussian measurement noise.  We additionally assume that at $k=0$ the initial condition is drawn from a Gaussian, $\mbf{x}_0 \sim \mathcal{N}\left(\pri{\mbf{x}}_0, \pri{\mbf{P}}_0\right)$.  In this case, we can populate our factor graph as in Figure~\ref{fig:dtfg2}, where all of the factors are now Gaussian.  
 
-An important point to make when looking at Figure~\ref{fig:dtfg2} is that the factor graph has a lot of structure in the form of sparsity.  Not all nodes are connected to all other nodes; rather, each node is connected only to its temporal neighbours.  This sparsity arises because $\mbf{x}$ is a {\em Markovian} state for~\eqref{eq:linsys}.  In other words, it captures everything we need to know to predict the next state of the system.  
-
-Our state-estimation problem is now to use the initial-state knowledge, $\pri{\mbf{x}}_0$, the inputs, $\mbf{v}_{k,k-1}$, and the measurements, $\mbf{y}_k$, to work out the likelihood of $\mbf{x}$ taking on all possible values.   This can be done exactly for this linear-Gaussian system; later for nonlinear systems we will require some approximations.  We will show that by using a combination of the Gaussian elimination and fusion operations from Section~\ref{sec:fgelimfus}, we can recover the classic \ac{RTS} smoother, the forward pass of which is the famous \ac{KF}.
-
 \begin{figure}[t]
      \centering
      \includegraphics[width=\textwidth]{dtfg2.pdf}
      \caption{Populated factor graph for the discrete-time estimation of the linear system in~\eqref{eq:linsys}.}
      \label{fig:dtfg2}
 \end{figure}
+
+An important point to make when looking at Figure~\ref{fig:dtfg2} is that the factor graph has a lot of structure in the form of sparsity.  Not all nodes are connected to all other nodes; rather, each node is connected only to its temporal neighbours.  This sparsity arises because $\mbf{x}$ is a {\em Markovian} state for~\eqref{eq:linsys}.  In other words, it captures everything we need to know to predict the next state of the system.  
+
+Our state-estimation problem is now to use the initial-state knowledge, $\pri{\mbf{x}}_0$, the inputs, $\mbf{v}_{k,k-1}$, and the measurements, $\mbf{y}_k$, to work out the likelihood of $\mbf{x}$ taking on all possible values.   This can be done exactly for this linear-Gaussian system; later for nonlinear systems we will require some approximations.  We will show that by using a combination of the Gaussian elimination and fusion operations from Section~\ref{sec:fgelimfus}, we can recover the classic \ac{RTS} smoother, the forward pass of which is the famous \ac{KF}.
 
 Looking to Figure~\ref{fig:dtfg2}, our estimation game plan will be to first fuse the two unary factors on $\mbf{x}_0$, then eliminate $\mbf{x}_0$, then repeat this process with $\mbf{x}_1$ and so on until we arrive at $\mbf{x}_K$.  The result of this forward pass will be a Bayes net.  After this we will carry out a backward pass to work out the posterior densities for $\mbf{x}_K$ all the way back to $\mbf{x}_0$.
 
@@ -189,7 +195,7 @@ and can be calculated during the backward pass.  The computational complexity of
 
 The forward pass is the very famous \acf{KF}, which we now understand from a factor-graph perspective.  The $p(\mbf{x}_k | \mbf{v}_{0:k}, \mbf{y}_{0:k}) = \mathcal{N}\left(\est{\mbf{x}}_{k,f}, \est{\mbf{P}}_{k,f} \right)$ quantities can be referred to as {\em filtered} (accounting only for up-to-the-present measurements) while the $p(\mbf{x}_k | \mbf{v}_{0:K}, \mbf{y}_{0:K}) = \mathcal{N}\left( \est{\mbf{x}}_k, \est{\mbf{P}}_k \right)$ quantities are {\em smoothed} (accounting for all measurements: past, present, and future); see Figure~\ref{fig:filtersmoother}.
 
-\begin{figure}[b]
+\begin{figure}[t]
      \centering
      \includegraphics[width=0.95\textwidth]{filtersmoother.pdf}
      \caption{Contrasting filtering vs. smoothing.  We are primarily interested in smoothing in this article.}

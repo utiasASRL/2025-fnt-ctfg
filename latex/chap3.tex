@@ -69,7 +69,7 @@ This is everything we need to populate the motion-model factors in Figure~\ref{f
      \label{fig:gausselim2}
 \end{figure}
 
-The second phase of our strategy is to solve for the state at the query time, $\mbf{x}_\tau$, in Figure~\ref{fig:ctfg2}. In this section, we assume the query state does not have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the sum-of-squares identity in~\eqref{eq:sumofsquares} to write
+The second phase of our strategy is to solve for the state at the query time, $\mbf{x}_\tau$, in Figure~\ref{fig:ctfg2}. In this section, we assume the query state does not have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the Gaussian elimination formula in~\eqref{eq:gausselim} to write
 \begin{multline}
 || \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbf{x}_\tau - \mbs{\mu}_\tau ||^2_{\mbs{\Sigma}_\tau},
 \end{multline}
@@ -115,11 +115,7 @@ There are a few use cases we can imagine for this type of grouped-state eliminat
 \item If we actually have a nonlinear system that has been linearized, we may still want to group-state eliminate several states at once (e.g., classic IMU preintegration), and then we will need the marginal conditionals to update the operating points of the linearizations for the next iteration.  The main solve might carry out several iterations with the grouped elimination only updating its operating point at a lower frequency.
 \end{itemize}
 
-Without showing all the details, the main tool that we need to carry out any Gaussian grouped-state elimination is the following:
-\begin{multline}
-\underbrace{\left\| \bbm \mbf{x} \\ \mbf{s} \ebm - \bbm \mbs{\mu}_x \\ \mbs{\mu}_s \ebm \right\|^2_{\bbm \mbs{\Sigma}_{xx} & \mbs{\Sigma}_{xs} \\ \mbs{\Sigma}_{sx} & \mbs{\Sigma}_{ss} \ebm} }_{-\log p(\mbf{x}, \mbf{s})} \\ = \underbrace{|| \mbf{x} - \mbs{\mu}_x - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} (\mbf{s} - \mbs{\mu}_s) ||^2_{\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}}}_{-\log p(\mbf{x} | \mbf{s})} + \underbrace{|| \mbf{s} - \mbs{\mu}_s ||^2_{\mbs{\Sigma}_{ss}}}_{-\log p(\mbf{s})}. \\
-\end{multline}
-Here $\mbf{x}$ is the grouped-state to be eliminated and $\mbf{s}$ is the separator state.  The term on the left is the (negative log of the) {\em product factor} in a standardized form.  The second term is the (negative log of the) {\em conditional density} and the third term is the (negative log of the) {\em residual factor} on the separator.  This expression can be used to carry out any Gaussian elimination, including the grouped-state elimination in Figure~\ref{fig:gausselim3}.  If we do not want the full covariance between the eliminated states, we can compute only the desired diagonal blocks of $\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}$, resulting in the marginal conditional densities for each of the individual eliminated states.
+Grouped-state Gaussian elimination is still handled by the general formula in~\eqref{eq:gausselim}.  If we do not want the full covariance between the eliminated states, we can compute only the desired diagonal blocks of $\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}$, resulting in the marginal conditional densities for each of the individual eliminated states.
 
 \section{Example}
 
