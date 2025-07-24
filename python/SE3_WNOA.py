@@ -627,7 +627,7 @@ if interp_mean:
 
                 # Plot the interpolated covariance ellipsoid
                 if interp_cov and plotting_covariance:    
-                    plot_covariance(plotter, T_tau_inv, P_tau[:3,:3], nstd=nstd, color='blue', opacity=0.03)
+                    plot_covariance(plotter, T_tau_inv, P_tau[:3,:3], nstd=nstd, color='blue', opacity=0.05)
 
             # Save the interpolated velocity and covariance
             tau_save[j] = tau

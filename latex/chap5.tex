@@ -16,9 +16,9 @@ For Lie groups, a kinematic motion model is typically of the form
 \end{equation}
 where $\mbs{T}(t)$ is the kinematic configuration expressed in some Lie group (e.g., $SE(3)$), $\mbs{\varpi}(t)$ is the generalized velocity (e.g., $\mathbb{R}^6$ twist for $SE(3)$), and $\wdg$ is the wedge operator for the Lie group. The challenge with this model is that not only is it nonlinear, the state does not live in a vector space.  Alternatively, we could write this same motion model in the Lie algebra as
 \begin{equation}
-\dot{\mbs{\xi}}(t) = \mbs{J}(\mbs{\xi}(t))^{-1} \mbs{\varpi}(t),
+\dot{\mbs{\xi}}(t) = \Jbig(\mbs{\xi}(t))^{-1} \mbs{\varpi}(t),
 \end{equation}
-where $\mbs{\xi}(t)$ is the state in the Lie algebra (i.e., $\mbs{T}(t) = \mbox{Exp}(\mbs{\xi}(t))$) and $\mbs{J}(\mbs{\xi}(t))$ is the (right) Jacobian of the exponential map from the Lie algebra to the Lie group.  The state now lives in vector space, but the motion model is still nonlinear. 
+where $\mbs{\xi}(t)$ is the state in the Lie algebra (i.e., $\mbs{T}(t) = \mbox{Exp}(\mbs{\xi}(t))$) and $\Jbig(\mbs{\xi}(t))$ is the (right) Jacobian of the exponential map from the Lie algebra to the (adjoint of the) Lie group.  The state now lives in vector space, but the motion model is still nonlinear.
 
 To directly leverage our earlier results, where we employed linear systems to build our motion priors, we could choose a linear motion model in the Lie algebra.  For example, a \ac{WNOA} model can be written down as
 \begin{equation}
@@ -71,15 +71,15 @@ recalling our linear results to compute $\mbf{A}_{k,k-1}$, $\mbf{v}_{k,k-1}$, an
 \end{equation}
 We can leave our motion model in this form and rely on the chain rule during optimization, but we can also work directly with the Lie group elements by substituting out the $\mbs{\gamma}_k(t)$ variables.  For example, if we want to use \ac{WNOA} as our motion model, we can substitute in the definitions of $\mbs{\xi}_k(t)$ to see that
 \begin{equation}
-\mbs{\gamma}_{k-1}(t) = \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}(t)\right) \\ \mbs{J}\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}(t)\right)\right)^{-1} \mbs{\varpi}(t) \ebm,
+\mbs{\gamma}_{k-1}(t) = \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}(t)\right) \\ \Jbig\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}(t)\right)\right)^{-1} \mbs{\varpi}(t) \ebm,
 \end{equation}
 and in turn
 \begin{equation}
-\mbs{\gamma}_{k-1}(t_k) = \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right) \\ \mbs{J}\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right)\right)^{-1} \mbs{\varpi}_k \ebm, \quad \mbs{\gamma}_{k-1}(t_{k-1}) = \bbm \mbf{0} \\ \mbs{\varpi}_{k-1} \ebm.
+\mbs{\gamma}_{k-1}(t_k) = \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right) \\ \Jbig\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right)\right)^{-1} \mbs{\varpi}_k \ebm, \quad \mbs{\gamma}_{k-1}(t_{k-1}) = \bbm \mbf{0} \\ \mbs{\varpi}_{k-1} \ebm.
 \end{equation}
 Putting it all together, the negative log-likelihood cost term becomes
 \begin{equation}
-\left|\left| \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right) - t_{k,k-1} \mbs{\varpi}_{k-1} \\ \mbs{J}\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right)\right)^{-1} \mbs{\varpi}_k - \mbs{\varpi}_{k-1} \ebm \right|\right|_{\mbf{Q}_{k,k-1}}^2.
+\left|\left| \bbm \mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right) - t_{k,k-1} \mbs{\varpi}_{k-1} \\ \Jbig\left(\mbox{Log} \left(\mbs{T}_{k-1}^{-1} \mbs{T}_k\right)\right)^{-1} \mbs{\varpi}_k - \mbs{\varpi}_{k-1} \ebm \right|\right|_{\mbf{Q}_{k,k-1}}^2.
 \end{equation}
 The top row is comparing the change in $\mbs{T}(t)$ to the generalized velocity times the time difference, while the bottom row is essentially comparing the generalized velocity at the two times.  Figure~\ref{fig:lgfg} shows the general form of a motion prior defined over a Lie-group trajectory.
 
@@ -124,6 +124,6 @@ which ensures the Lie group element remains in the Lie group.
 \begin{figure}[p]
      \centering
      \includegraphics[width=\textwidth]{se3_velocity_example.pdf}
-     \caption{Generalized velocities associated with Figure~\ref{fig:se3_trajectory_example}.  The velocity is estimated at each measurement time and shown as blue dots including covariance. The interpolated velocities and covariances are shown as the solid line.  The green line is the ground truth velocity.}
+     \caption{Generalized velocities associated with Figure~\ref{fig:se3_trajectory_example}.  The velocity is estimated at each measurement time and shown as blue dots including covariance. The interpolated velocities and covariances are shown as the blue solid line.  The green line is the ground truth velocity.}
      \label{fig:se3_velocity_example}
 \end{figure}
