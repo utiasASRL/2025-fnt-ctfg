@@ -16,6 +16,22 @@
   file = {/Users/tdb/Zotero/storage/QLHIQLJ6/Dellaert and Kaess - 2017 - Factor Graphs for Robot Perception.pdf}
 }
 
+@inproceedings{dongSparseGaussianProcesses2018,
+  title = {Sparse {{Gaussian Processes}} on {{Matrix Lie Groups}}: {{A Unified Framework}} for {{Optimizing Continuous-Time Trajectories}}},
+  shorttitle = {Sparse {{Gaussian Processes}} on {{Matrix Lie Groups}}},
+  booktitle = {2018 {{IEEE International Conference}} on {{Robotics}} and {{Automation}} ({{ICRA}})},
+  author = {Dong, Jing and Mukadam, Mustafa and Boots, Byron and Dellaert, Frank},
+  year = {2018},
+  month = may,
+  pages = {6497--6504},
+  issn = {2577-087X},
+  doi = {10.1109/ICRA.2018.8461077},
+  urldate = {2025-07-25},
+  abstract = {Continuous-time trajectories are useful for reasoning about robot motion in a wide range of tasks. Sparse Gaussian processes (GPs) can be used as a non-parametric representation for trajectory distributions that enables fast trajectory optimization by sparse GP regression. However, most previous approaches that utilize sparse GPs for trajectory optimization are limited by the fact that the robot state is represented in vector space. In this paper, we first extend previous works to consider the state on general matrix Lie groups by applying a constant-velocity prior and defining locally linear GPs. Next, we discuss how sparse GPs on Lie groups provide a unified continuous-time framework for trajectory optimization for solving a number of robotics problems including state estimation and motion planning. Finally, we demonstrate and evaluate our approach on several different estimation and motion planning tasks with both synthetic and real-world experiments.},
+  keywords = {Estimation,Gaussian processes,Planning,Simultaneous localization and mapping,Sparse matrices,Trajectory},
+  file = {/Users/tdb/Zotero/storage/UKHD8FMR/Dong et al. - 2018 - Sparse Gaussian Processes on Matrix Lie Groups A Unified Framework for Optimizing Continuous-Time T.pdf}
+}
+
 @article{kaessISAM2IncrementalSmoothing2012,
   title = {{{iSAM2}}: {{Incremental}} Smoothing and Mapping Using the {{Bayes}} Tree},
   shorttitle = {{{iSAM2}}},
@@ -33,6 +49,41 @@
   abstract = {We present a novel data structure, the Bayes tree, that provides an algorithmic foundation enabling a better understanding of existing graphical model inference algorithms and their connection to sparse matrix factorization methods. Similar to a clique tree, a Bayes tree encodes a factored probability density, but unlike the clique tree it is directed and maps more naturally to the square root information matrix of the simultaneous localization and mapping (SLAM) problem. In this paper, we highlight three insights provided by our new data structure. First, the Bayes tree provides a better understanding of the matrix factorization in terms of probability densities. Second, we show how the fairly abstract updates to a matrix factorization translate to a simple editing of the Bayes tree and its conditional densities. Third, we apply the Bayes tree to obtain a completely novel algorithm for sparse nonlinear incremental optimization, named iSAM2, which achieves improvements in efficiency through incremental variable re-ordering and fluid relinearization, eliminating the need for periodic batch steps. We analyze various properties of iSAM2 in detail, and show on a range of real and simulated datasets that our algorithm compares favorably with other recent mapping algorithms in both quality and efficiency.},
   langid = {english},
   file = {/Users/tdb/Zotero/storage/PZK2EXGQ/Kaess et al. - 2012 - iSAM2 Incremental smoothing and mapping using the Bayes tree.pdf}
+}
+
+@article{legentilContinuousLatentState2023,
+  title = {Continuous Latent State Preintegration for Inertial-Aided Systems},
+  author = {Le Gentil, Cedric and {Vidal-Calleja}, Teresa},
+  year = {2023},
+  month = sep,
+  journal = {The International Journal of Robotics Research},
+  volume = {42},
+  number = {10},
+  pages = {874--900},
+  publisher = {SAGE Publications Ltd STM},
+  issn = {0278-3649},
+  doi = {10.1177/02783649231199537},
+  urldate = {2025-07-25},
+  abstract = {Traditionally, the pose and velocity prediction of a system at time t2 given inertial measurements from a 6-DoF IMU depends on the knowledge of the system's state at time t1. It involves a series of integration and double integration that can be computationally expensive if performed regularly, in particular in the context of inertial-aided optimisation-based state estimation. The concept of preintegration consists of creating pseudo-measurements that are independent of the system's initial conditions (pose and velocity at t1) in order to predict the system's state at t2. These pseudo-measurements, so-called preintegrated measurements, were originally computed numerically using the integration rectangle rule. This article presents a novel method to perform continuous preintegration using Gaussian processes (GPs) to model the system's dynamics focusing on high accuracy. It represents the preintegrated measurement's derivatives in a continuous latent state that is learnt/optimised according to asynchronous IMU gyroscope and accelerometer measurements. The GP models allow for analytical integration and double integration of the latent state to generate accurate preintegrated measurements called unified Gaussian preintegrated measurements (UGPMs). We show through extensive quantitative experiments that the proposed UGPMs outperform the standard preintegration method by an order of magnitude. Additionally, we demonstrate that the UGPMs can be integrated into off-the-shelf multi-modal estimation frameworks with ease based on lidar-inertial, RGBD-inertial, and visual-inertial real-world experiments.},
+  langid = {english},
+  file = {/Users/tdb/Zotero/storage/FZINDG58/Le Gentil and Vidal-Calleja - 2023 - Continuous latent state preintegration for inertial-aided systems.pdf}
+}
+
+@article{legentilGaussianProcessPreintegration2020,
+  title = {Gaussian {{Process Preintegration}} for {{Inertial-Aided State Estimation}}},
+  author = {Le Gentil, Cedric and {Vidal-Calleja}, Teresa and Huang, Shoudong},
+  year = {2020},
+  month = apr,
+  journal = {IEEE Robotics and Automation Letters},
+  volume = {5},
+  number = {2},
+  pages = {2108--2114},
+  issn = {2377-3766},
+  doi = {10.1109/LRA.2020.2970940},
+  urldate = {2025-07-25},
+  abstract = {In this letter, we present Gaussian Process Preintegration, a preintegration theory based on continuous representations of inertial measurements. A novel use of linear operators on Gaussian Process kernels is employed to generate the proposed Gaussian Preintegrated Measurements (GPMs). This formulation allows the analytical integration of inertial signals on any time interval. Consequently, GPMs are especially suited for asynchronous inertial-aided estimation frameworks. Unlike discrete preintegration approaches, the proposed method does not rely on any explicit motion-model and does not suffer from numerical integration noise. Additionally, we provide the analytical derivation of the Jacobians involved in the first-order expansion for postintegration bias and inter-sensor time-shift correction. We benchmarked the proposed method against existing preintegration methods on simulated data. Our experiments show that GPMs produce the most accurate results and their computation time allows close-to-real-time operations. We validated the suitability of GPMs for inertial-aided estimation by integrating them into a lidar-inertial localisation and mapping framework.},
+  keywords = {Acceleration,autonomous vehicle navigation,Gaussian processes,Gyroscopes,Kernel,localization,Sensor fusion,Sensors,SLAM,State estimation},
+  file = {/Users/tdb/Zotero/storage/Y9SW2HSD/Le Gentil et al. - 2020 - Gaussian Process Preintegration for Inertial-Aided State Estimation.pdf}
 }
 
 @article{mukadamContinuoustimeGaussianProcess2018,

@@ -90,9 +90,11 @@ In this article, we focus on the nonparametric approach, which has been less wid
 \item \citet{barfoot_rss14}, \citet{anderson_ar15} - Showed how to construct a kernel function from a physically motivated motion prior that resulted in a block-tridiagonal inverse kernel matrix, which is key to efficient computation; made the initial connection between the \ac{GP} approach and sparse factor graphs.  Coined the term \ac{STEAM}.
 \item \citet{anderson_iros15}, \citet{anderson_phd16} - Showed how to apply the \ac{GP} continuous-time approach (specifically a \ac{WNOA} motion model) on Lie groups using the `local GP' approach.
 \item \citet{yanIncrementalSparseGP2015}, \citet{yanIncrementalSparseGP2017} - Showed that once the \ac{GP} approach was formulated as a factor graph it could be incrementalized using the ideas of \citet{kaess08, kaessISAM2IncrementalSmoothing2012}.
+\item \citet{dongSparseGaussianProcesses2018} - Generalized the \ac{GP} formulation to different Lie groups and provided examples.
 \item \citet{mukadamContinuoustimeGaussianProcess2018} - Extended the approach beyond estimation to include motion-planning problems.
 \item \citet{tang_ral19}, \citet{nguyen_tro25} - Showed how to construct a \ac{WNOJ} prior for Lie groups that worked well for vehicles experiencing acceleration.
-\item \citet{wong_ral20} - Showed how to construct a Singer prior for Lie groups that was trained on data to better fit a real-world motion profile. 
+\item \citet{wong_ral20} - Showed how to construct a Singer prior for Lie groups that was trained on data to better fit a real-world motion profile.
+\item \citet{legentilGaussianProcessPreintegration2020}, \citet{legentilContinuousLatentState2023} - Showed how to use \acp{GP} to preintegrate inertial measurements in continuous time; this work is not directly connected to the \ac{GP} approach discussed in this article but is an important related topic.
 \item \citet{lilge_ijrr22}, \citet{lilge_tro25} - Showed that the \ac{GP} approach could be used to also estimate the shape of continuum robots.
 \item \citet{duembgen_ral23}, \citet{barfoot_ijrr25} - Showed how to incorporate \ac{GP} motion priors within a certifiably optimal estimation framework.
 \item \citet{johnson_arxiv24} - Provided a detailed experimental comparison of parametric and nonparametric methods for continuous-time estimation.  Also showed how to incorporate motion priors into parametric methods to make them essentially equivalent to nonparametric methods.
@@ -100,6 +102,7 @@ In this article, we focus on the nonparametric approach, which has been less wid
 \item \citet{lilge_rob25} - Extended the \ac{GP} motion priors to include non-zero mean functions, allowing more specific prior motion to be captured.
 \item \citet{burnett_tro25} - Showed state-of-the-art performance on radar- and lidar-inertial estimation using the \ac{GP} approach.
 \end{itemize}
+Additional related works and applications of the \ac{GP} approach are listed by \citet{talbot_tro25} in Table VI.
 
 \section{How to Read This Article}
 
@@ -112,3 +115,4 @@ The rest of the article is structured in the following way:
 \item Chapter 6:  We provide detailed examples of \ac{GP} continuous-time state estimation implemented using \ac{GTSAM}.  
 \item Chapter 7:  We wrap up and provide an outlook for the future.
 \end{itemize}
+We hope that this article provides a useful introduction to continuous-time estimation using \ac{GP} regression and that the examples provided will help practitioners to adopt this approach in their own work.
