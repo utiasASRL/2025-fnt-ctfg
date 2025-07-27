@@ -1,3 +1,13 @@
 %!TEX root =  FnTarticle.tex
 
 \chapter{Conclusion and Outlook}
+
+We have revisited the \ac{GP} approach to continuous-time estimation, through the lens of factor graphs.  We hope the new insights this provides will lead to wider adoption of the approach, as well as new applications.  To this end, we also provided implementations of the approach in \ac{GTSAM} that we hope will be useful to the community.
+
+Looking forward, we see several interesting directions for future work:
+\begin{itemize}
+\item For computational reasons, we employed a sequence of local \acp{GP} between our estimation times when working on Lie groups.  While this works well in practice, it is not as elegant as the original linear-Gaussian theory, sometimes leading to artifacts in the estimated trajecotry.  Perhaps there are other ways to formulate the problem that would allow us to work with a single \ac{GP} over the entire Lie group.  For example, we are currently investigating the use of differential flatness to formulate the problem in a way that would allow us to work with a single \ac{GP} over the entire Lie group along the lines of \citet{johnsonContinuousTimeTrajectoryEstimation2023} who used a similar idea with parametric continuous-time estimation.
+\item It could be of interest to explore the use of multi-dimensional \acp{GP} to model more complex systems such as dynamic continuum robots \citep{teetaert_icra24}.  This would require careful consideration of the kernel functions and the structure of the factor graph.
+\item Our approach still requires the user to select the estimation times, which is currently done in a heuristic way.  It would be interesting to explore how to automatically select the estimation times  based on the data, perhaps using a data-driven approach or a more principled method based on information theory.  \citet{anderson_icra14}, for example, used a wavelet approach in the parametric setting.
+\end{itemize}
+Happy estimating!
