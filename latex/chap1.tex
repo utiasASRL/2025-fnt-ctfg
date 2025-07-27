@@ -10,7 +10,7 @@ Specifically, we will discuss using continuous-time estimation based on \ac{GP} 
 
 \item {\em We implement three tutorial examples in the popular \ac{GTSAM} framework.}  This allows us to demonstrate the use of continuous-time estimation in a practical setting, including how to handle high-rate and asynchronous measurements.
 
-\item {\em We release the code and the datasets used in the examples open source.}  Thsi will hopefully make adoption by others easier and allow for further experimentation and development in this area.
+\item {\em We release the code and the datasets used in the examples open source.}  This will hopefully make adoption by others easier and allow for further experimentation and development in this area.
 \end{itemize}
 In the rest of this chapter, we motivate the continuous-time estimation problem, discuss the specific type of continuous-time estimation we consider, and provide an overview of related work.
 
@@ -27,7 +27,7 @@ Figure~\ref{fig:ct} illustrates the general problem in which we are interested. 
 
 There are four main advantages to continuous-time estimation over its discrete-time counterpart:
 \begin{itemize}
-\item {\em We can easily handle high-rate and asynchronous measurements.}  This is accomplished by assigning each measurement to the trajectory at its time of occurrence, $t_k$.  However, we can avoid estimating the state at all of these measurement times, thereby saving computational cost.
+\item {\em We can easily handle high-rate and asynchronous measurements.}  This is accomplished by assigning each measurement to the trajectory at its time of occurrence, $t_k$.  
 
 \item {\em We can query the trajectory at any time of interest, $\tau$, not just at the measurement times, $t_k$.}  This is useful for applications where we might use one sensor to estimate the trajectory but another to build a map, for example.  It is also useful in control where we might want to query the trajectory at a high rate to compute control inputs. 
 
@@ -44,7 +44,7 @@ A common way to perform continuous-time estimation is to use a {\em parametric} 
 \begin{equation}\label{eq:spline}
 \mbf{x}(t) = \sum_{n=0}^N \mbf{B}_n(t) \mbf{p}_n,
 \end{equation}
-where $\mbs{p}_n$ are the coefficient parameters to be estimated and $\mbf{B}_n(t)$ are known temporal basis functions.  We receive some discrete-time measurements $\mbf{y}_k$ at times $t_k$, given by the linear measurement function,
+where $\mbf{p}_n$ are the coefficient parameters to be estimated and $\mbf{B}_n(t)$ are known temporal basis functions.  We receive some discrete-time measurements $\mbf{y}_k$ at times $t_k$, given by the linear measurement function,
 \begin{equation}
 \mbf{y}_k = \mbf{C}_k \mbf{x}(t_k) + \mbf{n}_k,
 \end{equation}
@@ -52,7 +52,7 @@ with $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k)$ measurement noise.  We can
 \begin{equation}
 \min_{\mbf{p}_n} \left( \sum_{k=0}^K \|\mbf{y}_k - \mbf{C}_k\mbf{x}(t_k)\|^2_{\mbf{R}_k} + \sum_{n=0}^N \|\mbf{p}_n\|^2 \right).
 \end{equation}
-The second term $\|\mbf{p}\|^2$ regularizes the problem by penalizing the magnitude of the parameters, $\mbf{p}$ (i.e., minimum description length prior).
+The second term $\|\mbf{p}_n\|^2$ regularizes the problem by penalizing the magnitude of the parameters, $\mbf{p}_n$ (i.e., minimum description length prior).
 Stacking all the quantities up into vectors/matrices, we can write this problem cleanly as
 \begin{equation}
 \min_{\mbf{p}} \left( \|\mbf{y} - \mbf{C}\mbf{B}\mbf{p}\|^2_{\mbf{R}} + \|\mbf{p}\|^2 \right),
@@ -61,7 +61,7 @@ The solution to this least-squares problem is the solution to the following line
 \begin{equation}
 \left( \mbf{B}^T \mbf{C}^T \mbf{R}^{-1} \mbf{C} \mbf{B} + \mbf{I} \right) \mbf{p} = \mbf{B}^T\mbf{C}^T \mbf{R}^{-1} \mbf{y}.
 \end{equation}
-One challenge with parametric methods is to choose the right basis functions $\mbf{B}_n(t)$, which can be difficult in practice.  Too few and the trajectory does not have enough flexibility to fit the data, too many and the solution becomes overfit, although the regularization term can help with this.  
+One challenge with parametric methods is to choose the right basis functions $\mbf{B}_n(t)$, which can be difficult in practice; too few and the trajectory does not have enough flexibility to fit the data, too many and the solution becomes overfit, although the regularization term can help with this.  
 
 The state at the measurement times is $\mbf{x} = \mbf{B} \mbf{p}$ and so we can manipulate the linear system of equations above to become
 \begin{equation}\label{eq:nonparametric_system}
@@ -75,7 +75,7 @@ The leap from parametric to {\em nonparametric} comes from the observation that 
 \end{equation}
 which is block-wise populated with evaluations of the kernel function at all pairs of measurement times.  This substitution is known as the {\em kernel trick}.  
 
-In general, the inverse kernel matrix $\mbf{K}^{-1}$ may be dense.  However, with the right choice of kernel function, we will show that it can be {\em block-tridiagonal}, which is a key advantage of our \ac{GP} approach as it means large computational savings.  The kernel function essentially builds in smoothness to the system and we can therefore also use it determine what is going on between the measurements.  This is the essence of \ac{GP} regression \citep{rasmussen06}.  However, there is also a well-known connection between the sparsity pattern of the left-hand side of~\eqref{eq:nonparametric_system} and the structure of the equivalent factor graph that we will discuss in more detail in Chapter~\ref{chap:fg}.
+There are a number of technical advantages of the nonparametric approach over the parametric one.  Selecting a kernel function rather than the individual basis functions provides more representational power and is inherently regularized without having to introduce and tune a minimum-description-length prior.  The kernel function essentially builds in smoothness to the system and we can therefore also use it determine what is going on between the measurements; this is the essence of \ac{GP} regression \citep{rasmussen06}.  In general, the inverse kernel matrix $\mbf{K}^{-1}$ may be dense.  However, with the right choice of kernel function, we will show that it can be {\em block-tridiagonal}, which is a key advantage of our specific \ac{GP} approach as it means large computational savings.  Moreover, the kernel function can be chosen intuitively to represent a physically motivated motion prior, such as a constant-velocity or constant-acceleration prior, which is useful for many applications in robotics and computer vision.  Finally, there is also a well-known connection between the sparsity pattern of the left-hand side of~\eqref{eq:nonparametric_system} and the structure of the equivalent factor graph that we will discuss in more detail in Chapter~\ref{chap:fg}.  
 
 \section{Related Work}
 
@@ -89,7 +89,7 @@ In this article, we focus on the nonparametric approach, which has been less wid
 \item \citet{tong_crv12}, \citet{tong_ijrr13b} - Made the initial connection between \ac{GP} regression and continuous-time estimation for general batch estimation problems (i.e, arbitrarily connected graph structures such as \ac{SLAM}).
 \item \citet{barfoot_rss14}, \citet{anderson_ar15} - Showed how to construct a kernel function from a physically motivated motion prior that resulted in a block-tridiagonal inverse kernel matrix, which is key to efficient computation; made the initial connection between the \ac{GP} approach and sparse factor graphs.  Coined the term \ac{STEAM}.
 \item \citet{anderson_iros15}, \citet{anderson_phd16} - Showed how to apply the \ac{GP} continuous-time approach (specifically a \ac{WNOA} motion model) on Lie groups using the `local GP' approach.
-\item \citet{yanIncrementalSparseGP2015}, \citet{yanIncrementalSparseGP2017} - Showed that once the \ac{GP} approach was formulated as a factor graph it could be incrementalized using the ideas of \citet{kaess08, kaessISAM2IncrementalSmoothing2012}.
+\item \citet{yanIncrementalSparseGP2015}, \citet{yanIncrementalSparseGP2017} - Showed that once the \ac{GP} approach was formulated as a factor graph it could be incrementalized using the Bayes-tree ideas of \citet{kaess08, kaessISAM2IncrementalSmoothing2012}.
 \item \citet{dongSparseGaussianProcesses2018} - Generalized the \ac{GP} formulation to different Lie groups and provided examples.
 \item \citet{mukadamContinuoustimeGaussianProcess2018} - Extended the approach beyond estimation to include motion-planning problems.
 \item \citet{tang_ral19}, \citet{nguyen_tro25} - Showed how to construct a \ac{WNOJ} prior for Lie groups that worked well for vehicles experiencing acceleration.
@@ -98,8 +98,8 @@ In this article, we focus on the nonparametric approach, which has been less wid
 \item \citet{lilge_ijrr22}, \citet{lilge_tro25} - Showed that the \ac{GP} approach could be used to also estimate the shape of continuum robots.
 \item \citet{duembgen_ral23}, \citet{barfoot_ijrr25} - Showed how to incorporate \ac{GP} motion priors within a certifiably optimal estimation framework.
 \item \citet{johnson_arxiv24} - Provided a detailed experimental comparison of parametric and nonparametric methods for continuous-time estimation.  Also showed how to incorporate motion priors into parametric methods to make them essentially equivalent to nonparametric methods.
-\item \citet{barfoot_ser24} - Provided a new way to carry out covariance interpolation during querying that was simpler than \citet{anderson_phd16} - a even better method is proposed in the current article.
-\item \citet{lilge_rob25} - Extended the \ac{GP} motion priors to include non-zero mean functions, allowing more specific prior motion to be captured.
+\item \citet{barfoot_ser24} - Provided a new way to carry out covariance interpolation during querying that was simpler than \citet{anderson_phd16}.  An even better method is proposed in the current article.
+\item \citet{lilge_rob25} - Extended the Lie-group \ac{GP} motion priors to include non-zero mean functions, allowing more specific prior motion to be captured.
 \item \citet{burnett_tro25} - Showed state-of-the-art performance on radar- and lidar-inertial estimation using the \ac{GP} approach.
 \end{itemize}
 Additional related works and applications of the \ac{GP} approach are listed by \citet{talbot_tro25} in Table VI.
@@ -109,9 +109,9 @@ Additional related works and applications of the \ac{GP} approach are listed by 
 The rest of the article is structured in the following way:
 \begin{itemize}
 \item Chapter 2:  We briefly introduce factor graphs and in particular Gaussian factors.  We provide an example of how the factor-graph elimination algorithm can recover the famous \ac{RTS} smoother, the forward pass of which is the Kalman filter.  For factor-graph experts, this chapter could be safely skipped.
-\item Chapter 3:  We explain \ac{GP} state estimation from a factor-graph estimation, showing how to solve at the measurement times and then query at other times of interest. This is done in the context of linear systems for pedagogical reasons.
+\item Chapter 3:  We explain \ac{GP} state estimation from a factor-graph perspective, showing how to solve at the measurement times and then query at other times of interest. This is done in the context of linear systems for pedagogical reasons.
 \item Chapter 4:  We connect Chapter 3 back to \ac{GP} regression, showing the equivalence. This chapter could be safely skipped during an initial read.
-\item Chapter 5:  We extend Chapter 3 to the case of factor graphs on Lie groups.  
+\item Chapter 5:  We extend Chapter 3 to the case of factor graphs on Lie groups.  A novel covariance interpolation method is introduced that is simpler than the one in \citet{anderson_phd16} and more efficient than the one in \citet{barfoot_ser24}.  
 \item Chapter 6:  We provide detailed examples of \ac{GP} continuous-time state estimation implemented using \ac{GTSAM}.  
 \item Chapter 7:  We wrap up and provide an outlook for the future.
 \end{itemize}

@@ -541,12 +541,6 @@ INPUT ./figs/ct.pdf
 INPUT ./figs/ct.pdf
 INPUT ./figs/ct.pdf
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmsso10.tfm
-INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib10.tfm
-INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib10.tfm
-INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib7.tfm
-INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmbsy10.tfm
-INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmbsy10.tfm
-INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmbsy7.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc
 INPUT ./chap2.tex
@@ -562,6 +556,12 @@ INPUT ./figs/elim.pdf
 INPUT ./figs/elim.pdf
 INPUT ./figs/elim.pdf
 INPUT ./figs/elim.pdf
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib10.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib10.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib7.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmbsy10.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmbsy10.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmbsy7.tfm
 INPUT ./figs/gausselim.pdf
 INPUT ./figs/gausselim.pdf
 INPUT ./figs/gausselim.pdf
