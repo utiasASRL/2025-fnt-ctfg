@@ -13,3 +13,6 @@ latex/main.pdf
 latex/main.run.xml
 latex/main.synctex.gz
 latex/main.toc
+latex/main.fls
+latex/main.fdb_latexmk
+latex/main.fdb_latexmk
