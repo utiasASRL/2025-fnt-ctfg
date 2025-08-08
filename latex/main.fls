@@ -615,6 +615,10 @@ INPUT ./figs/gausselim3.pdf
 INPUT ./figs/gausselim3.pdf
 INPUT ./figs/gausselim3.pdf
 INPUT ./figs/gausselim3.pdf
+INPUT ./figs/gausselim3b.pdf
+INPUT ./figs/gausselim3b.pdf
+INPUT ./figs/gausselim3b.pdf
+INPUT ./figs/gausselim3b.pdf
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/rm-lmbx9.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/rm-lmbx5.tfm
 INPUT ./figs/linear_WNOA_example.pdf
