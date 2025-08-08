@@ -170,11 +170,11 @@ Each product term, $p(\mbf{y}_i| \mbf{x}_2,\mbf{x}_{1})$, can be interpreted as 
 \begin{equation}
      p(\mbf{y}_i| \mbf{x}_2,\mbf{x}_{1}) = \mathcal{N}\left(\mbf{C}_i \check{\mbf{x}}_{\tau_i}, \mbf{C}_i \mbf{\Sigma}_{\tau_i}\mbf{C}_i^T + \mbf{R}_i \right).
 \end{equation}
-The interpretation of this distribution is straightforward: the mean is obtained by mapping the bordering states to the interpolated state via the motion model and applying the measurement model. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
+The interpretation of this distribution is straightforward: the mean is obtained by applying the measurement model to the bordering states after mapping through the motion model to the measurement time. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
 
 Dropping the cross-covariance allows us to re-separate the measurements factors even after marginalization. However, this approximation also treats a set of correlated measurements as if they were independent. In practice, this typically does not affect the mean estimate, but can lead to overconfident estimates (i.e., artificially reduces the estimated posterior covariance).
 
-Many prior works in continuous-time estimation -- including the \ac{STEAM} framework -- further approximate the measurement distribution by removing the $\mbf{C}_i \mbf{\Sigma}_{\tau_i}\mbf{C}_i^T$ term from the covariance~\cite{burnett_tro25}. This has the effect of removing any dependence of measurement certainty on the time that measurement was observed.
+Many prior works in continuous-time estimation -- including the \ac{STEAM} framework -- further approximate the measurement distribution by removing the $\mbf{C}_i \mbf{\Sigma}_{\tau_i}\mbf{C}_i^T$ term from the covariance~\citep{burnett_tro25}. This has the effect of removing any dependence of measurement certainty on the time that measurement was observed.
 
 \section{Example}
 
