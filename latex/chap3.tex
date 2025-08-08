@@ -156,7 +156,7 @@ The resulting factor graph from this factorization is shown in Figure~\ref{fig:g
 \begin{figure}[t]
      \centering
      \includegraphics[width=0.90\textwidth]{gausselim3b.pdf}
-     \caption{Following on to Figure~\ref{fig:gausselim3}, we can exactly decompose the residual factor into two factors: a measurement factor $\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})$ and a motion prior factor $\phi_v(\mbf{x}_{k-1}, \mbf{x}_{k})$ (bottom left).  By making a further approximation, we can drop the cross-covariances between the interpolated states, resulting in a factor graph that can be solved as if the measurements were independent (bottom right).}
+     \caption{Following on to Figure~\ref{fig:gausselim3}, we can exactly decompose the residual factor into two factors: a measurement factor $\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})$ and a motion-prior factor $\phi_v(\mbf{x}_{k-1}, \mbf{x}_{k})$ (bottom left).  By making a further approximation, we can drop the cross-covariances between the interpolated states, resulting in a factor graph that can be solved as if the measurements were independent (bottom right).}
      \label{fig:gausselim3b}
 \end{figure}
 
