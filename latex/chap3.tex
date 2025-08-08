@@ -120,16 +120,16 @@ Grouped-state Gaussian elimination is still handled by the general formula in~\e
 \subsection{The Residual Factor}
 
 An important remaining question is whether there is additional structure to be exploited in the residual factor between the bordering states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, after the grouped-state elimination. It turns out that this factor can actually be split into two factors; one corresponding to our prior model and the other corresponding to the measurements on the eliminated states. 
-To see why this is true, consider that the probability density function of the original factor graph in Figure~\ref{fig:gausselim3} can be factored into a term that contains only measurement factors and a term that contains only motion model prior factors,
+To see why this is true, consider that the probability density function of the original factor graph in Figure~\ref{fig:gausselim3} can be factored into a term that contains only measurement factors and a term that contains only motion-model prior factors,
 \begin{equation}
      p(\mbf{y}, \mbf{x}_{\tau_{1:N}},\mbf{x}_k, \mbf{x}_{k-1}) = p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) p(\mbf{x}_{\tau_{1:N}},\mbf{x}_k, \mbf{x}_{k-1}).
 \end{equation}
 In the original factor graph, the measurement and motion model terms are further factored as follows:
-\begin{gather}
-     p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) = \prod\limits_{i=1}^{N} p(\mbf{y}_i| \mbf{x}_{\tau_{i}}), \\
-     p(\mbf{x}_{\tau_{1:N}},\mbf{x}_k, \mbf{x}_{k-1}) = p(\mbf{x}_2|\mbf{x}_{\tau_N})\prod\limits_{k=2}^{N} p(\mbf{x}_{\tau_{k}}| \mbf{x}_{\tau_{k-1}})p(\mbf{x}_{\tau_N}|\mbf{x}_1)p(\mbf{x}_1).
-\end{gather}
-However, given a specific choice of motion prior (e.g., \ac{WNOA}), it turns out that the second term can be refactored as
+\beqn{}
+     p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) & = & \prod\limits_{i=1}^{N} p(\mbf{y}_i| \mbf{x}_{\tau_{i}}), \\
+     p(\mbf{x}_{\tau_{1:N}},\mbf{x}_k, \mbf{x}_{k-1}) & = & p(\mbf{x}_2|\mbf{x}_{\tau_N})\prod\limits_{k=2}^{N} p(\mbf{x}_{\tau_{k}}| \mbf{x}_{\tau_{k-1}})p(\mbf{x}_{\tau_N}|\mbf{x}_1)p(\mbf{x}_1). \nonumber \\
+\eeqn
+However, given a motion prior of the type discussed in this article, it turns out that the second term can be refactored as
 \begin{equation}
      p(\mbf{x}_{\tau_{1:N}},\mbf{x}_k, \mbf{x}_{k-1}) = p(\mbf{x}_{\tau_{1:N}}|\mbf{x}_k, \mbf{x}_{k-1}) p(\mbf{x}_2|\mbf{x}_{1})p(\mbf{x}_1), 
 \end{equation} 
@@ -143,13 +143,13 @@ The residual factor is obtained by marginalizing the full joint distribution wit
 \begin{equation}
      \int p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) p(\mbf{x}_{\tau_{1:N}}|\mbf{x}_k, \mbf{x}_{k-1}) p(\mbf{x}_2|\mbf{x}_{1})p(\mbf{x}_1) d\mbf{x}_{\tau_{1:N}} .
 \end{equation}
-The final two terms can be pulled out of the integral and correspond to a \ac{WNOA} prior factor between bordering states, $\mbf{x}_2$ and $\mbf{x}_{1}$, and the unary prior on $\mbf{x}_{1}$, respectively. The remaining terms in the integral correspond to the measurement distribution conditioned on the border states:
+The final two factors can be pulled out of the integral and correspond to a motion-prior factor between bordering states, $\mbf{x}_2$ and $\mbf{x}_{1}$, and the unary prior on $\mbf{x}_{1}$, respectively. The remaining terms in the integral correspond to the measurement distribution conditioned on the border states:
 \begin{equation}
      p(\mbf{y}| \mbf{x}_2,\mbf{x}_{1}) = \int p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) p(\mbf{x}_{\tau_{1:N}}|\mbf{x}_k, \mbf{x}_{k-1}) d\mbf{x}_{\tau_{1:N}}.
 \end{equation} 
 The resulting factor graph from this factorization is shown in Figure.
 
-At this point, it is worth noting that, even though the original measurement distribution, $p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) $, can be factorized into individual measurements, our new measurement distribution cannot be similarly factorized. This is because the interpolated states, $\mbf{x}_{\tau_{1:N}}$, are fully-correlated variables.\footnote{This correlation arises due to the fact that these variables are assumed to come from the same trajectory in time. Their distributions linked by their dependence on the bordering states.} When we eliminate these states in the factor graph, we necessarily obtain a new (large) lumped measurement factor corresponding to $p(\mbf{y}| \mbf{x}_2,\mbf{x}_{1})$ that cannot be further seperated.
+At this point, it is worth noting that, even though the original measurement distribution, $p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) $, can be factorized into individual measurements, our new measurement distribution cannot be similarly factorized. This is because the interpolated states, $\mbf{x}_{\tau_{1:N}}$, are fully correlated variables.\footnote{This correlation arises due to the fact that these variables are assumed to come from the same trajectory in time. Their distributions are linked by their dependence on the bordering states.} When we eliminate these states in the factor graph, we necessarily obtain a new (large) lumped measurement factor corresponding to $p(\mbf{y}| \mbf{x}_2,\mbf{x}_{1})$ that cannot be further seperated.
 
 \subsection{Dropping the Cross-Covariances}
 
@@ -159,22 +159,22 @@ To keep the batch optimization lightweight, we would like to be able to treat ea
 \end{equation}
 The exact form of the individual distributions was derived above in Section~\ref{sec:linafterquery} and is given by
 \begin{equation}
-     p(\mbf{x}_{\tau_{i}}|\mbf{x}_k, \mbf{x}_{k-1}) = \mathcal{N}\left(\underbrace{\mbs{\eta}_{\tau_i}+ \bbm \mbs{\Lambda}_{\tau_i} & \mbs{\Psi}_{\tau_i} \ebm \bbm \mbf{x}_{k-1} \\ \mbf{x}_{k} \ebm}_{\check{\mbf{x}}_{\tau_i}}, \mbf{\Sigma}_{\tau_i}\right),
+     p(\mbf{x}_{\tau_{i}}|\mbf{x}_k, \mbf{x}_{k-1}) = \mathcal{N}\biggl(\underbrace{\mbs{\eta}_{\tau_i}+ \bbm \mbs{\Lambda}_{\tau_i} & \mbs{\Psi}_{\tau_i} \ebm \bbm \mbf{x}_{k-1} \\ \mbf{x}_{k} \ebm}_{\check{\mbf{x}}_{\tau_i}}, \mbf{\Sigma}_{\tau_i}\biggr),
 \end{equation} 
 In turn, our lumped measurement factor can now be broken into factors corresponding to individual measurements:
-\begin{gather}
-     p(\mbf{y}| \mbf{x}_2,\mbf{x}_{1}) = \prod\limits_{i=1}^{N} p(\mbf{y}_i| \mbf{x}_2,\mbf{x}_{1}),\\
-     p(\mbf{y}_i| \mbf{x}_2,\mbf{x}_{1}) = \int p(\mbf{y}_i| \mbf{x}_{\tau_{i}}) p(\mbf{x}_{\tau_{i}}|\mbf{x}_k, \mbf{x}_{k-1}) d\mbf{x}_{\tau_i}.
-\end{gather}
+\beqn{}
+     p(\mbf{y}| \mbf{x}_2,\mbf{x}_{1}) & = & \prod\limits_{i=1}^{N} p(\mbf{y}_i| \mbf{x}_2,\mbf{x}_{1}),\\
+     p(\mbf{y}_i| \mbf{x}_2,\mbf{x}_{1}) & = & \int p(\mbf{y}_i| \mbf{x}_{\tau_{i}}) p(\mbf{x}_{\tau_{i}}|\mbf{x}_k, \mbf{x}_{k-1}) d\mbf{x}_{\tau_i}.
+\eeqn
 Each product term, $p(\mbf{y}_i| \mbf{x}_2,\mbf{x}_{1})$, can be interpreted as a separate factor in our factor graph. Assuming that the measurements are linear, $p(\mbf{y}_i| \mbf{x}_{\tau_i})=\mathcal{N}\left(\mbf{C}_i \mbf{x}_{\tau_i}, \mbf{R}_i\right)$, it is fairly straightforward to show that these measurement factors have the following distribution:
 \begin{equation}
      p(\mbf{y}_i| \mbf{x}_2,\mbf{x}_{1}) = \mathcal{N}\left(\mbf{C}_i \check{\mbf{x}}_{\tau_i}, \mbf{C}_i \mbf{\Sigma}_{\tau_i}\mbf{C}_i^T + \mbf{R}_i \right).
 \end{equation}
-The interpretation of this distribution is straightforward: the mean is obtained by mapping the bordering states to the interpolated state via the motion model and applying the measurement model. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
+The interpretation of this distribution is straightforward: the mean is obtained by mapping the bordering states to the interpolated state via the motion model and applying the measurement model. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the motion model. 
 
 Dropping the cross-covariance allows us to re-separate the measurements factors even after marginalization. However, this approximation also treats a set of correlated measurements as if they were independent. In practice, this typically does not affect the mean estimate, but can lead to overconfident estimates (i.e., artificially reduces the estimated posterior covariance).
 
-Many prior works in continuous-time estimation -- including the \ac{STEAM} framework -- further approximate the measurement distribution by removing the $\mbf{C}_i \mbf{\Sigma}_{\tau_i}\mbf{C}_i^T$ term from the covariance~\cite{burnett_tro25}. This has the effect of removing any dependence of measurement certainty on the time that measurement was observed.
+Many prior works in continuous-time estimation -- including the \ac{STEAM} framework -- further approximate the measurement distribution by removing the $\mbf{C}_i \mbf{\Sigma}_{\tau_i}\mbf{C}_i^T$ term from the covariance~\citep{burnett_tro25}. This has the effect of removing any dependence of measurement certainty on the time that measurement was observed.
 
 \section{Example}
 
