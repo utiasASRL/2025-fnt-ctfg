@@ -1,7 +1,7 @@
 # Fdb version 4
-["biber main"] 1754665161.92516 "main.bcf" "main.bbl" "main" 1754933304.97392 0
+["biber main"] 1754665161.92516 "main.bcf" "main.bbl" "main" 1754933884.47604 0
   "book.bib" 1741306350.67316 90497 8ff076e7da665d43d95c6caf6639ba9d ""
-  "main.bcf" 1754933304.81577 120961 9ef0bfdc59c7a758ce39d7f7e2187f23 "pdflatex"
+  "main.bcf" 1754933884.30928 120961 9ef0bfdc59c7a758ce39d7f7e2187f23 "pdflatex"
   "pubs.bib" 1753446852.17007 618258 e784c993d4e5557c23576d1e6f55bcc3 ""
   "refs.bib" 1753628211.7067 15747 47e03a4400dab4c2ef781abcbe4e55c3 ""
   "refs2.bib" 1753461874.21198 15706 f8478b359e0ea1c44580430f336b99da ""
@@ -9,7 +9,7 @@
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1754933296.12779 "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" "main.pdf" "main" 1754933304.97417 0
+["pdflatex"] 1754933875.55471 "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" "main.pdf" "main" 1754933884.47627 0
   "/Users/tdb/Documents/Papers/2025-fnt-ctfg/latex/main.tex" 1753628457.65919 4249 43523e63fce76edc04369eee88a47780 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1202520719 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
@@ -291,9 +291,9 @@
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
   "NOWFnT-data.tex" 1751633848.96293 3562 3bd6a217e554c712b3b24b7db5918bbd ""
   "ROB-journaldata.tex" 1751633848.96301 1570 ff2ea2b628c7309e34a53c4d4c094e1c ""
-  "chap1.tex" 1754932780.14291 14515 5cf275b57df1b9e740a6bb19552bb0fc ""
+  "chap1.tex" 1754933866.3957 14515 5cf275b57df1b9e740a6bb19552bb0fc ""
   "chap2.tex" 1753472491.38703 20508 a1e6eaa4d0651b98912716caced51778 ""
-  "chap3.tex" 1754933295.90445 22684 8b3821e08ecafa6b968d766d79d7171f ""
+  "chap3.tex" 1754933866.39584 22969 cda50da88b2e7e9008672930f63dc866 ""
   "chap4.tex" 1752010083.68335 14576 95fc612d78fc34d209e6d0eb25c7528e ""
   "chap5.tex" 1753627699.86772 18615 8082afb4da0bf51e7298161b266736a5 ""
   "chap6.tex" 1751633848.96365 208 2dad34770c7356d5d59e7b68e8296ed5 ""
@@ -328,11 +328,11 @@
   "main-nowechapter.tex" 1751633866.6877 59 aca81cffdea4a520e07cb3500b2345a8 ""
   "main-nowplain.tex" 1751633866.68793 56 7455b33f5d846a6483076c17dfc26d48 ""
   "main-nowsample.tex" 1751633866.6872 57 afade65ca9640b16b71ca6e5be337e88 ""
-  "main.aux" 1754933303.50069 171919 6cdb3cb1dbbc7b198ff83fea3b265faf "pdflatex"
+  "main.aux" 1754933883.01333 171860 d4d1a098cf4443ff140b0bc062a810f3 "pdflatex"
   "main.bbl" 1754665169.34772 109588 d95716b8a33bdc3369602367eb8fc85a "biber main"
-  "main.run.xml" 1754933304.81644 2424 eb0cd5ed8cf210d376decac5909f5646 "pdflatex"
+  "main.run.xml" 1754933884.30989 2424 eb0cd5ed8cf210d376decac5909f5646 "pdflatex"
   "main.tex" 1753628457.65919 4249 43523e63fce76edc04369eee88a47780 ""
-  "main.toc" 1754933304.81652 2860 15f19e6b09c0b7d6e65aaf39bfcd9dc0 "pdflatex"
+  "main.toc" 1754933884.30996 2860 15f19e6b09c0b7d6e65aaf39bfcd9dc0 "pdflatex"
   "notation_header.tex" 1751633848.97966 3884 9bc39a4b1bff561944a1be52008f890b ""
   "now_logo.pdf" 1751633848.98025 7507 a6bf3a4be4f282af5b0ed01753ac1912 ""
   "nowfnt-biblatex.sty" 1751633848.98035 5036 2cc234812210613db3bcfe070ab52804 ""
