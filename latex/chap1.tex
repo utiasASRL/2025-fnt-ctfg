@@ -49,9 +49,10 @@ where $\mbf{p}_n$ are the coefficient parameters to be estimated and $\mbf{B}_n(
 \mbf{y}_k = \mbf{C}_k \mbf{x}(t_k) + \mbf{n}_k,
 \end{equation}
 with $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k)$ measurement noise.  We can then estimate the parameters $\mbf{p}_n$ by minimizing the residuals between the measurements and the predicted values from the trajectory,
-\begin{equation}
-\min_{\mbf{p}_n} \left( \sum_{k=0}^K \|\mbf{y}_k - \mbf{C}_k\mbf{x}(t_k)\|^2_{\mbf{R}_k} + \sum_{n=0}^N \|\mbf{p}_n\|^2 \right).
-\end{equation}
+\begin{multline}
+\min_{\mbf{p}_n} \left( \sum_{k=0}^K \|\mbf{y}_k - \mbf{C}_k\mbf{x}(t_k)\|^2_{\mbf{R}_k} + \sum_{n=0}^N \|\mbf{p}_n\|^2 \right) \\ = \min_{\mbf{p}_n} \left( \sum_{k=0}^K \|\mbf{y}_k - \mbf{C}_k \sum_{n=0}^N \mbf{B}_n(t) \mbf{p}_n \|^2_{\mbf{R}_k} + \sum_{n=0}^N \|\mbf{p}_n\|^2 \right),
+\end{multline}
+where we have substituted in the trajectory from~\eqref{eq:spline}.  
 The second term $\|\mbf{p}_n\|^2$ regularizes the problem by penalizing the magnitude of the parameters, $\mbf{p}_n$ (i.e., minimum description length prior).
 Stacking all the quantities up into vectors/matrices, we can write this problem cleanly as
 \begin{equation}

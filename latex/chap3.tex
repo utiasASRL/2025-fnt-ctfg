@@ -58,7 +58,13 @@ with $t_{k,k-1} = t_{k} - t_{k-1}$.  We can often simplify these expressions for
 \begin{equation}
 \mbf{Q}_{k,k-1} = \bbm \frac{1}{3}  t_{k,k-1}^3 \mbs{Q} & \frac{1}{2} t_{k,k-1}^2 \mbs{Q} \\  \frac{1}{2} t_{k,k-1}^2 \mbs{Q} &  t_{k,k-1} \mbs{Q} \ebm, \;\; \mbf{A}_{k,k-1} = \bbm \mbf{I} &  t_{k,k-1} \mbf{I} \\ \mbf{0} & \mbf{I} \ebm,
 \end{equation}
-This is everything we need to populate the motion-model factors in Figure~\ref{fig:dtfg2}.  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  The next section shows how to use these states to solve for the states at the query times.
+This is everything we need to populate the motion-model factors in Figure~\ref{fig:dtfg2}.  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  
+
+The next two sections discuss querying the trajectory at times other than the measurements times.  There are two use cases for this:
+\begin{itemize}
+     \item {\em After-Main-Solve Querying:} This use case involves querying the trajectory at times of interest after the main optimization problem has been solved.  These times {\em do not} have measurements associated with them.
+     \item {\em During-Main-Solve Querying:} This use case involves querying the trajectory at times of interest during the main optimization problem.  These times {\em do} have measurements associated with them, and we may want to eliminate these states from the main solve to reduce the size of the main optimization problem.
+\end{itemize}
 
 \section{After-Main-Solve Querying}\label{sec:linafterquery}
 
@@ -69,7 +75,7 @@ This is everything we need to populate the motion-model factors in Figure~\ref{f
      \label{fig:gausselim2}
 \end{figure}
 
-The second phase of our strategy is to solve for the state at the query time, $\mbf{x}_\tau$, in Figure~\ref{fig:ctfg2}. In this section, we assume the query state does not have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the Gaussian elimination formula in~\eqref{eq:gausselim} to write
+In this section, we discuss querying the trajectory at some time(s) of interest, $\mbf{x}_\tau$, as in Figure~\ref{fig:ctfg2}, where the query state {\em does not} have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the Gaussian elimination formula in~\eqref{eq:gausselim} to write
 \begin{multline}
 || \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbf{x}_\tau - \mbs{\mu}_\tau ||^2_{\mbs{\Sigma}_\tau},
 \end{multline}
@@ -99,7 +105,7 @@ We can carry out this type of query for as many query times as we like.  The com
 
 \section{During-Main-Solve Querying}
 
-The previous section discussed how to carry out interpolation for after-the-fact trajectory queries at times that did not have measurements associated with them.  We may also be interested in interpolation during the main solve in order to reduce the number of states in the factor graph.  For example, in Figure~\ref{fig:gausselim3} we may want to eliminate several states that do have measurements associated with them: $\mbf{x}_{\tau_1}, \ldots \mbf{x}_{\tau_N}$.  Eliminating all of these states en masse results in the factor graph in the bottom-left of the figure.  The resulting conditional density will be for the joint variable $\mbf{x}_{\tau_{1:N}}$, meaning it includes the full covariance between all the eliminated states.  If the cross-covariances are not required, we can drop these and only compute individual marginal conditional densities as in the bottom-right of the figure.  
+In this section, we discuss querying the trajectory at times that {\em do} have measurements associated with them, with the goal of reducing the number of states that we include in the main solve. For example, in Figure~\ref{fig:gausselim3} we may want to eliminate several states that do have measurements associated with them: $\mbf{x}_{\tau_1}, \ldots \mbf{x}_{\tau_N}$.  Eliminating all of these states en masse results in the factor graph in the bottom-left of the figure.  The resulting conditional density will be for the joint variable $\mbf{x}_{\tau_{1:N}}$, meaning it includes the full covariance between all the eliminated states.  If the cross-covariances are not required, we can drop these and only compute individual marginal conditional densities as in the bottom-right of the figure.  
 
 \begin{figure}[t]
      \centering
