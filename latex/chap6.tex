@@ -1,7 +1,28 @@
 %!TEX root =  FnTarticle.tex
 
 \chapter{Robotics Examples in GTSAM}
-\section{GTSAM Primer} 
-\section{1D: Giant Glass of Milk Dataset}
-\section{2D: Lost in the Woods Dataset}
-\section{3D: Starry Night Dataset}
+
+This chapter discusses our open-source implementation of the continuous-time estimation framework as an addition to GTSAM.
+
+
+\section{GTSAM Primer}
+
+GTSAM is a widely used C++ library that leverages factor graphs to efficiently solve large-scale optimization problems in robotics and computer vision.
+
+\section{Implementation Details}
+
+In the following, we present implementation details to support the use of GTSAM’s Gaussian process–based continuous-time estimation capabilities. We illustrate these concepts through a simple example showcasing the Gaussian Process Motion Prior Factor, along with both after-solve and during-solve interpolation functionalities.
+
+\subsection{Gaussian Process Motion Prior Factor}
+\subsection{After-Main-Solve Querying}
+\subsection{During-Main-Solve Querying}
+\subsubsection{Eliminate And Freeze}
+\subsubsection{Interpolation Wrapper}
+
+\section{Implementation on Datasets}
+
+We now turn to more sophisticated robotics estimation problems using real-world datasets to demonstrate the capabilities of the continuous-time estimation framework across one-dimensional, two-dimensional, and three-dimensional scenarios.
+
+\subsection{1D: Giant Glass of Milk Dataset}
+\subsection{2D: Lost in the Woods Dataset}
+\subsection{3D: Starry Night Dataset}
