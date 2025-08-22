@@ -15,6 +15,8 @@ In the following, we present implementation details to support the use of GTSAMâ
 
 \subsection{Gaussian Process Motion Prior Factor}
 \subsection{After-Main-Solve Querying}
+After the main solve, suppose we now wish to interpolate for intermediate poses in the solution. The Interpolator computes the means and covariances of the query points based on Section~\ref{sec:lie-after-query}.
+
 \subsection{During-Main-Solve Querying}
 \subsubsection{Eliminate And Freeze}
 \subsubsection{Interpolation Wrapper}
@@ -58,3 +60,8 @@ Using our continuous-time state estimation framework, we now seek to estimate it
 
 \subsection{2D: Lost in the Woods Dataset}
 \subsection{3D: Starry Night Dataset}
+We now turn to a 3D dataset to demonstrate the above concepts in SE(3). The setup consists of a sensor head that contains an inertial measurement unit (IMU) rigidly attached to a stereo camera. The sensor head is being moved around above a field of reflective markers acting as landmarks, and groundtruth poses of the sensor head is collected using a motion capture system. The localization objective is to estimate the trajectory of the sensor head. See \textit{here} for a video of the data collection process.
+
+To focus more on the factor graph theory (reword this), this dataset within the GTSAM repository has already been sanitized. For odometry, we have derived the sensor head's (unbiased) linear and angular velocities based on the raw IMU data. For measurements, we have extracted stereo features from the images, and have associated these features with the landmarks based on groundtruth data. The odometry and the groundtruth poses have been interpolated at the measurement times.
+
+We follow a similar procedure as for the datasets above. We first compare localization using an odometry motion prior, with localization using a WNOA prior.  The results are... We also look at interpolation... We encourage interested readers to try out other interpolation configurations for localization, and even SLAM.
