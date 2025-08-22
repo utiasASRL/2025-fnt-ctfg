@@ -15,6 +15,8 @@ In the following, we present implementation details to support the use of GTSAMâ
 
 \subsection{Gaussian Process Motion Prior Factor}
 \subsection{After-Main-Solve Querying}
+After the main solve, suppose we now wish to interpolate for intermediate poses in the solution. The Interpolator computes the means and covariances of the query points based on Section~\ref{sec:lie-after-query}.
+
 \subsection{During-Main-Solve Querying}
 \subsubsection{Eliminate And Freeze}
 \subsubsection{Interpolation Wrapper}
@@ -24,5 +26,42 @@ In the following, we present implementation details to support the use of GTSAMâ
 We now turn to more sophisticated robotics estimation problems using real-world datasets to demonstrate the capabilities of the continuous-time estimation framework across one-dimensional, two-dimensional, and three-dimensional scenarios.
 
 \subsection{1D: Giant Glass of Milk Dataset}
+
+In our first example dataset, we are investigating a linear one-dimensional problem, in which a mobile robot is driving back and forth in a straight line.
+The experimental setup is shown in Figure~\ref{fig:giant_glass_of_milk}, consisting of the robot, two fixed guiding rails as well as a large cylinder.
+Both the robot and the cylinder are equipped with reflective markers, which are tracked by a ten-camera motion capture system, providing ground-truth positions with millimeter-level accuracy.
+Additionally, the robot is equipped with a laser rangefinder (Hokuyo URG-04LX) that provides 681 range measurements over a 240Â° horizontal field of view, centered straight ahead, as well as wheel odometers for measuring the robot's speed.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{GiantGlassOfMilk.png}
+	\caption{A mobile robot driving between rails. It is equipped with an odometer to measure translational speed and a laser rangefinder to measure the range to the large white cylinder.}
+	\label{fig:giant_glass_of_milk}
+\end{figure}
+
+During data collection, the robot was driven back and forth along the two guiding rails for 20 minutes, logging laser rangefinder and odometer data at 10 Hz, while ground-truth positions were recorded at 70 Hz.
+All measurement data were temporally aligned in a post-processing step using linear interpolation.
+Moreover, the distance between the robot and the cylinder was extracted from each rangefinder scan by exploiting the cylinder's circular shape.
+This eliminates the need to process the raw laser scans directly, allowing the use of a simplified range measurement instead.
+The noise of each sensor was characterized using the ground-truth data provided by the motion capture system.
+
+Using our continuous-time state estimation framework, we now seek to estimate its position and velocity throughout it's approx. 280~m long trajectory using only the noisy range and velocity measurements.
+
+...
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=1\textwidth]{a1_example_results.pdf}
+	\caption{Robot state estimate over a subset of its trajectory. Position and velocity measurements are provided only every 5 seconds. Between these times, the estimate relies solely on the Gaussian process prior. The plot shows the mean estimate with 3-$\sigma$ uncertainty envelopes.}
+	\label{fig:giant_glass_of_milk_results}
+\end{figure}
+
+
+
 \subsection{2D: Lost in the Woods Dataset}
 \subsection{3D: Starry Night Dataset}
+We now turn to a 3D dataset to demonstrate the above concepts in SE(3). The setup consists of a sensor head that contains an inertial measurement unit (IMU) rigidly attached to a stereo camera. The sensor head is being moved around above a field of reflective markers acting as landmarks, and groundtruth poses of the sensor head is collected using a motion capture system. The localization objective is to estimate the trajectory of the sensor head. See \textit{here} for a video of the data collection process.
+
+To focus more on the factor graph theory (reword this), this dataset within the GTSAM repository has already been sanitized. For odometry, we have derived the sensor head's (unbiased) linear and angular velocities based on the raw IMU data. For measurements, we have extracted stereo features from the images, and have associated these features with the landmarks based on groundtruth data. The odometry and the groundtruth poses have been interpolated at the measurement times.
+
+We follow a similar procedure as for the datasets above. We first compare localization using an odometry motion prior, with localization using a WNOA prior.  The results are... We also look at interpolation... We encourage interested readers to try out other interpolation configurations for localization, and even SLAM.
