@@ -4,22 +4,50 @@
 
 This chapter discusses our open-source implementation of the continuous-time estimation framework as an addition to GTSAM.
 
+GTSAM is a widely used C++ library that leverages factor graphs to efficiently solve large-scale optimization problems in robotics and computer vision. One of the key contributions of our work is the introduction of Gaussian-process-based continuous-time (GP-CT) estimation into the existing GTSAM library. In this chapter, we will outline the essential functions that can be used to perform GP-CT estimation using our modified library and will provide some explanation of their implementation.
 
 \section{GTSAM Primer}
 
-GTSAM is a widely used C++ library that leverages factor graphs to efficiently solve large-scale optimization problems in robotics and computer vision.
+Points that should be discussed are given below. 
+
+\begin{itemize}
+	\item discuss that GTSAM is essentially a large library of factors that can be assembled into any arbitrary factor graph.
+	\item In general, practitioners either use existing factors, or build new factors for their given application. 
+	\item Each factor has a set of keys that are associated with the random variables in the factor graph. At inference time, the keys correspond to the variables that are estimated.
+	\item factors are defined seperately and added to a factor graph object
+	\item along with initial value estimates, this object is then passed to an optimizer, which iteratively solves for the optimal estimates
+	\item It is also possible to use the factor graph to compute the covariance of these variables, once the optimal values (the means) are known.
+\end{itemize}
 
 \section{Implementation Details}
 
-In the following, we present implementation details to support the use of GTSAM’s Gaussian process–based continuous-time estimation capabilities. We illustrate these concepts through a simple example showcasing the Gaussian Process Motion Prior Factor, along with both after-solve and during-solve interpolation functionalities.
+In the following, we present implementation details to support the use of \ac{GTSAM} Gaussian process–based continuous-time estimation capabilities. We illustrate these concepts through a simple example showcasing the Gaussian Process Motion Prior Factor, along with both after-solve and during-solve interpolation functionalities. 
 
 \subsection{Gaussian Process Motion Prior Factor}
+
+As discussed in the preceding chapters, we have shown that, by assuming that the estimated trajectory of a robot is consistent with a given \ac{SDE}, the trajectory can be represented by a \ac{GP}. In turn, this \ac{GP} can be queried at any given time, both during and after the main optimization routine takes place.
+
+To enforce this relationship in a factor graph setting, we must first define a \emph{motion model factor} between two robot states that are adjacent in time. We have implemented such a factor in \ac{GTSAM} for the \ac{WNOA} motion prior, leaving alternative motion models (e.g., \ac{WNOJ}, Singer) as future work. 
+ 
+Recall that the state variable for the \ac{WNOA} prior consists of a both a pose and a velocity variable, where the velocity lives in the Lie algebra of the pose variable.
+We have defined a custom structure to keep track of the pose, velocity, and timestamp associated with a particular state. Our implementation of the \ac{WNOA} requires two such state structures as well as the power spectral density matrix of the \ac{WNOA} prior.
+
+% Insert code showing how to define the prior
+
+Though in this example our factor is defined on $SE(3)$, it supports any vector space or Lie group already defined in \ac{GTSAM}. 
+
 \subsection{After-Main-Solve Querying}
 After the main solve, suppose we now wish to interpolate for intermediate poses in the solution. The Interpolator computes the means and covariances of the query points based on Section~\ref{sec:lie-after-query}.
 
 \subsection{During-Main-Solve Querying}
-\subsubsection{Eliminate And Freeze}
-\subsubsection{Interpolation Wrapper}
+
+\begin{itemize}
+	\item Describe the wrapper framework, referring to linear CT section
+	\item Two major deviations from the math: support for Lie groups, support for any kind of factor (including those defined on non-interpolated states)
+	\item introduce graph conversion function
+	\item introduce workflow: convert graph, get means, interpolate other means, use original graph to compute covariances. If there are non-measurement-time covariances of interest, use interpolator to get them
+\end{itemize}
+
 
 \section{Implementation on Datasets}
 
