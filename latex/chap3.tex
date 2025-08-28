@@ -103,7 +103,7 @@ where
 \eeqn
 We can carry out this type of query for as many query times as we like.  The complexity of each query is $O(1)$, since we only need the marginal of the separator states from the main solve.
 
-\section{During-Main-Solve Querying}
+\section{During-Main-Solve Querying}\label{ch3:sec:during-solve}
 
 In this section, we discuss querying the trajectory at times that {\em do} have measurements associated with them, with the goal of reducing the number of states that we include in the main solve. For example, in Figure~\ref{fig:gausselim3} we may want to eliminate several states that do have measurements associated with them: $\mbf{x}_{\tau_1}, \ldots \mbf{x}_{\tau_N}$.  Eliminating all of these states en masse results in the factor graph in the bottom-left of the figure.  The resulting conditional density will be for the joint variable $\mbf{x}_{\tau_{1:N}}$, meaning it includes the full covariance between all the eliminated states.  If the cross-covariances are not required, we can drop these and only compute individual marginal conditional densities as in the bottom-right of the figure.  
 
@@ -181,7 +181,7 @@ The exact form of the individual distributions was derived above in Section~\ref
 In turn, our lumped measurement factor can now be broken into factors corresponding to individual measurements:
 \beqn{}
      \phi_y(\mbf{x}_{k-1}, \mbf{x}_{k}) & = & \prod_{n=1}^N \phi_{y_n}(\mbf{x}_{k-1}, \mbf{x}_{k}),\\
-     \phi_{y_n}(\mbf{x}_{k-1}, \mbf{x}_{k}) & = & \int p(\mbf{y}_n| \mbf{x}_{\tau_{n}}) p(\mbf{x}_{\tau_{n}}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}) d\mbf{x}_{\tau_n}.
+     \phi_{y_n}(\mbf{x}_{k-1}, \mbf{x}_{k}) & = & \int p(\mbf{y}_n| \mbf{x}_{\tau_{n}}) p(\mbf{x}_{\tau_{n}}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}) d\mbf{x}_{\tau_n}.\label{eqn:interp-factor}
 \eeqn
 Assuming that the measurements are linear, $p(\mbf{y}_n| \mbf{x}_{\tau_n})=\mathcal{N}\left(\mbf{C}_n \mbf{x}_{\tau_n}, \mbf{R}_n\right)$, it is fairly straightforward to show that these measurement factors have the following distribution:
 \begin{equation}

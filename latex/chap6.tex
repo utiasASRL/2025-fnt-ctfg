@@ -41,11 +41,21 @@ After the main solve, suppose we now wish to interpolate for intermediate poses 
 
 \subsection{During-Main-Solve Querying}
 
+As mentioned in the preceding chapters, one key reason for using \ac{CT} estimation is that it can allow the practitioner to reduce the number of variables in a given optimization problem. We can treat a subset of the variables as interpolated states and use the methodology outlined in Section\ref{ch3:sec:during-solve} to eliminate them from the optimization, while still accounting for the effect of factors that are defined on these states. The independence approximation introduced in that chapter allows us to continue to treat each factor defined on these states separately (rather than lumping them together). Effectively, each factor defined on an interpolated state can be mapped to a new factor on the bordering states, removing the need to actually solve for the interpolated states. 
+
+Our implementation allows a user to convert any \ac{GTSAM} factor graph into an equivalent graph where all the interpolated states have been removed from the optimization. The core element of this implementation is new interpolation factor that can be wrapped around any \ac{GTSAM} factor that is defined on one or more interpolated variables. This `wrapper' factor automatically maps the error computation and Jacobians to the bordering states via the \ac{WNOA} interpolation equations. The resulting factor is defined only with respect to non-interpolated variables.
+
+Mathematically, our wrapper factor implements the conversion from a measurement factor defined on an interpolated state, $p(\mbf{y}_n|\mbf{x}_{\tau_n})$, to the factor given in Equation~\eqref{eqn:interp-factor}, but with two key generalizations. First, the development shown in Section~\ref{ch3:sec:during-solve} applies to variables defined in a vector space, but our implementation can be used with variables defined on Lie groups, using the development shown in Chapter~\ref{chapLieGroups} for continuous-time systems on Lie groups. Second, Section~\ref{ch3:sec:during-solve} is demonstrated for unary factors on the interpolated variables, but our wrapper factor implementation can be applied to any kind of \ac{GTSAM} factor. As we show below, our framework can be applied to factors defined on any number of interpolated and non-interpolated variables.
+
+
+The example below shows how the interpolation factor can be applied to various factors.
+
 \begin{itemize}
 	\item Describe the wrapper framework, referring to linear CT section
 	\item Two major deviations from the math: support for Lie groups, support for any kind of factor (including those defined on non-interpolated states)
 	\item introduce graph conversion function
 	\item introduce workflow: convert graph, get means, interpolate other means, use original graph to compute covariances. If there are non-measurement-time covariances of interest, use interpolator to get them
+	\item Add plots: estimated vs full solve, interp cov vs graph cov
 \end{itemize}
 
 
