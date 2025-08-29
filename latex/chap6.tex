@@ -62,6 +62,7 @@ The example below shows how the interpolation factor can be applied to various f
 \section{Implementation on Datasets}
 
 We now turn to more sophisticated robotics estimation problems using real-world datasets to demonstrate the capabilities of the continuous-time estimation framework across one-dimensional, two-dimensional, and three-dimensional scenarios.
+While high-level descriptions are provided in the following subsections, readers are encouraged to explore the dataset examples themselves, which are available in the GTSAM open-source repository along with the plotting scripts used to generate the graphs in this section.
 
 \subsection{1D: Giant Glass of Milk Dataset}
 
@@ -77,21 +78,38 @@ Additionally, the robot is equipped with a laser rangefinder (Hokuyo URG-04LX) t
 	\label{fig:giant_glass_of_milk}
 \end{figure}
 
-During data collection, the robot was driven back and forth along the two guiding rails for 20 minutes, logging laser rangefinder and odometer data at 10 Hz, while ground-truth positions were recorded at 70 Hz.
-All measurement data were temporally aligned in a post-processing step using linear interpolation.
-Moreover, the distance between the robot and the cylinder was extracted from each rangefinder scan by exploiting the cylinder's circular shape.
-This eliminates the need to process the raw laser scans directly, allowing the use of a simplified range measurement instead.
-The noise of each sensor was characterized using the ground-truth data provided by the motion capture system.
-
-Using our continuous-time state estimation framework, we now seek to estimate its position and velocity throughout it's approx. 280~m long trajectory using only the noisy range and velocity measurements.
-
-...
 
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=1\textwidth]{a1_example_results.pdf}
-	\caption{Robot state estimate over a subset of its trajectory. Position and velocity measurements are provided only every 5 seconds. Between these times, the estimate relies solely on the Gaussian process prior. The plot shows the mean estimate with 3-$\sigma$ uncertainty envelopes.}
+	\caption{Robot state estimate over a subset of its trajectory for different measurement frequencies. Position and velocity measurements are provided only every 2.5 seconds, 5 seconds or 7.5 seconds, respectively. Between these times, the estimate relies solely on the Gaussian process prior. The plots show the mean estimates with 3-$\sigma$ uncertainty envelopes.}
 	\label{fig:giant_glass_of_milk_results}
+\end{figure}
+
+During data collection, the robot was driven back and forth along the two guiding rails for 20 minutes, logging laser rangefinder and odometer data at 10 Hz, while ground-truth positions were recorded at 70 Hz.
+All measurement data were temporally aligned in a post-processing step using linear interpolation.
+Moreover, the distance between the robot and the cylinder was extracted from each rangefinder scan by exploiting the cylinder's circular shape.
+This eliminates the need to process the raw laser scans directly, allowing the use of a simplified range measurement instead.
+Given the known location of the cylinder, the range measurement can be treated as a noisy observation of the robot’s position.
+The noise of each sensor was characterized using the ground-truth data provided by the motion capture system.
+
+Using our continuous-time state estimation framework, we now seek to estimate its position and velocity throughout it's approx. 280~m long trajectory using only the noisy position and velocity measurements.
+For this, we set our problem up using GTSAM, defining estimation states, including position and velocity, every 0.1 seconds, while adding relative WNOA motion prior factors between them.
+Position and velocity measurements are included as straightforward unary factors on the states.
+Fig.~\ref{fig:giant_glass_of_milk_results} shows the robot estimate at 10 Hz using our framework for different measurement frequencies.
+Three different cases are shown with meausrements being available every 2.5, 5 and 7.5 seconds, respectively.
+It can be seen that our approach achieves good estimation accuracy even with relatively sparse data, leveraging the motion prior to produce a continuous estimate over time.
+As expected, accuracy improves with a higher number of measurements.
+Nonetheless, even with sparse data, the physics-based prior enables close approximations of the ground truth.
+
+\textcolor{red}{Sven: Add short paragraph on comparison when using interpolation vs. no interpolation}
+
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=1\textwidth]{a1_example_interpolation.pdf}
+	\caption{Comparison of incorporating discrete states into the factor graph at every 0.1 s versus only every 5 s (when measurements are available). In the latter case, intermediate states are recovered using our post-query interpolation scheme. For this one-dimensional linear example, both approaches yield identical solutions.}
+	\label{fig:giant_glass_of_milk_interpolation}
 \end{figure}
 
 
