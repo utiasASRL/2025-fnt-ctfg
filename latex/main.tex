@@ -20,6 +20,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb,amsfonts,amscd,amsthm}
 \usepackage[printonlyused,withpage]{acronym}
+\usepackage{listings}
+\usepackage{xcolor}
 % \usepackage{enumerate}
 
 % Location of figures
@@ -27,6 +29,21 @@
 
 % load the notation header
 \input{notation_header}
+
+% c++ listing format
+\lstdefinestyle{C++Style}{
+  language=C++,
+  basicstyle=\scriptsize\ttfamily, % Smaller monospaced font
+  keywordstyle=\color{blue}, % Keywords in blue
+  commentstyle=\color{green!50!black}, % Comments in dark green
+  stringstyle=\color{red}, % Strings in red
+  showstringspaces=false, % Don't show spaces in strings
+  numbers=left, % Line numbers on the left
+  numberstyle=\tiny\color{gray}, % Style for line numbers
+  frame=single, % Add a frame around the listing
+  breaklines=true, % Allow line breaking
+  backgroundcolor=\color{black!5}, % Light gray background
+}
 
 % a few definitions that are *not* needed in general:
 \newcommand{\ie}{\emph{i.e.}}
