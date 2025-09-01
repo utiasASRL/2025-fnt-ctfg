@@ -30,18 +30,33 @@ As discussed in the preceding chapters, we have shown that, by assuming that the
 To enforce this relationship in a factor graph setting, we must first define a \emph{motion model factor} between two robot states that are adjacent in time. We have implemented such a factor in \ac{GTSAM} for the \ac{WNOA} motion prior, leaving alternative motion models (e.g., \ac{WNOJ}, Singer) as future work. 
  
 Recall that the state variable for the \ac{WNOA} prior consists of a both a pose and a velocity variable, where the velocity lives in the Lie algebra of the pose variable.
-We have defined a custom structure to keep track of the pose, velocity, and timestamp associated with a particular state. Our implementation of the \ac{WNOA} requires two such state structures as well as the power spectral density matrix of the \ac{WNOA} prior.
+We have defined a custom C\texttt{++} struct (\lstinline[style=C++Style]|StateData|) to keep track of the pose, velocity, and timestamp associated with a particular state.\footnote{This struct has specific member functions that facilitate sorting states by time and comparing different states in a well-defined way. This allows efficient sorting for sets and maps, which are essential to some of the underlying operations in our implementation.}
 
-% Insert code showing how to define the prior
+Our implementation of the \ac{WNOA} requires two such state structures as well as the power spectral density matrix of the \ac{WNOA} prior. Alternatively, it can be defined directly on the \ac{GTSAM} keys as long as the time difference between the states is provided.
 
-Though in this example our factor is defined on $SE(3)$, it supports any vector space or Lie group already defined in \ac{GTSAM}. 
+\begin{lstlisting}[style=C++Style]
+  // Define states on (P1, V1) and (P2, V2), pose-vel pairs
+  StateData state_1(P(1), V(1), 0.0);
+  StateData state_2(P(2), V(2), timestep);
+  
+  // Define Power Spectral Density matrices
+  Q_p2 = Vector4::Ones();
+  Q_se3 = Vector6::Ones();
 
-\subsection{After-Main-Solve Querying}
+  // Define factor for 2D point
+  WNOAMotionFactor<Point2> factor_P2(state_1, state_2, Q_p2);
+  // Define factor for SE(3) pose
+  WNOAMotionFactor<Pose3> factor_SE3(state_1, state_2, Q_se3);
+\end{lstlisting}
+
+Note that in this example, our factor is templated on a 2D point and an $SE(3)$ pose, but it also supports any vector space or Lie group defined in \ac{GTSAM}. 
+
+\subsection{After-Main-Solve Querying}\label{sec:post-query-implem}
 After the main solve, suppose we now wish to interpolate for intermediate poses in the solution. The Interpolator computes the means and covariances of the query points based on Section~\ref{sec:lie-after-query}.
 
-\subsection{During-Main-Solve Querying}
+\subsection{During-Main-Solve Querying}\label{sec:during-query-implem}
 
-As mentioned in the preceding chapters, one key reason for using \ac{CT} estimation is that it can allow the practitioner to reduce the number of variables in a given optimization problem. We can treat a subset of the variables as interpolated states and use the methodology outlined in Section\ref{ch3:sec:during-solve} to eliminate them from the optimization, while still accounting for the effect of factors that are defined on these states. The independence approximation introduced in that chapter allows us to continue to treat each factor defined on these states separately (rather than lumping them together). Effectively, each factor defined on an interpolated state can be mapped to a new factor on the bordering states, removing the need to actually solve for the interpolated states. 
+As mentioned in the preceding chapters, one key reason for using continuous-time estimation is that it can allow the practitioner to reduce the number of variables in a given optimization problem. We can treat a subset of the variables as interpolated states and use the methodology outlined in Section\ref{ch3:sec:during-solve} to eliminate them from the optimization, while still accounting for the effect of factors that are defined on these states. The independence approximation introduced in that chapter allows us to continue to treat each factor defined on these states separately (rather than lumping them together). Effectively, each factor defined on an interpolated state can be mapped to a new factor on the bordering states, removing the need to actually solve for the interpolated states. 
 
 Our implementation allows a user to convert any \ac{GTSAM} factor graph into an equivalent graph where all the interpolated states have been removed from the optimization. The core element of this implementation is new interpolation factor that can be wrapped around any \ac{GTSAM} factor that is defined on one or more interpolated variables. This `wrapper' factor automatically maps the errors and Jacobians to the bordering states via the \ac{WNOA} interpolation equations. The resulting factor is defined only with respect to non-interpolated variables.
 
@@ -83,9 +98,9 @@ Mathematically, our wrapper factor implements the conversion from a measurement 
 
 \end{lstlisting}
 
-In the listing above, we define two factors on the interpolated states for the first and third poses. These factors are then wrapped using our \lstinline[C++Style]|WNOAInterpFactor| factor (templated on $SE(3)$) and added to the graph. The resulting graph is defined only on the bordering states for the zeroth, second and fourth states (poses and velocities).
+In the listing above, we define two factors on the interpolated states for the first and third poses. These factors are then wrapped using our \lstinline[style=C++Style]{WNOAInterpFactor} factor (templated on $SE(3)$) and added to the graph. The resulting graph is defined only on the bordering states for the zeroth, second and fourth states (poses and velocities).
 
-The factors above allow the user to exactly specify which states and factors they wish to convert. However, we also provide a function that automatically convert an entire factor graph into an equivalent, interpolated graph based on a list of interpolated states. This function (\lstinline[C++Style]|interpolateFactorGraph|) effectively carries out the operations shown in Figure~\ref{fig:gausselim3b}: it replaces any factors defined on interpolated states with wrapped, interpolated factors and adds \ac{WNOA} motion models factors between adjacent border states. It will also remove any \ac{WNOA} motion model factors defined on interpolated states. The resulting output graph will not be defined any of the interpolated state variables.
+The factors above allow the user to exactly specify which states and factors they wish to convert. However, we also provide a function that automatically convert an entire factor graph into an equivalent, interpolated graph based on a list of interpolated states. This function (\lstinline[style=C++Style]{interpolateFactorGraph}) effectively carries out the operations shown in Figure~\ref{fig:gausselim3b}: it replaces any factors defined on interpolated states with wrapped, interpolated factors and adds \ac{WNOA} motion models factors between adjacent border states. It will also remove any \ac{WNOA} motion model factors defined on interpolated states. The resulting output graph will not be defined any of the interpolated state variables.
 
 A factor graph built on the factors we have defined herein can be optimized in the same way as any other \ac{GTSAM} factor graph. Once optimization has completed, interpolated means and covariances can be obtained for any query time using the functions defined in the previous section. 
 
@@ -198,21 +213,53 @@ Nonetheless, even with sparse data, the physics-based prior enables close approx
 
 \subsection{2D: Lost in the Woods Dataset}
 
-The second dataset that we introduce here is geared towards estimation on $SE(2)$ such as either localization or \ac{SLAM}. The setup consists of a wheeled robot exploring a flat space amongst a forest of fixed plastic tubes that can be used as landmarks. The robot is equipped with the following sensors:
-\begin{itemize}
-	\item laser rangefinder scans consisting of 681 range measurements spread over a 240 degree horizontal field of view centered on straight ahead (Hokuyo URG-04LX sensor), logged at 10 Hz
-	\item robot’s speed based on a wheel odometry, logged at 10 Hz
-\end{itemize}
+The second dataset that we introduce here is geared towards estimation on $SE(2)$ such as either localization or \ac{SLAM}. The setup consists of a wheeled robot exploring a flat space amongst a forest of fixed plastic tubes that can be used as landmarks. The robot is equipped with a laser rangefinder (Hokuyo URG-04LX sensor) scans with 681 range measurements over a 240 degree horizontal field of view centered on straight ahead. The robot also has wheel encoders that measure linear and angular speeds. 
 
-Sensor data has been sanitized to facilitate the study of back-end estimation routines. In particular, all biases have been removed and rangefinder measurements have been converted to bearing/range measurements to landmarks, with known data association.
-
-The ground truth position and orientation of the rangefinder origin on the robot is tracked at 40 Hz (downsampled to sensor data rate, 10 Hz) using a Vicon motion capture system.
+Sensor data has been sanitized to facilitate the study of back-end estimation routines. In particular, biases have been removed and rangefinder measurements have been converted to bearing-range measurements to landmarks, with known data association. The ground truth position and orientation of the rangefinder origin on the robot and landmark locations are tracked via a Vicon motion capture system. All data in the dataset has been synchronized at 10 Hz (approximately). Images of the setup and ground truth trajectory for the dataset are shown in Figure~\ref{fig:litw-setup}.
 
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=\textwidth]{a2_figs/litw_fig1_setup_gt.png}
-	\caption{Dataset setup and ground truth trajectory (in 2D). Image \textbf{a.} shows the setup of the robot and the plastic cylinders that serve as the landmark while image \textbf{b.} highlights the 10 camera Vicon system used to obtain the ground truth positions and orienatations of the robot throughout the dataset. Plot \textbf{c.} shows the full trajectory of the robot throughout the dataset. The start and end positions are marked with a green and red star, respectively.}
+	\caption{Dataset setup and ground truth trajectory (in 2D). Image \textbf{a.} shows the setup of the robot and the plastic cylinders that serve as the landmark while image \textbf{b.} highlights the 10 camera Vicon system used to obtain the ground truth positions and orientations of the robot throughout the dataset. Plot \textbf{c.} shows the full trajectory of the robot throughout the dataset. The start and end positions are marked with a green and red star, respectively.}
 	\label{fig:litw-setup}
+\end{figure}
+
+Figure~\ref{fig:litw-gtsam-solve} shows a segment of the trajectory that has been optimized via \ac{GTSAM} with all available bearing-range and wheel odometry measurements. In this and all other cases, the optimization was initialized using a roll-out of the wheel odometry measurements. Note that with the available data, the robot can be localized to a high degree of accuracy.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=\textwidth]{a2_figs/litw_fig2_solve.png}
+	\caption{\ac{GTSAM} localization solution of a segment (timestep 1000 to timestep 6000) of the Lost in the Woods dataset using both bearing-range and wheel odometry measurements. The ground truth trajectory is shown in green, while the optimal trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue for the estimated values.}
+	\label{fig:litw-gtsam-solve}
+\end{figure}
+
+We now turn our attention to the application of the methods described herein to this dataset. We make the state estimation problem more challenging by artificially limiting the available measurements:  bearing-range measurements with range greater than 1 m are removed and the wheel odometry measurements are completely removed (though we still use odometry to initialize the trajectory). We then apply our \ac{WNOA} motion model factor between poses that are adjacent in time. The resulting trajectory is shown in Figure~\ref{fig:litw-loc-wnoa}. Note that the estimated trajectories deviate from the ground truth in regions where there are fewer available bearing-range measurements. In these regions, the estimate relies entirely upon the \ac{WNOA} prior, leading to an increase in uncertainty (covariance ellipsoids grow). 
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=\textwidth]{a2_figs/litw_fig3_full.png}
+	\caption{\ac{GTSAM} localization solution of a segment (100 seconds to 250 seconds) of the Lost in the Woods dataset with bearing-range measurements limited to 1 m and \ac{WNOA} motion model factors between adjacent states (no odometry). The ground truth trajectory is shown in green, while the estimated trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue for the estimated values. In regions with few bearing-range measurements (between 0 and 4 m along the x-axis), estimate uncertainty increases since it relies only on the \ac{WNOA} motion prior.}
+	\label{fig:litw-loc-wnoa}
+\end{figure}
+
+Figure~\ref{fig:litw-loc-wnoa-interp} shows the exact same problem as Figure~\ref{fig:litw-loc-wnoa}, but only one in every 30 trajectory states are actually computed in the main solve, with the remainder being interpolated. Bearing-range factors on interpolated states were converted to new factors on the remaining states by applying our \lstinline[style=C++Style]|WNOAInterpFactor| factor (described in Section~\ref{sec:during-query-implem}). We would like to draw the reader's attention to the fact that, despite this aggressive interpolation scheme, we are still able to recover a trajectory that are \emph{almost identical} to the full solve trajectory. The similarity of the covariances suggest that the overconfidence and bubbling issues described above for interpolation may not always be apparent for practical examples.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=\textwidth]{a2_figs/litw_fig3_interp.png}
+	\caption{\ac{GTSAM} localization solution for the same setup as in Figure~\ref{fig:litw-loc-wnoa}, but with interpolation. The main solve only optimizes every $30^{th}$ state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. After the main solve, the interpolated states were added back to the trajectory using after-main-solve querying described in Section~\ref{sec:post-query-implem}. The ground truth trajectory is shown in green, while the estimated trajectory is shown in blue. Covariance ellipsoids are plotted based on three standard deviations. Non-interpolated states are represented with larger, darker frames and darker ellipsoids with borders. Note that the interpolated solution matches well with the non-interpolated solution in Figure~\ref{fig:litw-loc-wnoa}.}
+	\label{fig:litw-loc-wnoa-interp}
+\end{figure}
+
+In Figure~\ref{fig:litw-SLAM-wnoa-interp}, we turn our attention to solving interpolated SLAM on this dataset. That is, we allow the landmarks to be variables in the problem. As in the previous example, we only keep one of every thirty states in the main solve, interpolating the remaining states and converting factors on interpolated states to \lstinline[style=C++Style]|WNOAInterpFactor| factors. Note that this experiment demonstrates the ability of our custom interpolation to handle factors that are defined on a combination of interpolated and non-interpolated states (the landmarks are not interpolated). 
+
+In this example, we extract the covariances of the interpolated states using the alternative method described in Section~\ref{sec:during-query-implem} (i.e., interpolating the mean values and then using the original factor graph to obtain covariances). Note that both the trajectory (blue) and the landmarks (red) track the ground truth (green) well.
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=\textwidth]{a2_figs/litw_fig4_interp.png}
+	\caption{\ac{GTSAM} SLAM solution with interpolation for the robot trajectory between 200 seconds and 500 seconds. The main solve only optimizes every $30^{th}$ state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. The ground truth trajectory is shown in green, while the estimated trajectory is shown in blue. Covariance ellipsoids are plotted based on three standard deviations. Non-interpolated states are represented using darker ellipsoids with borders.}
+	\label{fig:litw-SLAM-wnoa-interp}
 \end{figure}
 
 \subsection{3D: Starry Night Dataset}
