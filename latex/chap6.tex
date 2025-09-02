@@ -179,7 +179,7 @@ Additionally, the robot is equipped with a laser rangefinder (Hokuyo URG-04LX) t
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=1\textwidth]{a1_example_results.pdf}
-	\caption{Robot state estimate over a subset of its trajectory for different measurement frequencies. Position and velocity measurements are provided only every 2.5 seconds, 5 seconds or 7.5 seconds, respectively. Between these times, the estimate relies solely on the Gaussian process prior. The plots show the mean estimates with 3-$\sigma$ uncertainty envelopes.}
+	\caption{Robot state estimate over a subset of its trajectory for different measurement frequencies. Position and velocity measurements are provided only every 2.5 seconds, 5 seconds or 7.5 seconds, respectively. Between these times, the estimate relies solely on the Gaussian process prior. The plots show the mean estimates with 3-$\sigma$ uncertainty envelopes. Ground-truth velocity is obtained by numerically differentiating the measured position ground-truth.}
 	\label{fig:giant_glass_of_milk_results}
 \end{figure}
 
@@ -194,13 +194,10 @@ Using our continuous-time state estimation framework, we now seek to estimate it
 For this, we set our problem up using GTSAM, defining estimation states, including position and velocity, every 0.1 seconds, while adding relative WNOA motion prior factors between them.
 Position and velocity measurements are included as straightforward unary factors on the states.
 Fig.~\ref{fig:giant_glass_of_milk_results} shows the robot estimate at 10 Hz using our framework for different measurement frequencies.
-Three different cases are shown with meausrements being available every 2.5, 5 and 7.5 seconds, respectively.
+Three different cases are shown with measurements being available every 2.5, 5 and 7.5 seconds, respectively.
 It can be seen that our approach achieves good estimation accuracy even with relatively sparse data, leveraging the motion prior to produce a continuous estimate over time.
 As expected, accuracy improves with a higher number of measurements.
 Nonetheless, even with sparse data, the physics-based prior enables close approximations of the ground truth.
-
-\textcolor{red}{Sven: Add short paragraph on comparison when using interpolation vs. no interpolation}
-
 
 \begin{figure}[ht!]
 	\centering
@@ -208,6 +205,13 @@ Nonetheless, even with sparse data, the physics-based prior enables close approx
 	\caption{Comparison of incorporating discrete states into the factor graph at every 0.1 s versus only every 5 s (when measurements are available). In the latter case, intermediate states are recovered using our post-query interpolation scheme. For this one-dimensional linear example, both approaches yield identical solutions.}
 	\label{fig:giant_glass_of_milk_interpolation}
 \end{figure}
+
+Lastly, we evaluate and validate the post-solve interpolation capabilities of our continuous-time state estimation framework.
+For this, we set up the problem so that discrete states are included in the main solves only at measurement times - every 5 seconds in our case - rather than solving explicitly for a state at every 0.1-second interval.
+As before, the remaining reduced set of states feature both unary position and velocity measurement factors as well as binary WNOA motion prior factors.
+After solving the resulting state estimation problem, we use the post-solve interpolation implementation detailed in Section \ref{sec:post-query-implem} to recover the estimated mean and covariance for states every 0.1 seconds.
+The results of this approach are presented in Fig.~\ref{fig:giant_glass_of_milk_interpolation}, where they are directly compared with the alternative of explicitly solving for the dense states during the main solve.
+It can be seen that the results in both cases are exactly identical, which is expected for a linear state estimation problem.
 
 
 
