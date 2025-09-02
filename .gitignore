@@ -1,3 +1,4 @@
+# LaTeX temporary files
 latex/main-nowbook.tex
 latex/main-nowchapter.tex
 latex/main-nowebook.tex
@@ -15,9 +16,15 @@ latex/main.synctex.gz
 latex/main.toc
 latex/main.fls
 latex/main.fdb_latexmk
-latex/main.fdb_latexmk
-latex/main.fdb_latexmk
-latex/main.fdb_latexmk
-latex/main.fls
-latex/main.fls
-latex/main.fdb_latexmk
+latex/*.out
+latex/*.lof
+latex/*.lot
+latex/*.nav
+latex/*.snm
+latex/*.vrb
+
+# Editor backup files
+*~
+*.swp
+*.swo
+.DS_Store
