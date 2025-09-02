@@ -667,6 +667,14 @@ INPUT ./chap6.tex
 INPUT ./chap6.tex
 INPUT ./chap6.tex
 INPUT chap6.tex
+INPUT ./figs/GiantGlassOfMilk.png
+INPUT ./figs/GiantGlassOfMilk.png
+INPUT ./figs/GiantGlassOfMilk.png
+INPUT ./figs/GiantGlassOfMilk.png
+INPUT ./figs/a1_example_results.pdf
+INPUT ./figs/a1_example_results.pdf
+INPUT ./figs/a1_example_results.pdf
+INPUT ./figs/a1_example_results.pdf
 INPUT ./chap7.tex
 INPUT ./chap7.tex
 INPUT ./chap7.tex
