@@ -1,15 +1,15 @@
 % !Mode:: "TeX:DE:UTF-8:Main"
 %
-\DocumentMetadata{
-  lang        = en,
-  pdfversion  = 2.0,
-  pdfstandard = A-2b,
-  testphase   = 
-    {phase-III,
-     title,
-     table
-	}  
-}
+% \DocumentMetadata{
+%   lang        = en,
+%   pdfversion  = 2.0,
+%   pdfstandard = A-2b,
+%   testphase   = 
+%     {phase-III,
+%      title,
+%      table
+% 	}  
+% }
 
 %JOURNAL CODE  SEE DOCUMENTATION
 \documentclass[ROB,biber]{nowfnt} % creates the journal version, needs biber version
@@ -144,19 +144,33 @@ Continuous-time state estimation is gaining in popularity due to its abilities t
 
 \end{abstract}
 
-
 \input{chap1} 
 \input{chap2}
 \input{chap3}
 \input{chap4}
 \input{chap5}
-%\input{chap6}
+\input{chap6}
 \input{chap7}
+
+\begin{lstlisting}[style=C++Style]
+  // Define states on (P1, V1) and (P2, V2), pose-vel pairs
+  StateData state_1(P(1), V(1), 0.0);
+  StateData state_2(P(2), V(2), timestep);
+  
+  // Define Power Spectral Density matrices
+  Q_p2 = Vector4::Ones();
+  Q_se3 = Vector6::Ones();
+
+  // Define factor for 2D point
+  WNOAMotionFactor<Point2> factor_P2(state_1, state_2, Q_p2);
+  // Define factor for SE(3) pose
+  WNOAMotionFactor<Pose3> factor_SE3(state_1, state_2, Q_se3);
+\end{lstlisting}
 
 %BACKMATTER SEE DOCUMENTATION
 \backmatter  % references, restarts sample
 
-%\chapter{Appendices}
+\chapter{Appendices}
 
 \printbibliography
 
