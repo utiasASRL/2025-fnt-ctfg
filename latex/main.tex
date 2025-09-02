@@ -68,20 +68,22 @@
 %if there are many author twocolumn mode can be activated.
 %\booltrue{authortwocolumn} %SEE DOCUMENTATION
 \maintitleauthorlist{
-Timothy D. Barfoot \\
 {\sffamily\bfseries Connor Holmes} \\
 {\sffamily\bfseries Zi Cong Guo} \\
 {\sffamily\bfseries Sven Lilge} \\
 University of Toronto \\
 \and
 Frank Dellaert \\
-Georgia Institute of Technology
+Georgia Institute of Technology \\
+\and
+Timothy D. Barfoot \\
+University of Toronto
 }
 
 %ISSUE DATA AS PROVIDED BY NOW
 \issuesetup
 {%
- copyrightowner={T.~D.~Barfoot, C.~Holmes, Z.~C.~Guo, S.~Lilge, and F.~Dellaert},
+ copyrightowner={C.~Holmes, Z.~C.~Guo, S.~Lilge, F.~Dellaert, and T.~D.~Barfoot},
  volume        = xx,
  issue         = xx,
  pubyear       = 2025,
@@ -101,13 +103,13 @@ Georgia Institute of Technology
 \usepackage{mwe}
 
 %AUTHORS FOR ABSTRACT PAGE
-\author[1]{Barfoot, Timothy D.}
 \author[1]{Holmes, Connor}
 \author[1]{Guo, Zi Cong}
 \author[1]{Lilge, Sven}
 \author[2]{Dellaert, Frank}
+\author[1]{Barfoot, Timothy D.}
 
-\affil[1]{University of Toronto; tim.barfoot@utoronto.ca}
+\affil[1]{University of Toronto; {connor.holmes, zc.guo}@mail.utoronto.ca, {sven.lilge, tim.barfoot}@utoronto.ca}
 \affil[2]{Georgia Institute of Technology; frank.dellaert@cc.gatech.edu}
 
 \articledatabox{\nowfntstandardcitation}
@@ -138,7 +140,7 @@ Georgia Institute of Technology
 \makeabstracttitle
 
 \begin{abstract}
-Continuous-time state estimation is gaining in popularity due to its abilities to provide smooth solutions, handle asynchronous sensors, and interpolate between data points.  While there are two main paradigms, {\em parametric} (e.g., temporal basis functions, splines) and {\em nonparametric} (Gaussian processes), the latter has seen less adoption despite its technical advantages and relative ease of implementation.  In this article, we seek to rectify this situation by providing a new simplified explanation of GP continuous-time estimation rooted in the language of {\em factor graphs}, which have become the de facto estimation paradigm in much of robotics.  To simplify onboarding, we also provide three working examples implemented in the popular GTSAM estimation framework.  We hope the article improves understanding and lowers the bar to entry into this exciting topic. 
+Continuous-time state estimation is gaining in popularity due to its abilities to provide smooth solutions, handle asynchronous sensors, and interpolate between data points.  While there are two main paradigms, {\em parametric} (e.g., temporal basis functions, splines) and {\em nonparametric} (Gaussian processes), the latter has seen less adoption despite its technical advantages and relative ease of implementation.  In this article, we seek to rectify this situation by providing a new simplified explanation of GP continuous-time estimation rooted in the language of {\em factor graphs}, which have become the de facto estimation paradigm in much of robotics.  To simplify onboarding, we also provide three working examples implemented in the popular GTSAM estimation framework. 
 
 \end{abstract}
 
@@ -148,7 +150,7 @@ Continuous-time state estimation is gaining in popularity due to its abilities t
 \input{chap3}
 \input{chap4}
 \input{chap5}
-\input{chap6}
+%\input{chap6}
 \input{chap7}
 
 %BACKMATTER SEE DOCUMENTATION
