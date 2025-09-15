@@ -20,7 +20,7 @@ Points that should be discussed are given below.
 \end{itemize}
 
 \section{Implementation Details}
-
+\label{sec:imp}
 In the following, we present implementation details to support the use of \ac{GTSAM} Gaussian process–based continuous-time estimation capabilities. We illustrate these concepts through a simple example showcasing the Gaussian Process Motion Prior Factor, along with both during-solve and after-solve interpolation functionalities. 
 
 \subsection{Gaussian Process Motion Prior Factor}
@@ -198,7 +198,7 @@ We now turn to more sophisticated robotics estimation problems using real-world 
 While high-level descriptions are provided in the following subsections, readers are encouraged to explore the dataset examples themselves, which are available in the GTSAM open-source repository along with the plotting scripts used to generate the graphs in this section.
 
 \subsection{1D: Giant Glass of Milk Dataset}
-
+\label{sec:exp-1d}
 In our first example dataset, we are investigating a linear one-dimensional problem, in which a mobile robot is driving back and forth in a straight line.
 The experimental setup is shown in Figure~\ref{fig:giant_glass_of_milk}, consisting of the robot, two fixed guiding rails as well as a large cylinder.
 Both the robot and the cylinder are equipped with reflective markers, which are tracked by a ten-camera motion capture system, providing ground-truth positions with millimeter-level accuracy.
@@ -303,15 +303,37 @@ In this example, we extract the covariances of the interpolated states using the
 \end{figure}
 
 \subsection{3D: Starry Night Dataset}
-We now turn to a 3D dataset to demonstrate the above concepts in SE(3). The setup consists of a sensor head that contains an inertial measurement unit (IMU) rigidly attached to a stereo camera. The sensor head is being moved around above a field of reflective markers acting as landmarks, and groundtruth poses of the sensor head is collected using a motion capture system. The localization objective is to estimate the trajectory of the sensor head. See \textit{here} for a video of the data collection process.
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[width=\textwidth]{a3_figs/a3_setup.png}
+	\caption{Starry Night dataset collection setup. A rigid sensor head is moved around in dim environment while collecting IMU data and stereo measurements to Vicon markers on the ground (top row). The groundtruth poses of the sensor head are collected using a Vicon motion capture system.}
+	\label{fig:a3-setup}
+\end{figure}
+We now turn to a 3D dataset to demonstrate the above concepts in SE(3). The setup consists of a sensor head that contains an inertial measurement unit (IMU) rigidly attached to a stereo camera. The sensor head is being moved around above a field of reflective markers acting as landmarks, and groundtruth poses of the sensor head is collected using a motion capture system. The localization objective is to estimate the trajectory of the sensor head. See Fig.~\ref{a3-setup} for a visualization and \textit{here} for a video of the data collection process.
 
-To focus more on the factor graph theory (reword this), this dataset within the GTSAM repository has already been sanitized. For odometry, we have derived the sensor head's (unbiased) linear and angular velocities based on the raw IMU data. For measurements, we have extracted stereo features from the images, and have associated these features with the landmarks based on groundtruth data. The odometry and the groundtruth poses have been interpolated at the measurement times.
+To focus more on the factor graph theory (reword this), this dataset within the GTSAM repository has already been sanitized. For odometry, we have derived the sensor head's (unbiased) linear and angular velocities based on the raw IMU data. For measurements, we have extracted stereo features from the images, and have associated these features with the landmarks based on groundtruth data. The odometry and the groundtruth poses have been interpolated at the measurement times. For more information on the dataset, please see [PLACE].
 
-We follow a similar procedure as for the datasets above. We first compare localization using an odometry motion prior, with localization using a WNOA prior.  The results are... We also look at interpolation... We encourage interested readers to try out other interpolation configurations for localization, and even SLAM.
+We compare the effects of with and without interpolation on this 3D dataset in a localization scenario. We first perform standard localization using stereo measurements and a WNOA motion model, with all states included in the main solve. We then perform localization with interpolation, adding only every $5^{th}$ state into the main solve and interpolating the rest following the procedure in Section~\ref{sec:imp}. For simplicity, covariance interpolation is performed following Section~\ref{sec:lie-after-query}, i.e., not using the alternative method. The two solutions and their corresponding error plots are shown in Fig.~\ref{fig:a3-3d-vis} and Fig.~\ref{fig:a3-errors}, respectively.
 
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=\textwidth]{a3_figs/starryNight.png}
-	\caption{Comparing \ac{GTSAM} localization solutions with and without interpolation between 200 seconds and 500 seconds of the 3D dataset. In the magenta trajectory, all states were included in the main solve. In the blue trajectory, every $5^{th}$ state was included in the main solve, with the remainder of the states being interpolated (cyan). We see that the two solutions are fairly close, despite that using interpolation involves much less states within the main solve.}
-	\label{fig:litw-SLAM-wnoa-interp}
+	\caption{Comparing \ac{GTSAM} localization solutions with and without interpolation between 112 seconds and 152 seconds of the Starry Night dataset. In the magenta trajectory, all states were included in the main solve. In the blue trajectory, every $5^{th}$ state was included in the main solve, with the remainder of the states being interpolated (cyan). We see that the two solutions are fairly close, despite that using interpolation involves much less states within the main solve.}
+	\label{fig:a3-3d-vis}
+\end{figure}
+
+The interpolated solution is fairly close, but not identical, to the full-solve solution, in constrast to the 1D case in Section~\ref{sec:exp-1d}. This is expected since we have made three major approximations: 1. the independence approximation in Section~\ref{sec:ind-approx}; 2. approximating Lie-group perturbations in Lie algebra (see Eq.~\ref{eq:lie-perturb}); and 3. approximations from linearizing the model. Expanding on the last point, since the WNOA motion model and the stereo measurement model is nonlinear, the expressiveness of the solution is limited by the number of linearization points. Nevertheless, we see that even with $80\%$ less linearization points, the interpolated solution has a similar accuracy and consistency as the full-solve solution.  We encourage interested readers to try using other interpolation configurations, adding in the IMU odometry, or try out SLAM on this dataset using the provided code.
+
+\begin{figure}[ht!]
+\centering
+\makebox[\textwidth][c]{
+ \subcaptionbox*{}{
+ \includegraphics[width=0.49\textwidth]{a3_figs/starryNightErrPlot2}
+ }
+  \subcaptionbox*{}{
+  \includegraphics[width=0.49\textwidth]{a3_figs/starryNightErrPlot1}
+ }
+ }
+	\caption{Pose error plots for the \ac{GTSAM} localization solutions in Fig.~\ref{fig:a3-3d-vis} with matching color schemes. The errors and covariances from interpolation (right) are reasonably similar to without interpolation (left), despite having only 20\% of all states included in the main solve.}
+	\label{fig:a3-errors}
 \end{figure}
