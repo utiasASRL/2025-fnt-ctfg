@@ -102,6 +102,8 @@ In the listing above, we define two factors on the interpolated states for the f
 
 The factors above allow the user to exactly specify which states and factors they wish to convert. However, we also provide a function that automatically convert an entire factor graph into an equivalent, interpolated graph based on a list of interpolated states. This function (\lstinline[style=C++Style]{interpolateFactorGraph}) effectively carries out the operations shown in Figure~\ref{fig:gausselim3b}: it replaces any factors defined on interpolated states with wrapped, interpolated factors and adds \ac{WNOA} motion models factors between adjacent border states. It will also remove any \ac{WNOA} motion model factors defined on interpolated states. The resulting output graph will not be defined any of the interpolated state variables.
 
+\textcolor{red}{Add new info on WNOA Factor Graph and shared compute between factors}
+
 A factor graph built on the factors we have defined herein can be optimized in the same way as any other \ac{GTSAM} factor graph. Once optimization has completed, interpolated means and covariances can be obtained for any query time using the functions defined in the previous section. 
 
 \begin{lstlisting}[style=C++Style]
@@ -265,6 +267,8 @@ In this example, we extract the covariances of the interpolated states using the
 	\caption{\ac{GTSAM} SLAM solution with interpolation for the robot trajectory between 200 seconds and 500 seconds. The main solve only optimizes every $30^{th}$ state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. The ground truth trajectory is shown in green, while the estimated trajectory is shown in blue. Covariance ellipsoids are plotted based on three standard deviations. Non-interpolated states are represented using darker ellipsoids with borders.}
 	\label{fig:litw-SLAM-wnoa-interp}
 \end{figure}
+
+\textcolor{red}{Add timing and accuracy trade-off results}
 
 \subsection{3D: Starry Night Dataset}
 We now turn to a 3D dataset to demonstrate the above concepts in SE(3). The setup consists of a sensor head that contains an inertial measurement unit (IMU) rigidly attached to a stereo camera. The sensor head is being moved around above a field of reflective markers acting as landmarks, and groundtruth poses of the sensor head is collected using a motion capture system. The localization objective is to estimate the trajectory of the sensor head. See \textit{here} for a video of the data collection process.
