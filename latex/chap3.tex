@@ -169,6 +169,7 @@ The resulting factor graph from this factorization is shown in Figure~\ref{fig:g
 At this point, it is worth noting that, even though the original measurement distribution, $p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) $, can be factorized into individual measurements, our new measurement distribution cannot be similarly factorized. This is because the interpolated states, $\mbf{x}_{\tau_{1:N}}$, are fully correlated variables.\footnote{This correlation arises due to the fact that these variables are assumed to come from the same trajectory in time. Their distributions are linked by their dependence on the bordering states.} When we eliminate these states in the factor graph, we necessarily obtain a new (large) lumped measurement factor, $\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})$, that cannot be further separated without making additional approximations.
 
 \subsection{Independence Approximation}
+\label{sec:ind-approx}
 
 To keep the batch optimization lightweight, we would like to be able to treat each measurement as a separate factor, even after marginalization of the interpolated states. This can be accomplished by dropping the cross-covariances between the interpolated variables. In other words, we can make the approximating assumption that the distribution of the $\mbf{x}_{\tau_{i}}$ variables are independent when conditioned on the bordering states:
 \begin{equation}
