@@ -186,6 +186,7 @@ In turn, our lumped measurement factor can now be broken into factors correspond
 \eeqn
 Assuming that the measurements are linear, $p(\mbf{y}_n| \mbf{x}_{\tau_n})=\mathcal{N}\left(\mbf{C}_n \mbf{x}_{\tau_n}, \mbf{R}_n\right)$, it is fairly straightforward to show that these measurement factors have the following distribution:
 \begin{equation}
+	 \label{eq:wrapped_meas}
      \phi_{y_n}(\mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}\left(\mbf{C}_n \check{\mbf{x}}_{\tau_n}, \mbf{C}_n \mbf{\Sigma}_{\tau_n}\mbf{C}_n^T + \mbf{R}_n \right).
 \end{equation}
 The interpretation of this distribution is straightforward: the mean is obtained by applying the measurement model to the bordering states after mapping through the motion model to the measurement time. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
