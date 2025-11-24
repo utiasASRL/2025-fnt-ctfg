@@ -382,7 +382,7 @@ We now turn our attention to the application of the methods described herein to 
 	\centering
 	\includegraphics[width=0.75\textwidth]{a2_figs/litw_fig3_full.png}
 	\includegraphics[width=0.75\textwidth]{a2_figs/litw_fig3_interp.png}
-	\caption{\ac{GTSAM} localization solution of a segment (100 seconds to 250 seconds) of the Lost in the Woods dataset with bearing-range measurements limited to 1 m and \ac{WNOA} motion model factors between adjacent states (no odometry). The ground truth trajectory is shown in green, while the estimated trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue. In regions with few measurements, estimate uncertainty increases since it mainly relies on the \ac{WNOA} motion prior. In the top plot, states at every measurement time are directly included in the main solve at 10 Hz. In the bottom plot, the main solve only optimizes every $30^{th}$ state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. Non-interpolated states are represented with larger, darker frames and darker ellipsoids with borders. The interpolated solution matches the non-interpolated solution well. \textcolor{red}{TODO: Ideally, ground-truth lies within covariance ellipsoids}}
+	\caption{\ac{GTSAM} localization solution of a segment (100 seconds to 250 seconds) of the Lost in the Woods dataset with bearing-range measurements limited to 1 m and \ac{WNOA} motion model factors between adjacent states (no odometry). The ground truth trajectory is shown in green, while the estimated trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue. In regions with few measurements, estimate uncertainty increases since it mainly relies on the \ac{WNOA} motion prior. In the top plot, states at every measurement time are directly included in the main solve at 10 Hz. In the bottom plot, the main solve only optimizes every $30^{th}$ state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. Non-interpolated states are represented with larger, darker frames and darker ellipsoids with borders. The interpolated solution matches the non-interpolated solution well.}
 	\label{fig:litw-loc-wnoa}
 \end{figure}
 
@@ -398,7 +398,7 @@ Further, in this example, we extract the covariances of the interpolated states 
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.75\textwidth]{a2_figs/litw_slam_example.pdf}
-	\caption{\ac{GTSAM} SLAM solution with interpolation for the robot trajectory between 100 seconds and 250 seconds. The main solve only optimizes every $30^{th}$ state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. Ground truth is shown in green, while the estimates are shown in blue. Covariance ellipsoids are plotted based on three standard deviations. \textcolor{red}{TODO: I didn't highlight estimated and interpolated states here as above - I think that's okay?}}
+	\caption{\ac{GTSAM} SLAM solution with interpolation for the robot trajectory between 100 seconds and 250 seconds. The main solve only optimizes every $30^{th}$ state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. Ground truth is shown in green, while the estimates are shown in blue. Covariance ellipsoids are plotted based on three standard deviations.}
 	\label{fig:litw-SLAM-wnoa-interp}
 \end{figure}
 
@@ -406,7 +406,7 @@ Further, in this example, we extract the covariances of the interpolated states 
 \subsubsection{Quantitative Estimation Results}
 
 Lastly, we are interested how relying on the interpolation schemes introduced in this work compares to simply solving the full graph for the `Lost In the Woods' estimation problem.
-For this, we again consider a subset of the full trajectory (between 600 and 700 seconds \textcolor{red}{Include another plot of this? Will take lots of space.}).
+For this, we again consider a subset of the full trajectory (between 600 and 700 seconds).
 Again, we set up the problem to solely rely on bearing-landmark measurements and our WNOA motion prior, while setting the maximum distance at which landmarks are considered observable to 10 m.
 
 In the following, we compare solving the full graph, i.e., explicitly including a state at every measurement time, to relying on interpolation.
@@ -419,7 +419,7 @@ When interpolation is used, we distinguish between the accuracy of states includ
 We also report both total computation time and average per-iteration runtime in seconds.
 Computation times for the after-the-solve interpolation are omitted, as they are negligible and orders of magnitude smaller than the solve times.
 Lastly, we evaluate the consistency of the obtained estimates using the Normalized Estimation Error Squared (NEES) metric.
-All experiments are conducted for both localization and SLAM.
+All experiments are conducted on the localization problem, assuming known landmark locations and leveraging parallelization in the implementation.
 
 For the interpolation experiments, we consider two variants of the noise model for measurements at interpolated times, as derived in \eqref{eq:wrapped_meas}.
 The first variant, referred to as the simplified noise model, omits the term $\mathbf{C}\boldsymbol{\Sigma}_\tau\mathbf{C}^\top$ accounting for interpolation uncertainty.
@@ -430,21 +430,23 @@ All estimation problems are solved using our custom \texttt{WNOAFactorGraph}, re
 \begin{figure}[b!]
 	\centering
 	\includegraphics[width=0.95\textwidth]{a2_figs/quantitative_results.pdf}
-	\caption{Quantitative comparison of solving the full factor graph by including a state at every measurement time versus relying on interpolation with varying state inclusion frequencies (one state corresponds to 0.1 seconds). We report on accuracy and computation for localization (top) and SLAM (bottom). We also compare interpolation with and without the approximations applied to the derived noise model for measurements at interpolated times, illustrating the associated trade-offs. \textcolor{red}{SLAM results are not great, exclude?}}
+	\caption{Quantitative comparison of solving the full factor graph by including a state at every measurement time versus relying on interpolation with varying state inclusion frequencies (one state corresponds to 0.1 seconds). We report on accuracy and computation tune. We also compare interpolation with and without the approximations applied to the derived noise model for measurements at interpolated times, illustrating the associated trade-offs.}
 	\label{fig:litw-quant-results}
 \end{figure}
 
-Accuracy and computation time results are shown in Figure~\ref{fig:litw-quant-results}, with localization shown at the top and SLAM results at the bottom.
-Figure~\ref{fig:litw-quant-results-nees} shows the consistency results for both cases.
-We first examine the localization results.
+Accuracy and computation time results are shown in Figure~\ref{fig:litw-quant-results}, while Figure~\ref{fig:litw-quant-results-nees} shows the consistency results.
 When including every state in the \texttt{WNOAFactorGraph}, the computation time is slightly higher than when using a standard \texttt{NonlinearFactorGraph}, likely due to additional bookkeeping during linearization and error evaluation.
 Nonetheless, relying on interpolation, i.e., omitting states from the main solve, can substantially reduce runtime.
 In general, decreasing the number of states included in the optimization leads to correspondingly lower computation times, reducing the runtime by about one third, when including only every fifth state.
 As expected, this effect is less pronounced when using the full noise model, where only small computational gains can be observed.
 
+Overall, we found that relying on the newly introduced \texttt{WNOAInterpFactor} slightly increases linearization cost, due to the need to backpropagate derivatives from interpolated states to their bordering states.
+However, solving the resulting linearized system can be faster, as it contains significantly fewer variables than the original problem.
+In practice, users are advised to carefully weigh this trade-off.
+
 \begin{figure}[t!]
 	\centering
-	\includegraphics[width=0.95\textwidth]{a2_figs/quantitative_results_consistency.pdf}
+	\includegraphics[width=0.55\textwidth]{a2_figs/quantitative_results_consistency.pdf}
 	\caption{Comparison of the estimate's consistency when solving the problem using interpolation with and without the approximations applied to the derived noise model for measurements at interpolated times.}
 	\label{fig:litw-quant-results-nees}
 \end{figure}
@@ -458,13 +460,6 @@ In Figure~\ref{fig:litw-quant-results-nees}, we observe that the estimates for i
 This behavior is expected: as the interpolation interval grows, the accuracy deteriorates while the reported uncertainty remains artificially low, since each measurement is treated as equally reliable and the additional uncertainty introduced by interpolation is ignored.
 In contrast, the full noise model maintains consistency levels for these states that remain much closer to those of the full-graph solution.
 
-\color{orange}
-\textcolor{red}{Not sure if we should include this as is or exclude it or spent further time investigating.}
-For the SLAM experiments, we observe similar accuracy and consistency trends.
-Interestingly, for large interpolation intervals, the full noise model retains the accuracy of both included and interpolated states better than the simplified approach.
-However, the computation times for the interpolation-based methods are unexpectedly higher than those of the full-graph solve.
-Addressing this shortcoming, likely through further code optimization, will be investigated in future work.
-\color{black}
 
 
 
