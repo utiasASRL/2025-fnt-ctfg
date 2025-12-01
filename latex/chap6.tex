@@ -204,7 +204,7 @@ The final row of the figure demonstrates an alternative method for finding the c
 
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=\textwidth]{figs/a2_figs/interp_fig_annotated.png}
+	\includegraphics[width=\textwidth]{figs/a2_figs/interp_fig_annotated.pdf}
 	\caption{A simple $SE(2)$ interpolation example demonstrating a full factor graph solve including all 60 states (green) compared to a reduced solve where only three of the 60 states are actually solved (blue). A unary factor is placed on each of the 60 states. The top row shows the estimated states in each case (with covariances). The bottom two rows show two different methods of interpolating the covariance of the interpolated states compared with the full solve. The middle row shows covariances interpolated via the after-main-solve equations, while the bottom row shows the covariances interpolated using the original graph with the interpolated means. The latter method provides covariances that match exactly with the full solve, while the former is subject to both overconfidence and `bubbling'.}
 	\label{fig:simple-se2-interp}
 \end{figure}
@@ -360,8 +360,8 @@ Sensor data has been sanitized to facilitate the study of back-end estimation ro
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\textwidth]{a2_figs/litw_fig1_setup_gt.png}
-	\caption{Dataset setup and ground truth trajectory (in 2D). Image (a) shows the setup of the robot and the plastic cylinders that serve as the landmark while image (b) highlights the 10 camera Vicon system used to obtain the ground truth positions and orientations of the robot throughout the dataset. Plot (c) shows the full trajectory of the robot throughout the dataset. The start and end positions are marked with a green and red star, respectively.}
+	\includegraphics[width=\textwidth]{a2_figs/litw_fig1_setup_gt.pdf}
+	\caption{Dataset setup and ground truth trajectory. The top left image shows the setup of the robot and the plastic cylinders that serve as the landmark while the top right image highlights the 10 camera Vicon system used to obtain the ground truth positions and orientations of the robot throughout the dataset. The plot on the bottom shows the full trajectory of the robot throughout the dataset. The start and end positions are marked with a green and red star, respectively.}
 	\label{fig:litw-setup}
 \end{figure}
 
