@@ -1,0 +1,660 @@
+% =============================================================================
+% API Appendix — Continuous-Time Factor Graph Library
+% =============================================================================
+% Include via: \input{api_appendix}
+% Requires: hyperref (for \hyperref), booktabs (for tables), enumitem (for lists)
+% =============================================================================
+
+% Requires: hyperref, booktabs, enumitem
+%
+% Add to your document preamble to handle long signatures:
+%   \setlength{\emergencystretch}{3em}  % allow flexible spacing
+%   \tolerance=1000                      % tolerate looser spacing
+% =============================================================================
+
+% Allow LaTeX to stretch spaces to avoid overfull hboxes from long \texttt
+\begingroup
+\setlength{\emergencystretch}{3em}
+\tolerance=1500
+
+
+This appendix documents the public C++ API for continuous-time state estimation
+using Gaussian Process interpolation under a White-Noise-on-Acceleration (WNOA)
+motion prior. All classes and functions reside in the \texttt{gtsam} namespace.
+
+% -----------------------------------------------------------------------------
+\newpage
+\subsection*{StateData}
+\label{sec:api-statedata}
+
+\textbf{Header:} \texttt{gtsam/nonlinear/StateData.h}
+
+\medskip\noindent
+Lightweight container for states used for continuous-time estimation and
+interpolation. \texttt{StateData} stores the keys identifying the pose and
+velocity variables in a factor graph together with the associated timestamp.
+It is intentionally minimal and used primarily for ordering, lookup and
+grouping of states when constructing interpolation queries.
+
+\subsubsection*{Members}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{Key pose}] Key of the pose variable.
+	\item[\texttt{Key vel}] Key of the velocity variable.
+	\item[\texttt{double time}] Timestamp (seconds) associated with this state.
+\end{description}
+
+\subsubsection*{Constructors}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{StateData()}] Default constructor (value-initialized members). Provided for convenience and to enable use in standard containers.
+	
+	\item[\texttt{StateData(Key pose\_in, Key vel\_in, double time\_in)}]
+	Construct a \texttt{StateData} from explicit keys and timestamp.
+	\begin{itemize}[nosep]
+		\item \texttt{pose\_in}: Key for the pose variable.
+		\item \texttt{vel\_in}: Key for the velocity variable.
+		\item \texttt{time\_in}: Timestamp in seconds.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Operators}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{bool operator<(const StateData\& other) const}]
+	Compare by timestamp (ascending). Useful to sort state lists in chronological order.
+	\begin{itemize}[nosep]
+		\item \texttt{other}: StateData to compare against.
+		\item \textit{Returns}: \texttt{true} if \texttt{this->time < other.time}.
+	\end{itemize}
+	
+	\item[\texttt{bool operator>(const StateData\& other) const}]
+	Compare by timestamp (descending).
+	\begin{itemize}[nosep]
+		\item \texttt{other}: StateData to compare against.
+		\item \textit{Returns}: \texttt{true} if \texttt{this->time > other.time}.
+	\end{itemize}
+	
+	\item[\texttt{bool operator<(double time) const}]
+	Compare this state's timestamp with a raw time value.
+	\begin{itemize}[nosep]
+		\item \texttt{time}: Timestamp to compare against.
+		\item \textit{Returns}: \texttt{true} if \texttt{this->time < time}.
+	\end{itemize}
+	
+	\item[\texttt{bool operator>(double time) const}]
+	Compare this state's timestamp with a raw time value.
+	\begin{itemize}[nosep]
+		\item \texttt{time}: Timestamp to compare against.
+		\item \textit{Returns}: \texttt{true} if \texttt{this->time > time}.
+	\end{itemize}
+	
+	\item[\texttt{bool operator==(const StateData\& other) const}]
+	Equality compares the identifying keys (pose and vel). Two \texttt{StateData} objects are considered equal if they refer to the same pose and velocity keys. The timestamp is not used for equality to keep \texttt{StateData} usable as a simple identifier in unordered containers.
+	\begin{itemize}[nosep]
+		\item \texttt{other}: StateData to compare against.
+		\item \textit{Returns}: \texttt{true} if both pose and vel keys match.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Hash Support}
+A \texttt{std::hash<StateData>} specialization combines the hash of the pose
+and velocity keys to produce a stable hash suitable for
+\texttt{unordered\_map}/\texttt{unordered\_set}. The timestamp is not included
+because \texttt{StateData} equality ignores time.
+
+% -----------------------------------------------------------------------------
+\newpage
+\subsection*{Interpolator}
+\label{sec:api-interpolator}
+
+\textbf{Header:} \texttt{gtsam/nonlinear/Interpolator.h}
+
+\medskip\noindent
+The \texttt{Interpolator<PoseType>} class provides routines to interpolate pose
+and velocity at arbitrary times between (or outside) estimated states. It
+encapsulates the motion model (WNOA by default) via function objects for
+transition, covariance and Jacobian computations. The class also computes
+conditional covariances for interpolated states when requested.
+
+\subsubsection*{Template Parameter}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{PoseType}] Pose group/type (e.g.\ \texttt{Pose2}, \texttt{Pose3}, or a vector-space pose).
+\end{description}
+
+\subsubsection*{Type Aliases}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{StateDataInterval}] \texttt{std::pair<std::optional<StateData>,\\ std::optional<StateData>>}. Pair of optional bordering states for an interpolated state. Either entry may be empty (\texttt{std::nullopt}) to indicate a missing border; in that case extrapolation is used instead of interpolation.
+	\item[\texttt{PoseVelocity<PoseType>}] Simple container for a pose and its corresponding velocity. Used as the local representation of a state when interpolating pose and velocity pairs.
+	\item[\texttt{TimestampedPoseVelocity<PoseType>}] Wraps a \texttt{PoseVelocity} together with a timestamp. This is the primary representation passed to interpolation routines.
+	\item[\texttt{CovarianceMap}] \texttt{std::map<Key, Matrix>}. Maps a pose or velocity key to its covariance matrix.
+	\item[\texttt{LambdaPsiMats}] \texttt{std::pair<Matrix2N, Matrix2N>}. Pair of $(\mbs{\Lambda}, \mbs{\Psi})$ interpolation matrices.
+	\item[\texttt{LocalStateVecs}] \texttt{std::pair<VectorN, VectorN>}. Pair of local state vectors $(\mbs{\xi}, \dot{\mbs{\xi}})$.
+	\item[\texttt{LocalGlobalStateJacs}] \texttt{std::vector<MatrixN>}. Vector of local-to-global Jacobian matrices.
+\end{description}
+
+\subsubsection*{Constructors}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{Interpolator(const VectorN\& Q\_psd, bool small\_angle\_approx = false)}]
+	Default constructor using the WNOA motion model.
+	\begin{itemize}[nosep]
+		\item \texttt{Q\_psd}: Diagonal power spectral density vector for the motion prior.
+		\item \texttt{small\_angle\_approx}: If true, use small-angle approximations on Lie groups.
+	\end{itemize}
+	
+	\item[\texttt{Interpolator(const VectorN\& Q\_psd, bool small\_angle\_approx,}\\\quad
+	\texttt{std::function<Matrix(double)> transitionFunction,}\\\quad
+	\texttt{std::function<Matrix(double, const VectorN\&)> covarianceFunction,}\\\quad
+	\texttt{std::function<Matrix(double, const VectorN\&)> inverseCovarianceFunction,}\\\quad
+	\texttt{std::function<Matrix(const PosePair\&, const PosePair\&, double)> computeJacobianPrev,}\\\quad
+	\texttt{std::function<Matrix(const PosePair\&, const PosePair\&, double)> computeJacobianNext)}]
+	Construct an Interpolator with custom motion-model functions.
+	\begin{itemize}[nosep]
+		\item \texttt{Q\_psd}: Diagonal power spectral density vector for the motion prior.
+		\item \texttt{small\_angle\_approx}: If true, use small-angle approximations on Lie groups.
+		\item \texttt{transitionFunction}: Function returning the transition matrix for a given $\Delta t$.
+		\item \texttt{covarianceFunction}: Function returning process noise covariance.
+		\item \texttt{inverseCovarianceFunction}: Function returning inverse covariance.
+		\item \texttt{computeJacobianPrev}: Function computing the Jacobian w.r.t.\ the previous bordering state.
+		\item \texttt{computeJacobianNext}: Function computing the Jacobian w.r.t.\ the next bordering state.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Public Methods}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{PoseVel interpolatePoseAndVelocity(}\\\quad
+	\texttt{const std::optional<TimestampedPoseVel>\& Tvarpi\_k,}\\\quad
+	\texttt{const std::optional<TimestampedPoseVel>\& Tvarpi\_kp1,}\\\quad
+	\texttt{double t\_tau,}\\\quad
+	\texttt{OptionalMatrixVecType H = nullptr,}\\\quad
+	\texttt{const std::shared\_ptr<Matrix>\& mainSolveMarginalMatrix = nullptr,}\\\quad
+	\texttt{Matrix* covarianceOut = nullptr,}\\\quad
+	\texttt{const std::shared\_ptr<const LambdaPsiMats>\& LambdaPsiPreComp = nullptr,}\\\quad
+	\texttt{const std::shared\_ptr<const LocalStateVecs>\& localStateVecsPreComp = nullptr,}\\\quad
+	\texttt{const std::shared\_ptr<const LocalGlobalStateJacs>\& localGlobalStateJacsPreComp = nullptr) const}]
+	Interpolate the pose and velocity at time $t_\tau$.
+	\begin{itemize}[nosep]
+		\item \texttt{Tvarpi\_k}: Optional timestamped pose/velocity at left border $t_k$.
+		\item \texttt{Tvarpi\_kp1}: Optional timestamped pose/velocity at right border $t_{k+1}$.
+		\item \texttt{t\_tau}: Interpolation time $\tau$.
+		\item \texttt{H}: Optional output vector of Jacobian blocks (8 matrices).
+		\item \texttt{mainSolveMarginalMatrix}: Optional marginal covariance of bordering states from the main solve.
+		\item \texttt{covarianceOut}: Optional output pointer for the interpolated state's covariance.
+		\item \texttt{LambdaPsiPreComp}: Optional precomputed $\mbs{\Lambda}$/$\mbs{\Psi}$ matrices.
+		\item \texttt{localStateVecsPreComp}: Optional precomputed local state vectors $(\mbs{\xi}, \dot{\mbs{\xi}})$.
+		\item \texttt{localGlobalStateJacsPreComp}: Optional precomputed local$\to$global Jacobians.
+		\item \textit{Returns}: Interpolated pose and velocity pair at $t_\tau$.
+	\end{itemize}
+	
+	\item[\texttt{Values interpolatePosesAndVelocities(}\\\quad
+	\texttt{const NonlinearFactorGraph\& mainSolveGraph,}\\\quad
+	\texttt{const Values\& mainSolveSolution,}\\\quad
+	\texttt{const StateDataSet\& mainSolveStates,}\\\quad
+	\texttt{const StateDataSet\& interpolatedStates,}\\\quad
+	\texttt{std::shared\_ptr<CovarianceMap> covarianceMapOut = nullptr) const}]
+	Interpolate multiple poses and velocities given a solved factor graph.
+	\begin{itemize}[nosep]
+		\item \texttt{mainSolveGraph}: Factor graph used in the main solve (estimated states only).
+		\item \texttt{mainSolveSolution}: Solution \texttt{Values} from the main solve.
+		\item \texttt{mainSolveStates}: Ordered set of estimated \texttt{StateData} used in the main solve.
+		\item \texttt{interpolatedStates}: Set of \texttt{StateData} to interpolate.
+		\item \texttt{covarianceMapOut}: Optional output map to receive per-state covariances.
+		\item \textit{Returns}: A \texttt{Values} container with interpolated pose and velocity entries.
+	\end{itemize}
+	
+	\item[\texttt{Matrix2N computeConditionalCov(}\\\quad
+	\texttt{const TimestampedPoseVel\& pvk,}\\\quad
+	\texttt{const TimestampedPoseVel\& pvkp1,}\\\quad
+	\texttt{const TimestampedPoseVel\& pvtau,}\\\quad
+	\texttt{OptionalMatrixType Lambda = nullptr,}\\\quad
+	\texttt{OptionalMatrixType Psi = nullptr) const}]
+	Compute the conditional covariance of the interpolated state.
+	\begin{itemize}[nosep]
+		\item \texttt{pvk}: Timestamped pose/velocity at left border.
+		\item \texttt{pvkp1}: Timestamped pose/velocity at right border.
+		\item \texttt{pvtau}: Timestamped pose/velocity at interpolation time.
+		\item \texttt{Lambda}: Optional output pointer to receive $\mbs{\Lambda}$ matrix.
+		\item \texttt{Psi}: Optional output pointer to receive $\mbs{\Psi}$ matrix.
+		\item \textit{Returns}: Conditional covariance matrix $\mbs{\Sigma}_\tau$ of size $2N \times 2N$.
+	\end{itemize}
+	
+	\item[\texttt{std::pair<Matrix, Matrix> getLambdaPsi(double t\_k, double t\_kp1, double t\_tau) const}]
+	Compute interpolation matrices $\mbs{\Lambda}$ and $\mbs{\Psi}$ (WNOA-optimized).
+	\begin{itemize}[nosep]
+		\item \texttt{t\_k}: Time of the left border state.
+		\item \texttt{t\_kp1}: Time of the right border state.
+		\item \texttt{t\_tau}: Interpolation time.
+		\item \textit{Returns}: Pair $(\mbs{\Lambda}, \mbs{\Psi})$ of interpolation matrices.
+	\end{itemize}
+	
+	\item[\texttt{std::pair<Matrix, Matrix> getLambdaPsiGeneral(double t\_k, double t\_kp1, double t\_tau) const}]
+	Compute interpolation matrices $\mbs{\Lambda}$ and $\mbs{\Psi}$ for a general motion model.
+	\begin{itemize}[nosep]
+		\item \texttt{t\_k}: Time of the left border state.
+		\item \texttt{t\_kp1}: Time of the right border state.
+		\item \texttt{t\_tau}: Interpolation time.
+		\item \textit{Returns}: Pair $(\mbs{\Lambda}, \mbs{\Psi})$ of interpolation matrices.
+	\end{itemize}
+	
+	\item[\texttt{LocalStateVecs computeLocalStateVecs(}\\\quad
+	\texttt{const TimestampedPoseVel\& pvk,}\\\quad
+	\texttt{const TimestampedPoseVel\& pvkp1,}\\\quad
+	\texttt{LocalGlobalStateJacs* jacs = nullptr) const}]
+	Compute the local state vectors $(\mbs{\xi}, \dot{\mbs{\xi}})$ for a pair of bordering states.
+	\begin{itemize}[nosep]
+		\item \texttt{pvk}: Timestamped pose/velocity at left border state.
+		\item \texttt{pvkp1}: Timestamped pose/velocity at right border state.
+		\item \texttt{jacs}: Optional output pointer to receive local-to-global Jacobians.
+		\item \textit{Returns}: Pair of local state vectors $(\mbs{\xi}, \dot{\mbs{\xi}})$.
+	\end{itemize}
+\end{description}
+
+% -----------------------------------------------------------------------------
+\newpage
+\subsection*{WNOAMotionFactor}
+\label{sec:api-wnoafactor}
+
+\textbf{Header:} \texttt{gtsam/nonlinear/WNOAFactor.h}
+
+\medskip\noindent
+WNOA (White Noise on Acceleration) motion prior factor. This factor implements
+the WNOA motion prior between two states (pose and velocity at times $t_k$ and
+$t_{k+1}$). It provides residuals and Jacobians consistent with the WNOA
+continuous-time prior when discretized over the timestep \texttt{delta\_t}.
+
+Template parameter \texttt{Pose} is expected to be a GTSAM pose type (e.g.\
+\texttt{Pose2}, \texttt{Pose3}) or a vector-space pose; the factor supports
+both Lie group and vector-space pose representations. The factor's ordering of
+keys is: \texttt{pose\_k}, \texttt{vel\_k}, \texttt{pose\_kp1}, \texttt{vel\_kp1}.
+
+\subsubsection*{Template Parameter}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{Pose}] Pose group/type (\texttt{Pose2}, \texttt{Pose3}, etc.)
+\end{description}
+
+\subsubsection*{Constructors}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{WNOAMotionFactor(const StateData\& state\_k, const StateData\& state\_kp1, const VectorN\& Q)}]
+	Construct a WNOA motion factor from two \texttt{StateData} entries.
+	\begin{itemize}[nosep]
+		\item \texttt{state\_k}: State data at time $t_k$ (contains pose key, vel key, and timestamp).
+		\item \texttt{state\_kp1}: State data at time $t_{k+1}$.
+		\item \texttt{Q}: Diagonal power spectral density vector for the WNOA motion prior.
+	\end{itemize}
+	Builds a factor connecting the pose and velocity keys contained in \texttt{state\_k} and \texttt{state\_kp1}. The internal noise model is constructed from the provided diagonal PSD vector \texttt{Q} and the timestep computed from the two state timestamps.
+	
+	\item[\texttt{WNOAMotionFactor(Key key1, Key key2, Key key3, Key key4, double delta\_t, const VectorN\& Q)}]
+	Construct a WNOA factor given explicit keys and timestep.
+	\begin{itemize}[nosep]
+		\item \texttt{key1}: Key of the pose at time $t_k$.
+		\item \texttt{key2}: Key of the velocity at time $t_k$.
+		\item \texttt{key3}: Key of the pose at time $t_{k+1}$.
+		\item \texttt{key4}: Key of the velocity at time $t_{k+1}$.
+		\item \texttt{delta\_t}: Time difference $\Delta t = t_{k+1} - t_k$.
+		\item \texttt{Q}: Diagonal power spectral density vector for the WNOA motion prior.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Public Methods}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{Vector evaluateError(}\\\quad
+	\texttt{const Pose\& pose\_k, const typename Pose::TangentVector\& vel\_k,}\\\quad
+	\texttt{const Pose\& pose\_kp1, const typename Pose::TangentVector\& vel\_kp1,}\\\quad
+	\texttt{OptionalMatrixType H1 = nullptr, OptionalMatrixType H2 = nullptr,}\\\quad
+	\texttt{OptionalMatrixType H3 = nullptr, OptionalMatrixType H4 = nullptr) const override}]
+	Evaluate the WNOA factor residual and optional Jacobians.
+	\begin{itemize}[nosep]
+		\item \texttt{pose\_k}: Pose at time $t_k$.
+		\item \texttt{vel\_k}: Velocity at time $t_k$.
+		\item \texttt{pose\_kp1}: Pose at time $t_{k+1}$.
+		\item \texttt{vel\_kp1}: Velocity at time $t_{k+1}$.
+		\item \texttt{H1}: Optional output Jacobian w.r.t.\ \texttt{pose\_k}.
+		\item \texttt{H2}: Optional output Jacobian w.r.t.\ \texttt{vel\_k}.
+		\item \texttt{H3}: Optional output Jacobian w.r.t.\ \texttt{pose\_kp1}.
+		\item \texttt{H4}: Optional output Jacobian w.r.t.\ \texttt{vel\_kp1}.
+		\item \textit{Returns}: Residual vector $\mathbf{e} \in \mathbb{R}^{2N}$ formed from the difference between the discrete relative pose/velocity and the predicted motion under the WNOA prior.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Static Methods}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{static Matrix2N buildWNOACovariance(double timestep, const VectorN\& Q)}]
+	Build the continuous-time WNOA discretized process covariance.
+	\begin{itemize}[nosep]
+		\item \texttt{timestep}: The time interval $\Delta t$ over which to discretize.
+		\item \texttt{Q}: Diagonal power spectral density vector.
+		\item \textit{Returns}: The $2N \times 2N$ covariance matrix for a WNOA prior discretized over \texttt{timestep}.
+	\end{itemize}
+	
+	\item[\texttt{static Matrix2N buildInverseWNOACovariance(double timestep, const VectorN\& Q)}]
+	Build the inverse of the WNOA discretized process covariance.
+	\begin{itemize}[nosep]
+		\item \texttt{timestep}: The time interval $\Delta t$ over which to discretize.
+		\item \texttt{Q}: Diagonal power spectral density vector.
+		\item \textit{Returns}: The $2N \times 2N$ inverse covariance (information) matrix.
+	\end{itemize}
+	
+	\item[\texttt{static noiseModel::Gaussian::shared\_ptr \\ buildWNOANoiseModel(double timestep, const VectorN\& Q)}]
+	Convenience helper to construct a Gaussian noise model from \texttt{Q}.
+	\begin{itemize}[nosep]
+		\item \texttt{timestep}: The time interval $\Delta t$.
+		\item \texttt{Q}: Diagonal power spectral density vector.
+		\item \textit{Returns}: Shared pointer to a Gaussian noise model.
+	\end{itemize}
+	
+	\item[\texttt{static Matrix2N transitionFunction(double delta\_t)}]
+	Transition matrix for the WNOA prior.
+	\begin{itemize}[nosep]
+		\item \texttt{delta\_t}: Time interval $\Delta t$.
+		\item \textit{Returns}: The $2N \times 2N$ transition matrix mapping for concatenated state $[\text{pose}; \text{vel}]$ over interval \texttt{delta\_t}.
+	\end{itemize}
+	
+	\item[\texttt{static Matrix2N computeJacobianPrev(const PosePair\& pose\_pair\_k, const PosePair\& pose\_pair\_tau, double t\_diff)}]
+	Compute interpolation Jacobian with respect to the previous state.
+	\begin{itemize}[nosep]
+		\item \texttt{pose\_pair\_k}: Pose/velocity pair at the left border $t_k$.
+		\item \texttt{pose\_pair\_tau}: Pose/velocity pair at the interpolation time $\tau$.
+		\item \texttt{t\_diff}: Time difference $\tau - t_k$.
+		\item \textit{Returns}: The $2N \times 2N$ Jacobian block that maps perturbations in the previous bordering state to perturbations in the interpolated discrete residual.
+	\end{itemize}
+	
+	\item[\texttt{static Matrix2N computeJacobianNext(const PosePair\& pose\_pair\_kp1, const PosePair\& pose\_pair\_tau, double t\_diff)}]
+	Compute interpolation Jacobian with respect to the next state.
+	\begin{itemize}[nosep]
+		\item \texttt{pose\_pair\_kp1}: Pose/velocity pair at the right border $t_{k+1}$.
+		\item \texttt{pose\_pair\_tau}: Pose/velocity pair at the interpolation time $\tau$.
+		\item \texttt{t\_diff}: Time difference $t_{k+1} - \tau$.
+		\item \textit{Returns}: The $2N \times 2N$ Jacobian block that maps perturbations in the next bordering state to perturbations in the interpolated discrete residual.
+	\end{itemize}
+\end{description}
+
+% -----------------------------------------------------------------------------
+\newpage
+\subsection*{WNOAInterpFactor}
+\label{sec:api-wnoainterpfactor}
+
+\textbf{Header:} \texttt{gtsam/nonlinear/WNOAInterpFactor.h}
+
+\medskip\noindent
+Wrapper class that allows a variable of a factor to be replaced by a WNOA
+interpolation. It is assumed that estimated state entries are sorted by time.
+The wrapper maps an inner factor that references ``interpolated'' states onto
+the outer estimated states used by the main solve.
+
+\subsubsection*{Template Parameter}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{PoseType}] Pose group/type (e.g.\ \texttt{Pose2}, \texttt{Pose3}).
+\end{description}
+
+\subsubsection*{Nested Types}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{PassedInterpData}]
+	Container for externally-computed interpolation data. Callers can precompute interpolated \texttt{Values}, flattened inner$\to$outer jacobian blocks and conditional covariances and pass them into \texttt{linearize}/\texttt{error} to avoid recomputation inside the factor.
+	\begin{itemize}[nosep]
+		\item \texttt{Values values}: Interpolated Values (pose and velocity entries at interpolated times).
+		\item \texttt{unordered\_map<Key, std::array<Matrix, 4>> jacobians}: Flattened jacobian blocks for each inner key; array order is [LPose, LVel, RPose, RVel].
+		\item \texttt{unordered\_map<StateData, Matrix2N> condCovs}: Conditional covariance ($2N \times 2N$) for each interpolated StateData.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Constructor}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{WNOAInterpFactor(}\\\quad
+	\texttt{NonlinearFactor::shared\_ptr inner\_factor,}\\\quad
+	\texttt{const StateDataSet\& estimated\_states,}\\\quad
+	\texttt{const StateDataSet\& interp\_states,}\\\quad
+	\texttt{const VectorN\& Q\_psd,}\\\quad
+	\texttt{bool fixed\_noise\_model = false,}\\\quad
+	\texttt{bool precomp\_interp\_mats = true,}\\\quad
+	\texttt{bool small\_angle\_approx = false)}]
+	Construct a WNOA interpolation wrapper factor.
+	\begin{itemize}[nosep]
+		\item \texttt{inner\_factor}: Factor defined over (possibly) interpolated keys.
+		\item \texttt{estimated\_states}: Ordered set of estimated \texttt{StateData} (main-solve states).
+		\item \texttt{interp\_states}: Ordered set of states to interpolate (states at query times).
+		\item \texttt{Q\_psd}: Diagonal PSD vector for the WNOA motion prior.
+		\item \texttt{fixed\_noise\_model}: If true, do not augment the measurement noise model with GP interpolation process noise.
+		\item \texttt{precomp\_interp\_mats}: If true, precompute $\Lambda$/$\Psi$ matrices for each interpolated state.
+		\item \texttt{small\_angle\_approx}: If true, enable the small-angle approximation in interpolation.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Public Methods}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{Vector unwhitenedError(const Values\& values,}\\\quad
+	\texttt{OptionalMatrixVecType H = nullptr,}\\\quad
+	\texttt{PassedInterpData* passedInterpData = nullptr) const override}]
+	Compute the unwhitened residual vector for the wrapped inner factor.
+	\begin{itemize}[nosep]
+		\item \texttt{values}: Current estimated \texttt{Values} (outer/main-solve states).
+		\item \texttt{H}: Optional output vector for Jacobian blocks.
+		\item \texttt{passedInterpData}: Optional precomputed interpolation data to avoid duplicate work.
+		\item \textit{Returns}: The outer-facing residual (before whitening) obtained by evaluating the inner factor on interpolated states and mapping the resulting error back to the outer state ordering.
+	\end{itemize}
+	
+	\item[\texttt{boost::shared\_ptr<GaussianFactor> linearize(const Values\& x) const override}]
+	Linearize the wrapper factor, computing a \texttt{JacobianFactor}.
+	\begin{itemize}[nosep]
+		\item \texttt{x}: Linearization point (estimated state \texttt{Values}).
+		\item \textit{Returns}: Shared pointer to linearized \texttt{GaussianFactor}. When interpolation increases measurement uncertainty, this function updates the noise model on-the-fly.
+	\end{itemize}
+	
+	\item[\texttt{boost::shared\_ptr<GaussianFactor> linearize(const Values\& x,}\\\quad
+	\texttt{PassedInterpData* passedInterpData) const}]
+	Linearize using externally provided interpolation data to avoid duplicate work.
+	\begin{itemize}[nosep]
+		\item \texttt{x}: Linearization point (estimated state \texttt{Values}).
+		\item \texttt{passedInterpData}: Precomputed interpolation data containing values, jacobians, and covariances.
+		\item \textit{Returns}: Shared pointer to linearized \texttt{GaussianFactor}.
+	\end{itemize}
+	
+	\item[\texttt{double error(const Values\& c) const override}]
+	Compute the factor error (unwhitened) using the current \texttt{Values}.
+	\begin{itemize}[nosep]
+		\item \texttt{c}: Current estimated \texttt{Values}.
+		\item \textit{Returns}: Scalar error value.
+	\end{itemize}
+	
+	\item[\texttt{double error(const Values\& c, PassedInterpData* passedInterpData) const}]
+	Error computation accepting precomputed interpolation data.
+	\begin{itemize}[nosep]
+		\item \texttt{c}: Current estimated \texttt{Values}.
+		\item \texttt{passedInterpData}: Precomputed interpolation data.
+		\item \textit{Returns}: Scalar error value.
+	\end{itemize}
+	
+	\item[\texttt{SharedGaussian noiseModel(const Values\& x) const}]
+	Return an augmented noise model accounting for interpolation.
+	\begin{itemize}[nosep]
+		\item \texttt{x}: Current estimated \texttt{Values}.
+		\item \textit{Returns}: Shared pointer to Gaussian noise model (possibly augmented with interpolation uncertainty).
+	\end{itemize}
+	
+	\item[\texttt{std::unordered\_map<Key, StateData> getInterpolatedKeys() const}]
+	Get the mapping from outer Keys to their corresponding interpolated \texttt{StateData}.
+	\begin{itemize}[nosep]
+		\item \textit{Returns}: Map from each inner factor key (that requires interpolation) to its \texttt{StateData}.
+	\end{itemize}
+	
+	\item[\texttt{std::unordered\_map<StateData, std::pair<StateData, StateData>> getInterpToBorders() const}]
+	Get the mapping from each interpolated \texttt{StateData} to its bordering states.
+	\begin{itemize}[nosep]
+		\item \textit{Returns}: Map from each interpolated state to its (left, right) bordering estimated states.
+	\end{itemize}
+\end{description}
+
+% -----------------------------------------------------------------------------
+\newpage
+\subsection*{WNOAFactorGraph}
+\label{sec:api-wnoafactorgraph}
+
+\textbf{Header:} \texttt{gtsam/nonlinear/WNOAFactorGraph.h}
+
+\medskip\noindent
+Factor graph specialized for WNOA interpolation-aware computation.
+\texttt{WNOAFactorGraph} wraps standard factor graph functionalities with
+utilities to compute interpolated pose/velocity states under a
+White-Noise-on-Acceleration (WNOA) motion prior. It stores the mapping from
+interpolated query times to their left/right bordering estimated states and
+precomputes interpolation helpers for efficient repeated evaluation.
+
+The graph provides optimized linearization and error computation routines that
+can exploit precomputed interpolation batches to reduce repeated work when
+evaluating many wrapper factors using the same query times.
+
+\subsubsection*{Template Parameter}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{PoseType}] Pose group/type (e.g.\ \texttt{Pose2}, \texttt{Pose3}) used by the interpolator.
+\end{description}
+
+\subsubsection*{Constructor}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{WNOAFactorGraph(}\\\quad
+	\texttt{std::unordered\_map<StateData, std::pair<StateData, StateData>> interp\_map,}\\\quad
+	\texttt{const VectorN\& Q\_psd,}\\\quad
+	\texttt{bool fixed\_noise\_model = false)}]
+	Construct a \texttt{WNOAFactorGraph} with interpolation metadata.
+	\begin{itemize}[nosep]
+		\item \texttt{interp\_map}: Mapping from each interpolated \texttt{StateData} to its left/right bordering estimated \texttt{StateData}.
+		\item \texttt{Q\_psd}: Diagonal PSD vector for the WNOA interpolator (size must match PoseType dimension).
+		\item \texttt{fixed\_noise\_model}: If true, the graph will not augment measurement noise for interpolation.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Public Methods}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{boost::shared\_ptr<GaussianFactorGraph> linearize(const Values\& linearizationPoint) const}]
+	Linearize the graph into a \texttt{GaussianFactorGraph}.
+	\begin{itemize}[nosep]
+		\item \texttt{linearizationPoint}: Current estimate of all variables.
+		\item \textit{Returns}: Shared pointer to the linearized Gaussian factor graph. Exploits precomputed interpolation data and batching to reduce duplicated interpolation work across wrapper factors.
+	\end{itemize}
+	
+	\item[\texttt{double error(const Values\& values) const}]
+	Compute the unnormalized graph error (sum of factor losses).
+	\begin{itemize}[nosep]
+		\item \texttt{values}: Current estimated \texttt{Values}.
+		\item \textit{Returns}: Total error (scalar). When the graph contains interpolation wrapper factors this method uses the interpolator to evaluate interpolated states and can exploit precomputation to improve throughput.
+	\end{itemize}
+\end{description}
+
+% -----------------------------------------------------------------------------
+\newpage
+\subsection*{WNOALevenbergMarquardtOptimizer}
+\label{sec:api-wnoalevenbergmarquardtoptimizer}
+
+\textbf{Header:} \texttt{gtsam/nonlinear/WNOALevenbergMarquardtOptimizer.h}
+
+\medskip\noindent
+Levenberg-Marquardt optimizer tuned for WNOA interpolation graphs.
+\texttt{WNOALevenbergMarquardtOptimizer} implements the Levenberg-Marquardt
+trust-region algorithm and is specialized to operate on
+\texttt{WNOAFactorGraph<PoseType>}. It can leverage interpolation
+precomputation in the factor graph to reduce redundant work during
+linearization and error evaluation when many wrapper factors are present.
+
+\subsubsection*{Template Parameter}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{PoseType}] Pose group/type used by the underlying WNOA graph (e.g.\ \texttt{Pose2}, \texttt{Pose3}).
+\end{description}
+
+\subsubsection*{Constructors}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{WNOALevenbergMarquardtOptimizer(}\\\quad
+	\texttt{const WNOAFactorGraph<PoseType>\& graph,}\\\quad
+	\texttt{const Values\& initialValues,}\\\quad
+	\texttt{const LevenbergMarquardtParams\& params\\ = LevenbergMarquardtParams())}]
+	Construct optimizer for a \texttt{WNOAFactorGraph} with initial values.
+	\begin{itemize}[nosep]
+		\item \texttt{graph}: The \texttt{WNOAFactorGraph} to optimize.
+		\item \texttt{initialValues}: Initial variable estimates.
+		\item \texttt{params}: LM algorithm parameters (default uses standard settings).
+	\end{itemize}
+	
+	\item[\texttt{WNOALevenbergMarquardtOptimizer(}\\\quad
+	\texttt{const WNOAFactorGraph<PoseType>\& graph,}\\\quad
+	\texttt{const Values\& initialValues,}\\\quad
+	\texttt{const Ordering\& ordering,}\\\quad
+	\texttt{const LevenbergMarquardtParams\& params\\ = LevenbergMarquardtParams())}]
+	Construct optimizer with explicit variable ordering for elimination/linearization.
+	\begin{itemize}[nosep]
+		\item \texttt{graph}: The \texttt{WNOAFactorGraph} to optimize.
+		\item \texttt{initialValues}: Initial variable estimates.
+		\item \texttt{ordering}: Variable elimination ordering.
+		\item \texttt{params}: LM algorithm parameters.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{Public Methods}
+
+Public methods are equivalent to those of the regular \texttt{LevenbergMarquardtOptimizer} with the exception that internally, the custom \texttt{linearize()} and \texttt{error()} functions of the \texttt{WNOAFactorGraph} are called directly.
+
+% -----------------------------------------------------------------------------
+\newpage
+\subsection*{Free Functions}
+\label{sec:api-free-functions}
+
+\textbf{Header:} \texttt{gtsam/nonlinear/WNOAInterpFactor.h}
+
+\subsubsection*{interpolateFactorGraph}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{template<typename PoseType>}\\
+	\texttt{NonlinearFactorGraph interpolateFactorGraph(}\\\quad
+	\texttt{const NonlinearFactorGraph\& graph,}\\\quad
+	\texttt{const StateDataSet\& estimated\_states,}\\\quad
+	\texttt{const StateDataSet\& interp\_states,}\\\quad
+	\texttt{const VectorN\& Q\_psd,}\\\quad
+	\texttt{bool fixed\_noise = false,}\\\quad
+	\texttt{bool small\_angle\_approx = false)}]
+	Convert a factor graph by removing interpolated states.
+	\begin{itemize}[nosep]
+		\item \texttt{graph}: Input factor graph possibly containing factors on interpolated states.
+		\item \texttt{estimated\_states}: Ordered set of estimated \texttt{StateData} (main-solve states).
+		\item \texttt{interp\_states}: Ordered set of \texttt{StateData} entries to be interpolated/removed.
+		\item \texttt{Q\_psd}: Diagonal PSD vector for the WNOA motion prior.
+		\item \texttt{fixed\_noise}: If true, do not augment measurement noise models for interpolation.
+		\item \texttt{small\_angle\_approx}: If true, use small-angle approximation for interpolation.
+		\item \textit{Returns}: A new \texttt{NonlinearFactorGraph} where factors referencing interpolated states are replaced with equivalent wrapper factors acting on bordering estimated states. WNOA motion prior factors are added between successive estimated states. Factors that do not reference interpolated states are copied unchanged.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{interpolateWNOAFactorGraph}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{template<typename PoseType>}\\
+	\texttt{WNOAFactorGraph<PoseType> interpolateWNOAFactorGraph(}\\\quad
+	\texttt{const NonlinearFactorGraph\& graph,}\\\quad
+	\texttt{const StateDataSet\& estimated\_states,}\\\quad
+	\texttt{const StateDataSet\& interp\_states,}\\\quad
+	\texttt{const VectorN\& Q\_psd,}\\\quad
+	\texttt{bool fixed\_noise = false,}\\\quad
+	\texttt{bool small\_angle\_approx = false)}]
+	Convert a factor graph to a \texttt{WNOAFactorGraph} with interpolated states removed.
+	\begin{itemize}[nosep]
+		\item \texttt{graph}: Input factor graph possibly containing factors on interpolated states.
+		\item \texttt{estimated\_states}: Ordered set of estimated \texttt{StateData} (main-solve states).
+		\item \texttt{interp\_states}: Ordered set of \texttt{StateData} entries to be interpolated/removed.
+		\item \texttt{Q\_psd}: Diagonal PSD vector for the WNOA motion prior.
+		\item \texttt{fixed\_noise}: If true, do not augment measurement noise models for interpolation.
+		\item \texttt{small\_angle\_approx}: If true, use small-angle approximation for interpolation.
+		\item \textit{Returns}: A \texttt{WNOAFactorGraph<PoseType>} where factors on interpolated states are replaced with wrapper factors acting on bordering estimated states. The returned graph carries interpolation metadata (borders and PSD) for efficient batched evaluation.
+	\end{itemize}
+\end{description}
+
+\subsubsection*{updateInterpValues}
+\begin{description}[style=nextline,leftmargin=2em]
+	\item[\texttt{template<typename PoseType>}\\
+	\texttt{Values updateInterpValues(}\\\quad
+	\texttt{const NonlinearFactorGraph\& interp\_graph,}\\\quad
+	\texttt{const Values\& values,}\\\quad
+	\texttt{const StateDataSet\& estim\_states,}\\\quad
+	\texttt{const StateDataSet\& interp\_states,}\\\quad
+	\texttt{const VectorN\& Q\_psd,}\\\quad
+	\texttt{std::shared\_ptr<CovarianceMap> covarianceMapOut = nullptr)}]
+	Update a \texttt{Values} with interpolated pose and velocity entries.
+	\begin{itemize}[nosep]
+		\item \texttt{interp\_graph}: Factor graph containing interpolation metadata (borders).
+		\item \texttt{values}: Current estimated \texttt{Values} (outer states used as borders).
+		\item \texttt{estim\_states}: Ordered set of estimated \texttt{StateData} used by the main solve.
+		\item \texttt{interp\_states}: Ordered set of \texttt{StateData} entries to interpolate.
+		\item \texttt{Q\_psd}: Diagonal PSD vector for the WNOA motion prior.
+		\item \texttt{covarianceMapOut}: Optional output pointer to receive per-interpolated-state covariances.
+		\item \textit{Returns}: A copy of \texttt{values} with interpolated pose/velocity entries merged in.
+	\end{itemize}
+\end{description}

@@ -23,7 +23,13 @@
 \usepackage{listings}
 \usepackage{subcaption}
 \usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
 % \usepackage{enumerate}
+
+
+\setlength{\emergencystretch}{3em}  % allow flexible spacing
+\tolerance=1000                      % tolerate looser spacing
 
 % Location of figures
  \graphicspath{{figs/}} 
@@ -156,10 +162,17 @@ Continuous-time state estimation is gaining in popularity due to its abilities t
 \input{chap7}
 
 
+
+
+
 %BACKMATTER SEE DOCUMENTATION
 \backmatter  % references, restarts sample
 
-\chapter{Appendices}
+\chapter{Appendix III: Code API}
+
+\input{api/api_overview}
+
+
 
 \printbibliography
 
