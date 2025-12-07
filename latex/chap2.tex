@@ -1,207 +1,60 @@
 %!TEX root =  main.tex
+\chapter{Continuous-Time Linear Systems}
+\label{chap:ctls}
 
-\chapter{Factor Graph Background}\label{chap:fg}
-In this chapter, we will first introduce factor graphs as a general tool for formulating estimation problems.  Following this, we will work through the specific example of classic discrete-time filtering/smoothing.  We will later show that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction to factor graphs, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
-
-\section{Factor Graphs}
-\label{sec:fg}
-
-Typically in state estimation, we are interested in computing a posterior density representing the likelihood of a state given some inputs and measurements of the form
-\begin{equation}
-p(\mbf{x} | \mbf{v}, \mbf{y}),
-\end{equation}
-where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ldots, t_K$, $\mbf{v} = (\mbf{v}_0, \ldots, \mbf{v}_K)$ is a set of inputs/commands, and $\mbf{y} = (\mbf{y}_0, \ldots, \mbf{y}_K)$ is a set of measurements.  In most practical scenarios, we can factor this posterior density into a product of factors, each of which depends on only a subset of the variables in the problem.  For example, we might have
-\begin{equation}
-p(\mbf{x} | \mbf{v}, \mbf{y}) \propto \underbrace{p(\mbf{x}_0)}_{\phi(\mbf{x}_0)} \prod_{k=1}^K \underbrace{p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi(\mbf{x}_{k-1},\mbf{x}_k)} \prod_{k=0}^K \underbrace{p(\mbf{y}_k | \mbf{x}_k)}_{\varphi(\mbf{x}_k)}.
-\end{equation}
-where each $\phi(\cdot)$, is a {\em factor} of the posterior density.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
-
-The normalization constant associated with this factorization is typically expensive to compute so we often satisfy ourselves with finding the $\mbf{x}$ that maximizes the posterior density, or equivalently the $\mbf{x}$ that minimizes the negative log-likelihood cost:
-\begin{equation}\label{eq:cost}
-\mathcal{C}(\mbf{x}) = -\log \phi(\mbf{x}_0) - \sum_{k=1}^K \log \phi(\mbf{x}_k, \mbf{x}_{k-1}) - \sum_{k=0}^K \log \varphi(\mbf{x}_k).
-\end{equation}
-This is a common approach in estimation, referred to as {\em \ac{MAP}} estimation.
-
-\begin{figure}[t]
-     \includegraphics[width=\textwidth]{dtfg1.pdf}
-     \caption{A simple factor graph for a classic estimation problem.  The unary factor on $\mbf{x}_0$ represents the prior knowledge about the initial state, the binary factors represent the motion model, and the remaining unary factors represent the measurements.  In practice, we can have much more complicated factor graphs with loops.}
-     \label{fig:dtfg1}
-\end{figure}
-
-We can visually understand the factors by assembling them into a {\em factor graph}, which is a bipartite graph with two types of nodes: variable nodes and factor nodes.  The variable nodes represent the variables in the problem, such as $\mbf{x}_0, \ldots, \mbf{x}_K$, and the factor nodes represent the factors, such as $\phi(\mbf{x}_0)$, $\phi(\mbf{x}_{k-1},\mbf{x}_k)$, and $\varphi(\mbf{x}_k)$.  The edges connect variable nodes to factor nodes, indicating which variables are involved in each factor.  This graphical representation allows us to see the dependencies between variables and factors in a very intuitive way.  Figure~\ref{fig:dtfg1} shows a simple factor graph for a classic discrete-time estimation problem.
-
-\section{The Elimination Algorithm}
-
-While it is possible to minimize the cost function in~\eqref{eq:cost} directly using matrix algebra, we here lean into the factor-graph representation and present the general {\em elimination algorithm}, an equivalent way to solve the minimization problem.  The key idea is to eliminate one variable at a time, updating the factors accordingly.  Once we have eliminated all variables, our factor graph has been transformed into another graph called a {\em Bayes net}; there is then a simple procedure to compute the desired posterior density from the Bayes net.
-
-Mathematically, the elimination algorithm starts from a factor graph and ends with a new factorization of the posterior in the form
-\begin{equation}\label{eq:elimfactors}
-p(\mbf{x}) = p(\mbf{x}_0 | \mbf{s}_0) p(\mbf{x}_1 | \mbf{s}_1) \cdots p(\mbf{x}_K) = \prod_{k=0}^K p(\mbf{x}_k | \mbf{s}_k),
-\end{equation}
-where $\mbf{s}_k$ is the {\em separator} for $\mbf{x}_k$, defined as the set of variables on which $\mbf{x}_k$ is conditioned after it is eliminated.  Without loss of generality, here $k=0\ldots K$ is the order in which the variables have been eliminated. It is important to note that each variable's separator cannot include any variables that have already been eliminated, which means that once all the conditional densities are computed, we can work backwards from $K$ to $0$ to compute the posterior densities for each variable.  
-
-Each step of the elimination algorithm consists of three operations:  (i) select a variable to eliminate, (ii) multiply all factors involving that variable together to form the {\em product factor}, and (iii) factor the product factor into a {\em conditional density} on the eliminated variable and a {\em residual factor} on the separator variables.  The new factor is then added to the factor graph, and the eliminated variable is removed from the graph.  This process is repeated until all variables have been eliminated.  
-
-In a bit more detail, consider the example factor graph on the left of Figure~\ref{fig:elim}.  Suppose we select $\mbf{x}$ as the variable to eliminate, then the product factor is given by
-\begin{equation}
-\psi(\mbf{x}, \mbf{s}) = \phi(\mbf{x}) \phi(\mbf{x}, \mbf{s}_1) \phi(\mbf{x}, \mbf{s}_2),
-\end{equation}
-where $\mbf{s}_1$ and $\mbf{s}_2$ are two other variables that share factors with $\mbf{x}$; the separator for $\mbf{x}$ is then $\mbf{s} = \{ \mbf{s}_1, \mbf{s}_2 \}$.  The product factor is then factored into a conditional density on $\mbf{x}$ and a new factor on the separator variables:
-\begin{equation}
-\psi(\mbf{x}, \mbf{s}) = p(\mbf{x} | \mbf{s}) \, \phi(\mbf{s}).
-\end{equation}
-The key to this last factorization is that $\phi(\mbf{s})$ has no dependence on $\mbf{x}$; it is the factor that would result if $\mbf{x}$ were {\em marginalized} from factor graph. After all variables have been eliminated, we are left with a graph with only directed arrows called the Bayes net.
-
-\begin{figure}[t]
-     \includegraphics[width=\textwidth]{elim.pdf}
-     \centering
-     \caption{Example of the elimination algorithm.  The left shows the factor graph before elimination, the middle shows the product factor formed by multiplying all factors involving $\mbf{x}$, and the right shows the result of eliminating $\mbf{x}$ from the factor graph, resulting in a new factor on the separator variables and a conditional density for $\mbf{x}$.}
-     \label{fig:elim}
-\end{figure}
-
-The elimination algorithm is quite powerful in that it can be applied to any factor graph.  However, it is particularly useful for problems with a lot of structure, such as those arising in robotics, as we can exploit the sparsity of the factor graph in the various operations.  Here, we will only need to work with factors and densities that are Gaussian, and we use the next section to show that the elimination algorithm can be carried out in closed form when the factors are Gaussian.  This will allow us to carry out estimation efficiently and effectively.
-
-\section{Gaussian Factors, Elimination, Fusion}
-\label{sec:fgelimfus}
-
-Now that we understand factor graphs and the general strategy for carrying out estimation, we show that when our factors are Gaussian we can carry out elimination in closed form.  We know that a Gaussian density has the form
-\begin{equation}
-p(\mbf{x}) \propto \exp\left( -\frac{1}{2} (\mbf{x} - \mbs{\mu})^T \mbs{\Sigma}^{-1} (\mbf{x} - \mbs{\mu}) \right) = \exp\left( -\frac{1}{2} || \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma} \right).
-\end{equation}
-After taking the negative logarithm, we will only need the $|| \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma}$ part, which forms a term in the negative-log likelihood cost that we are seeking to minimize; we will often then label our factors on our factor graphs using this cost term for simplicity.  We may also sometimes write $p(\mbf{x}) \sim \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$ as a shorthand for Gaussian densities.
-
-In general, we can use the following relationship to carry out elimination when all the factors are Gaussian:
-\begin{multline}\label{eq:gausselim}
-\underbrace{\left\| \bbm \mbf{x} \\ \mbf{s} \ebm - \bbm \mbs{\mu}_x \\ \mbs{\mu}_s \ebm \right\|^2_{\bbm \mbs{\Sigma}_{xx} & \mbs{\Sigma}_{xs} \\ \mbs{\Sigma}_{sx} & \mbs{\Sigma}_{ss} \ebm} }_{-\log p(\mbf{x}, \mbf{s})} \\ = \underbrace{|| \mbf{x} - \mbs{\mu}_x - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} (\mbf{s} - \mbs{\mu}_s) ||^2_{\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}}}_{-\log p(\mbf{x} | \mbf{s})} + \underbrace{|| \mbf{s} - \mbs{\mu}_s ||^2_{\mbs{\Sigma}_{ss}}}_{-\log p(\mbf{s})}. \\
-\end{multline}
-Here $\mbf{x}$ is the state to be eliminated and $\mbf{s}$ is the separator state.  The term on the left is the (negative log of the) {\em product factor} in a standardized form.  The second term is the (negative log of the) {\em conditional density} and the third term is the (negative log of the) {\em residual factor} on the separator.  This expression can be used to carry out any Gaussian elimination, including grouped-state elimination. 
-
-\begin{figure}[t]
-     \includegraphics[width=\textwidth]{gausselim.pdf}
-     \caption{With Gaussian factors, eliminating $\mbf{x}$ results in a new Gaussian factor and a Gaussian conditional density for $\mbf{x}$.  This is a specific example of the general Gaussian elimination formula in~\eqref{eq:gausselim}.}
-     \label{fig:gausselim}
-\end{figure}
-
-For example, consider the situation on the left of Figure~\ref{fig:gausselim}; we have $\mbf{x}$ linked to two other variables via Gaussian factors (i.e., $\mbf{x}$'s separator).  When we eliminate $\mbf{x}$, this results in the situation on the right, with a new binary factor between the separator variables as well as a Gaussian conditional density for $\mbf{x}$.  Note, we assume that $\mbf{u}_1$ depends on $\mbf{x}_1$ and $\mbf{u}_2$ depends on $\mbf{x}_2$, typically linearly, but the elimination procedure still works if $\mbf{x}$ has a binary factor on one side and a unary factor on the other. 
-
-% The Gaussian elimination in Figure~\ref{fig:gausselim} follows from the very handy sum-of-squares identity,
-% \begin{equation}\label{eq:sumofsquares}
-% || \mbf{u}_1 - \mbf{A}_1 \mbf{x} ||^2_{\mbf{Q}_1} + || \mbf{u}_2 - \mbf{A}_2 \mbf{x} ||^2_{\mbf{Q}_2}  = || \mbf{A}_1^{-1} \mbf{u}_1 - \mbf{A}_2^{-1} \mbf{u}_2 ||^2_{\mbf{Q}_{12}} + || \mbf{x} - \mbs{\mu}||^2_\mbs{\Sigma},
-% \end{equation}
-% where $\mbf{Q}_{12}$, $\mbs{\Sigma}$, $\mbs{\mu}$,  are defined in Figure~\ref{fig:gausselim} and $\mbf{A}_1$ and $\mbf{A}_2$ are for now assumed invertible.  We will use this closed-form Gaussian elimination time and again in what follows.  
+In this chapter, we show how to carry out so-called {\em continuous-time} estimation.  What we really mean by this is that we have some measurements at some times that we should use to estimate the trajectory at some (possibly distinct) query times. Figure~\ref{fig:ctfg} shows the situation in which we are interested, with a single query time.  We will focus on how to implement this in a factor-graph framework; however, we will show the idea is identical to \ac{GP} regression in the next chapter.
 
 \begin{figure}[b]
      \centering
-     \includegraphics[width=0.8\textwidth]{gaussfusion.pdf}
-     \caption{We can fuse multiple Gaussian factors into a single one in order to declutter our factor graph.}
-     \label{fig:gaussfusion}
+     \includegraphics[width=0.95\textwidth]{ctfg.pdf}
+     \caption{A continuous-time estimation problem with measurements at discrete times and a single query time.  We refer to this as `continuous-time' because the query(s) could be at any time along the trajectory.}
+     \label{fig:ctfg}
 \end{figure}
 
-Another operation that we will perform frequently with Gaussian factors is fusion.  By this we mean lumping together multiple factors into a single one as depicted in Figure~\ref{fig:gaussfusion} for unary factors.  In fact, it is a well-known result that we can fuse an arbitrary number of Gaussians in this way, allowing us to declutter our factor graph.
-
-We are now prepared to discuss classic discrete-time estimation from a factor-graph perspective.
-
-\section{Linear Discrete-Time Estimation}
-\label{sec:ldte}
-
-Classic discrete-time state estimation has a chain-like factor graph as depicted in Figure~\ref{fig:dtfg1}.  There is a unary initial-condition factor capturing what we know about the state at the initial time, binary motion-model factors predicting how the system moves from one discrete time to the next, and unary measurement factors that tell us something about the state at each discrete time. 
-
-% \begin{figure}[b]
-%      \centering
-%      \includegraphics[width=0.95\textwidth]{dtfg.pdf}
-%      \caption{Factor graph for classic discrete-time filtering/smoothing estimators.}
-%      \label{fig:dtfg}
-% \end{figure}
-
-For example, we might have a stochastic linear system of the form
-\beqn{linsys}
-\mbf{x}_k & = & \mbf{A}_{k,k-1} \mbf{x}_{k-1} + \mbf{v}_{k,k-1} + \mbf{w}_{k,k-1},  \\
-\mbf{y}_k & = & \mbf{C}_k \mbf{x}_k + \mbf{n}_k,
-\eeqn
-where $k \in 0 \ldots K$ is the discrete-time index, $\mbf{x}_k$ is the state, $\mbf{v}_{k,k-1}$ is an input/command, $\mbf{y}_k$ is an output/measurement, $\mbf{w}_{k,k-1} \sim \mathcal{N}(\mbf{0}, \mbf{Q}_{k,k-1})$ is Gaussian process noise, and $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k)$ is Gaussian measurement noise.  We additionally assume that at $k=0$ the initial condition is drawn from a Gaussian, $\mbf{x}_0 \sim \mathcal{N}\left(\pri{\mbf{x}}_0, \pri{\mbf{P}}_0\right)$.  In this case, we can populate our factor graph as in Figure~\ref{fig:dtfg2}, where all of the factors are now Gaussian.  
+We will see that we can recycle what we learned in the previous chapter for discrete-time estimation when approaching the continuous-time problem in Figure~\ref{fig:ctfg}.  In a nutshell, we can break the problem down into two main steps:
+\begin{enumerate}
+\item {\em main solve}: solve for the states at the measurement times
+\item {\em interpolation}: solve for the states at the query times
+\end{enumerate}
+The key to this decomposition is to again use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}.  The remaining factor graph is now identical in structure to the one treated in the previous chapter; we can therefore solve at the measurement times and then the query time.  Importantly, the main solve step is completely agnostic to the query times, meaning we can select as many query times as we like after the main solve. The next two sections work through the details.
 
 \begin{figure}[t]
      \centering
-     \includegraphics[width=\textwidth]{dtfg2.pdf}
-     \caption{Populated factor graph for the discrete-time estimation of the linear system in~\eqref{eq:linsys}.}
-     \label{fig:dtfg2}
+     \includegraphics[width=0.95\textwidth]{ctfg2.pdf}
+     \caption{The same factor graph as Figure~\ref{fig:ctfg} with the state at the query time, $\mbf{x}_\tau$, eliminated.}
+     \label{fig:ctfg2}
 \end{figure}
 
-An important point to make when looking at Figure~\ref{fig:dtfg2} is that the factor graph has a lot of structure in the form of sparsity.  Not all nodes are connected to all other nodes; rather, each node is connected only to its temporal neighbours.  This sparsity arises because $\mbf{x}$ is a {\em Markovian} state for~\eqref{eq:linsys}.  In other words, it captures everything we need to know to predict the next state of the system.  
+\section{Main Solve}
 
-Our state-estimation problem is now to use the initial-state knowledge, $\pri{\mbf{x}}_0$, the inputs, $\mbf{v}_{k,k-1}$, and the measurements, $\mbf{y}_k$, to work out the likelihood of $\mbf{x}$ taking on all possible values.   This can be done exactly for this linear-Gaussian system; later for nonlinear systems we will require some approximations.  We will show that by using a combination of the Gaussian elimination and fusion operations from Section~\ref{sec:fgelimfus}, we can recover the classic \ac{RTS} smoother, the forward pass of which is the famous \ac{KF}.
+The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  This is precisely the problem discussed in the previous chapter and so we already know how to carry this out.  However, we would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated during the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
 
-Looking to Figure~\ref{fig:dtfg2}, our estimation game plan will be to first fuse the two unary factors on $\mbf{x}_0$, then eliminate $\mbf{x}_0$, then repeat this process with $\mbf{x}_1$ and so on until we arrive at $\mbf{x}_K$.  The result of this forward pass will be a Bayes net.  After this we will carry out a backward pass to work out the posterior densities for $\mbf{x}_K$ all the way back to $\mbf{x}_0$.
-
-\begin{figure}[p]
-     \centering
-     \includegraphics[width=\textwidth]{dtfg3.pdf}
-     \caption{Result after fusing the two unary factors on $\mbf{x}_0$ in Figure~\ref{fig:dtfg2}.}
-     \label{fig:dtfg3}
-\end{figure}
-\begin{figure}[p]
-     \centering
-     \includegraphics[width=\textwidth]{dtfg4.pdf}
-     \caption{Result after eliminating $\mbf{x}_0$ from the factor graph in Figure~\ref{fig:dtfg3}.}
-     \label{fig:dtfg4}
-\end{figure}
-\begin{figure}[p]
-     \centering
-     \hspace*{0.5in}\includegraphics[width=0.87\textwidth]{dtfg5.pdf}
-     \caption{Result after fusing the two unary factors on $\mbf{x}_1$ in Figure~\ref{fig:dtfg4} and then also eliminating $\mbf{x}_1$.}
-     \label{fig:dtfg5}
-\end{figure}
-
-Figure~\ref{fig:dtfg3} shows the result of fusing the two unary factors on $\mbf{x}_0$ into a single Gaussian factor.  Figure~\ref{fig:dtfg4} then shows the result of eliminating $\mbf{x}_0$ from the factor graph, resulting in a new unary factor on $\mbf{x}_1$ as well as the conditional density for $\mbf{x}_0$.  We now notice that the remaining factor graph looks identical to the one we started with, only shifted forward by one time step.  Figure~\ref{fig:dtfg5} shows what happens after another round of fusing the unary factors on $\mbf{x}_1$ then eliminating $\mbf{x}_1$.  If we keep applying this same procedure all the way to time step $K$, our factor graph is completely eliminated and we are left with the Bayes net in Figure~\ref{fig:dtfg6}.  We can then work backward from $\mbf{x}_K$ back to $\mbf{x}_0$ using the conditional densities to compute the posterior densities for each state.
-
-\begin{figure}[t]
-     \centering
-     \includegraphics[width=0.85\textwidth]{dtfg6.pdf}
-     \caption{After eliminating all the variables in a forward pass, we are left with a Bayes net.  We can then carry out a backward pass to calculate the posterior densities on all the variables.}
-     \label{fig:dtfg6}
-\end{figure}
-
-After some algebraic manipulations, it can be shown that this procedure is identical to the classic \ac{RTS} smoother, consisting of the same forward and backward passes:
-\begin{subequations}
-\label{eq:rts}
-\begin{eqnarray}
-\mbox{forward:} \quad\;\;\; & & \nonumber \\
-\mbox{($k=1\ldots K$)} \; & & \nonumber \\
-\pri{\mbf{P}}_{k,f} & = & \mbf{A}_{k,k-1} \est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T + \mbf{Q}_{k,k-1}, \\
-\pri{\mbf{x}}_{k,f} & = & \mbf{A}_{k,k-1} \est{\mbf{x}}_{k-1,f} + \mbf{v}_{k,k-1}, \\
-\mbf{K}_k & = & \pri{\mbf{P}}_{k,f} \mbf{C}_k^T \left( \mbf{C}_k \pri{\mbf{P}}_{k,f} \mbf{C}_k^T + \mbf{R}_k \right)^{-1}, \\
-\est{\mbf{P}}_{k,f} & = & \left( \mbf{1} - \mbf{K}_k \mbf{C}_k \right) \pri{\mbf{P}}_{k,f}, \\
-\est{\mbf{x}}_{k,f} & = & \pri{\mbf{x}}_{k,f} + \mbf{K}_k \left( \mbf{y}_k - \mbf{C}_k \pri{\mbf{x}}_{k,f} \right), \\
-\mbox{backward:}\quad & & \nonumber \\
-\mbox{($k=K\ldots 1$)} \; & & \nonumber \\
-\est{\mbf{x}}_{k-1} & = & \est{\mbf{x}}_{k-1,f} + \left(\est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T \pri{\mbf{P}}_{k,f}^{-1} \right)\left( \est{\mbf{x}}_k - \pri{\mbf{x}}_{k,f} \right), \qquad\quad \\
-\est{\mbf{P}}_{k-1} & = & \est{\mbf{P}}_{k-1,f} + \left( \est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T \pri{\mbf{P}}_{k,f}^{-1}\right) \left( \est{\mbf{P}}_k - \pri{\mbf{P}}_{k,f} \right) \nonumber \\  &  & \qquad\qquad\qquad\quad \times \; \left( \est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T \pri{\mbf{P}}_{k,f}^{-1}\right)^T \label{eq:rtsbackcov3}, 
-\end{eqnarray}
-\end{subequations}
-which are initialized with 
-\begin{subequations}
-\begin{eqnarray}
-\est{\mbf{P}}_{0,f} & = & ( \mbf{1} - \mbf{K}_0 \mbf{C}_0 ) \pri{\mbf{P}}_0, \\
-\est{\mbf{x}}_{0,f} & = & \pri{\mbf{x}}_0 + \mbf{K}_0 ( \mbf{y}_0 - \mbf{C}_0 \pri{\mbf{x}}_0), \\
-\est{\mbf{x}}_K & = & \est{\mbf{x}}_{K,f}, \\
-\est{\mbf{P}}_K & = & \est{\mbf{P}}_{K,f},
-\end{eqnarray}
-\end{subequations}
-and $\mbf{K}_0 = \pri{\mbf{P}}_{0} \mbf{C}_0^T \left( \mbf{C}_0 \pri{\mbf{P}}_{0} \mbf{C}_0^T + \mbf{R}_0 \right)^{-1}$.  We will also be interested in computing the cross-covariance between two consecutive states, which is given by
-\begin{equation}
-\est{\mbf{P}}_{k,k-1} = \est{\mbf{P}}_{k} \left( \est{\mbf{P}}_{k-1,f} \mbf{A}_{k,k-1}^T \pri{\mbf{P}}_{k,f}^{-1}\right)^T
+We previously had a discrete-time motion model, but now we will start with a generic continuous-time one:
+\begin{equation}\label{eq:linsysct}
+\dot{\mbs{x}}(t) = \mbs{A} \mbs{x}(t) + \mbs{v}(t) + \mbs{L} \mbs{w}(t),
 \end{equation}
-and can be calculated during the backward pass.  The computational complexity of the \ac{RTS} smoother is $O(K)$, in other words, linear in the length of the trajecotry.
+where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \delta(t-t^\prime))$ a white-noise process.  For example if we choose the coefficient matrices to be $\mbs{A} = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm$ and $\mbs{L} = \bbm \mbf{0} \\ \mbf{I} \ebm$ and set the inputs to zero, $\mbs{v}(t) = \mbf{0}$, then our state represents position and velocity, $\mbs{x}(t) = \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm$, and our motion model becomes {\em \ac{WNOA}}:
+\begin{equation}
+\bbm \dot{\mbs{p}}(t) \\ \ddot{\mbs{p}}(t) \ebm = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm + \bbm \mbf{0} \\ \mbf{I} \ebm \mbs{w}(t) \quad \Rightarrow \quad \ddot{\mbs{p}}(t) = \mbs{w}(t).
+\end{equation}
+For now we will work with~\eqref{eq:linsysct} due to its generality, but our examples will often use the specific case of \ac{WNOA}.
 
-The forward pass is the very famous \acf{KF}, which we now understand from a factor-graph perspective.  The $p(\mbf{x}_k | \mbf{v}_{0:k}, \mbf{y}_{0:k}) = \mathcal{N}\left(\est{\mbf{x}}_{k,f}, \est{\mbf{P}}_{k,f} \right)$ quantities can be referred to as {\em filtered} (accounting only for up-to-the-present measurements) while the $p(\mbf{x}_k | \mbf{v}_{0:K}, \mbf{y}_{0:K}) = \mathcal{N}\left( \est{\mbf{x}}_k, \est{\mbf{P}}_k \right)$ quantities are {\em smoothed} (accounting for all measurements: past, present, and future); see Figure~\ref{fig:filtersmoother}.
-
-\begin{figure}[t]
-     \centering
-     \includegraphics[width=0.95\textwidth]{filtersmoother.pdf}
-     \caption{Contrasting filtering vs. smoothing.  We are primarily interested in smoothing in this article.}
-     \label{fig:filtersmoother}
-\end{figure}
-
-It turns out that this discrete-time estimation setup is completely compatible with extending our results to continuous time, we just need to fill in the details of~\eqref{eq:linsys} in the right way.  This will be the subject of the next chapter.
-
-
+We know from Sections~\ref{sec:fgelimfus} and~\ref{sec:ldte} and that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
+\begin{multline}
+     \phi(\mbf{x}_k, \mbf{x}_{k-1}) = -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ \propto || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
+\end{multline}
+To fill in the details, we need to (stochastically) integrate the motion model in~\eqref{eq:linsysct} over the time interval, $[t_{k-1}, t_{k}]$.  It can be shown that the solution to this \ac{SDE} is given by
+\begin{equation}
+p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) = \mathcal{N}\left(\mbf{A}_{k,k-1} \mbf{x}_{k-1} + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1} \right),
+\end{equation}
+where
+\beqn{}
+\mbf{v}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{v}(s) \, ds,   \\
+\mbf{Q}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{L} \mbs{Q} \mbs{L}^T \exp\left( \mbs{A} (t_{k} - s)\right)^T \, ds,  \quad\;\;\;   \\
+\mbf{A}_{k,k-1} & = &  \exp\left( \mbs{A} \, t_{k,k-1} \right),
+\eeqn
+with $t_{k,k-1} = t_{k} - t_{k-1}$.  We can often simplify these expressions for particular choices of $\mbs{A}$, $\mbs{L}$, and $\mbs{v}(t)$; for example, for \ac{WNOA} we have $\mbf{v}_{k,k-1} = \mbf{0}$ and
+\begin{equation}
+\mbf{Q}_{k,k-1} = \bbm \frac{1}{3}  t_{k,k-1}^3 \mbs{Q} & \frac{1}{2} t_{k,k-1}^2 \mbs{Q} \\  \frac{1}{2} t_{k,k-1}^2 \mbs{Q} &  t_{k,k-1} \mbs{Q} \ebm, \;\; \mbf{A}_{k,k-1} = \bbm \mbf{I} &  t_{k,k-1} \mbf{I} \\ \mbf{0} & \mbf{I} \ebm,
+\end{equation}
+This is everything we need to populate the motion-model factors in Figure~\ref{fig:dtfg2}.  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  

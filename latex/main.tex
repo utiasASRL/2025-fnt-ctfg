@@ -58,6 +58,7 @@
 \newcommand{\eg}{\emph{e.g.}}
 \newcommand{\etc}{\emph{etc}}
 \newcommand{\now}{\textsc{now}}
+\newcommand{\alert}[1]{\textcolor{red}{#1}}
 
 %ARTICLE TITLE
 \title{Smoothing Out the Edges: Continuous-Time Estimation with Gaussian Process Motion Priors on Factor Graphs}
@@ -141,6 +142,9 @@ University of Toronto
 \acrodef{LTV}{linear time-varying}
 \acrodef{LTI}{linear time-invariant}
 \acrodef{GTSAM}{Georgia Tech Smoothing and Mapping}
+\acrodef{lidar}[LiDAR]{light detection and ranging}
+\acrodef{radar}[RADAR]{radio detection and ranging}
+
 
 
 
@@ -156,7 +160,7 @@ Continuous-time state estimation is gaining in popularity due to its abilities t
 \input{chap1} 
 \input{chap2}
 \input{chap3}
-\input{chap4}
+% \input{chap4}
 \input{chap5}
 \input{chap6}
 \input{chap7}
@@ -167,6 +171,9 @@ Continuous-time state estimation is gaining in popularity due to its abilities t
 
 %BACKMATTER SEE DOCUMENTATION
 \backmatter  % references, restarts sample
+
+\input{factor_graph_bg}
+\input{ct_regression_bg}
 
 \chapter{Appendix III: Code API}
 

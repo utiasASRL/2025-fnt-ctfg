@@ -1,70 +1,17 @@
 %!TEX root =  main.tex
 
-\chapter{Continuous-Time Linear Systems}
-\label{chap:ctls}
+\chapter{The GP Advantage: Querying}
+\alert{title needs work}
 
-In this chapter, we show how to carry out so-called {\em continuous-time} estimation.  What we really mean by this is that we have some measurements at some times that we should use to estimate the trajectory at some (possibly distinct) query times. Figure~\ref{fig:ctfg} shows the situation in which we are interested, with a single query time.  We will focus on how to implement this in a factor-graph framework; however, we will show the idea is identical to \ac{GP} regression in the next chapter.
+An inherent limitation of classical discrete-time optimization problems in robotics is that each state that is of interest must be \emph{explicitly} represented by optimization variables. In state estimation, this can lead to considerable increase in the size of the problem, especially when dealing with data from many unsynchronized, high-rate sensors such as \ac{lidar}, \ac{radar}, and rolling shutter cameras~\cite{talbot_tro25}. This can also complicate downstream controls tasks, which often require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\cite{mukadamContinuoustimeGaussianProcess2018}.
 
-\begin{figure}[b]
-     \centering
-     \includegraphics[width=0.95\textwidth]{ctfg.pdf}
-     \caption{A continuous-time estimation problem with measurements at discrete times and a single query time.  We refer to this as `continuous-time' because the query(s) could be at any time along the trajectory.}
-     \label{fig:ctfg}
-\end{figure}
+In this section, we expand on the main advantage of using \ac{GP} continuous-time estimation: it allows us to \emph{query} states (and their uncertainty) that do not explicitly appear in the main solve of the optimization problem. This is made possible by efficient \ac{GP}-interpolation machinery, which is typically leveraged in two ways:
 
-We will see that we can recycle what we learned in the previous chapter for discrete-time estimation when approaching the continuous-time problem in Figure~\ref{fig:ctfg}.  In a nutshell, we can break the problem down into two main steps:
-\begin{enumerate}
-\item {\em main solve}: solve for the states at the measurement times
-\item {\em interpolation}: solve for the states at the query times
-\end{enumerate}
-The key to this decomposition is to again use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}.  The remaining factor graph is now identical in structure to the one treated in the previous chapter; we can therefore solve at the measurement times and then the query time.  Importantly, the main solve step is completely agnostic to the query times, meaning we can select as many query times as we like after the main solve. The next two sections work through the details.
+\paragraph{After-Main-Solve Querying:} We can query the estimated trajectory \emph{a posteriori} at \emph{any} time of interest once the main optimization problem has been solved. In this case, the main optimization need not solve the estimation at the exact times required for downstream tasks like control or motion planning.
 
-\begin{figure}[t]
-     \centering
-     \includegraphics[width=0.95\textwidth]{ctfg2.pdf}
-     \caption{The same factor graph as Figure~\ref{fig:ctfg} with the state at the query time, $\mbf{x}_\tau$, eliminated.}
-     \label{fig:ctfg2}
-\end{figure}
+\paragraph{During-Main-Solve Querying:} We can include the \emph{effect} of certain measurements without needing to explicitly define a state variable at the associated measurement time. Instead, we use \ac{GP} interpolation to reformulate the associated measurement cost terms as a function of the neighbouring states that \emph{are} included in the optimization problem. This technique offers a principled alternative to the approximations that are typically required to incorporate high-rate or asynchronous sensor data into estimation problems.
 
-\section{Main Solve}
-
-The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  This is precisely the problem discussed in the previous chapter and so we already know how to carry this out.  However, we would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated during the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
-
-We previously had a discrete-time motion model, but now we will start with a generic continuous-time one:
-\begin{equation}\label{eq:linsysct}
-\dot{\mbs{x}}(t) = \mbs{A} \mbs{x}(t) + \mbs{v}(t) + \mbs{L} \mbs{w}(t),
-\end{equation}
-where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \delta(t-t^\prime))$ a white-noise process.  For example if we choose the coefficient matrices to be $\mbs{A} = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm$ and $\mbs{L} = \bbm \mbf{0} \\ \mbf{I} \ebm$ and set the inputs to zero, $\mbs{v}(t) = \mbf{0}$, then our state represents position and velocity, $\mbs{x}(t) = \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm$, and our motion model becomes {\em \ac{WNOA}}:
-\begin{equation}
-\bbm \dot{\mbs{p}}(t) \\ \ddot{\mbs{p}}(t) \ebm = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm + \bbm \mbf{0} \\ \mbf{I} \ebm \mbs{w}(t) \quad \Rightarrow \quad \ddot{\mbs{p}}(t) = \mbs{w}(t).
-\end{equation}
-For now we will work with~\eqref{eq:linsysct} due to its generality, but our examples will often use the specific case of \ac{WNOA}.
-
-We know from Sections~\ref{sec:fgelimfus} and~\ref{sec:ldte} and that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
-\begin{multline}
-     \phi(\mbf{x}_k, \mbf{x}_{k-1}) = -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ \propto || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
-\end{multline}
-To fill in the details, we need to (stochastically) integrate the motion model in~\eqref{eq:linsysct} over the time interval, $[t_{k-1}, t_{k}]$.  It can be shown that the solution to this \ac{SDE} is given by
-\begin{equation}
-p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) = \mathcal{N}\left(\mbf{A}_{k,k-1} \mbf{x}_{k-1} + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1} \right),
-\end{equation}
-where
-\beqn{}
-\mbf{v}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{v}(s) \, ds,   \\
-\mbf{Q}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{L} \mbs{Q} \mbs{L}^T \exp\left( \mbs{A} (t_{k} - s)\right)^T \, ds,  \quad\;\;\;   \\
-\mbf{A}_{k,k-1} & = &  \exp\left( \mbs{A} \, t_{k,k-1} \right),
-\eeqn
-with $t_{k,k-1} = t_{k} - t_{k-1}$.  We can often simplify these expressions for particular choices of $\mbs{A}$, $\mbs{L}$, and $\mbs{v}(t)$; for example, for \ac{WNOA} we have $\mbf{v}_{k,k-1} = \mbf{0}$ and
-\begin{equation}
-\mbf{Q}_{k,k-1} = \bbm \frac{1}{3}  t_{k,k-1}^3 \mbs{Q} & \frac{1}{2} t_{k,k-1}^2 \mbs{Q} \\  \frac{1}{2} t_{k,k-1}^2 \mbs{Q} &  t_{k,k-1} \mbs{Q} \ebm, \;\; \mbf{A}_{k,k-1} = \bbm \mbf{I} &  t_{k,k-1} \mbf{I} \\ \mbf{0} & \mbf{I} \ebm,
-\end{equation}
-This is everything we need to populate the motion-model factors in Figure~\ref{fig:dtfg2}.  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  
-
-The next two sections discuss querying the trajectory at times other than the measurements times.  There are two use cases for this:
-\begin{itemize}
-     \item {\em After-Main-Solve Querying:} This use case involves querying the trajectory at times of interest after the main optimization problem has been solved.  These times {\em do not} have measurements associated with them.
-     \item {\em During-Main-Solve Querying:} This use case involves querying the trajectory at times of interest during the main optimization problem.  These times {\em do} have measurements associated with them, and we may want to eliminate these states from the main solve to reduce the size of the main optimization problem.
-\end{itemize}
+The next two sections show how these two forms of querying can be carried out in the context of linear continuous-time estimation. For didactic purposes, we first investigate the simpler case of querying after the main solve has completed, before proceeding to during-main-solve querying.
 
 \section{After-Main-Solve Querying}\label{sec:linafterquery}
 
