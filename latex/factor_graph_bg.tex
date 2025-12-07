@@ -1,36 +1,10 @@
 %!TEX root =  main.tex
 
-\chapter{Factor Graph Background}\label{chap:fg}
-In this chapter, we will first introduce factor graphs as a general tool for formulating estimation problems.  Following this, we will work through the specific example of classic discrete-time filtering/smoothing.  We will later show that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction to factor graphs, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
+\section{Additional Factor Graph Background}\label{chap:add-fg-bg}
 
-\section{Factor Graphs}
-\label{sec:fg}
+In Section~\ref{sec:brief-fg}, we introduced the basic concept of a factor graph. In this chapter, provide additional details about how a factor graph can be used to efficiently solve state estimation problems. Following this, we will work through the specific example of classic discrete-time filtering/smoothing. Although this section can be safely skipped by readers that are already familiar with factor graphs, it sets the stage for Chapter~\ref{chap:ctls}, which shows that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction to factor graphs, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
 
-Typically in state estimation, we are interested in computing a posterior density representing the likelihood of a state given some inputs and measurements of the form
-\begin{equation}
-p(\mbf{x} | \mbf{v}, \mbf{y}),
-\end{equation}
-where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ldots, t_K$, $\mbf{v} = (\mbf{v}_0, \ldots, \mbf{v}_K)$ is a set of inputs/commands, and $\mbf{y} = (\mbf{y}_0, \ldots, \mbf{y}_K)$ is a set of measurements.  In most practical scenarios, we can factor this posterior density into a product of factors, each of which depends on only a subset of the variables in the problem.  For example, we might have
-\begin{equation}
-p(\mbf{x} | \mbf{v}, \mbf{y}) \propto \underbrace{p(\mbf{x}_0)}_{\phi(\mbf{x}_0)} \prod_{k=1}^K \underbrace{p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi(\mbf{x}_{k-1},\mbf{x}_k)} \prod_{k=0}^K \underbrace{p(\mbf{y}_k | \mbf{x}_k)}_{\varphi(\mbf{x}_k)}.
-\end{equation}
-where each $\phi(\cdot)$, is a {\em factor} of the posterior density.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
-
-The normalization constant associated with this factorization is typically expensive to compute so we often satisfy ourselves with finding the $\mbf{x}$ that maximizes the posterior density, or equivalently the $\mbf{x}$ that minimizes the negative log-likelihood cost:
-\begin{equation}\label{eq:cost}
-\mathcal{C}(\mbf{x}) = -\log \phi(\mbf{x}_0) - \sum_{k=1}^K \log \phi(\mbf{x}_k, \mbf{x}_{k-1}) - \sum_{k=0}^K \log \varphi(\mbf{x}_k).
-\end{equation}
-This is a common approach in estimation, referred to as {\em \ac{MAP}} estimation.
-
-\begin{figure}[t]
-     \includegraphics[width=\textwidth]{dtfg1.pdf}
-     \caption{A simple factor graph for a classic estimation problem.  The unary factor on $\mbf{x}_0$ represents the prior knowledge about the initial state, the binary factors represent the motion model, and the remaining unary factors represent the measurements.  In practice, we can have much more complicated factor graphs with loops.}
-     \label{fig:dtfg1}
-\end{figure}
-
-We can visually understand the factors by assembling them into a {\em factor graph}, which is a bipartite graph with two types of nodes: variable nodes and factor nodes.  The variable nodes represent the variables in the problem, such as $\mbf{x}_0, \ldots, \mbf{x}_K$, and the factor nodes represent the factors, such as $\phi(\mbf{x}_0)$, $\phi(\mbf{x}_{k-1},\mbf{x}_k)$, and $\varphi(\mbf{x}_k)$.  The edges connect variable nodes to factor nodes, indicating which variables are involved in each factor.  This graphical representation allows us to see the dependencies between variables and factors in a very intuitive way.  Figure~\ref{fig:dtfg1} shows a simple factor graph for a classic discrete-time estimation problem.
-
-\section{The Elimination Algorithm}
+\subsection{The Elimination Algorithm}\label{sec:elim-algo}
 
 While it is possible to minimize the cost function in~\eqref{eq:cost} directly using matrix algebra, we here lean into the factor-graph representation and present the general {\em elimination algorithm}, an equivalent way to solve the minimization problem.  The key idea is to eliminate one variable at a time, updating the factors accordingly.  Once we have eliminated all variables, our factor graph has been transformed into another graph called a {\em Bayes net}; there is then a simple procedure to compute the desired posterior density from the Bayes net.
 
@@ -61,7 +35,7 @@ The key to this last factorization is that $\phi(\mbf{s})$ has no dependence on 
 
 The elimination algorithm is quite powerful in that it can be applied to any factor graph.  However, it is particularly useful for problems with a lot of structure, such as those arising in robotics, as we can exploit the sparsity of the factor graph in the various operations.  Here, we will only need to work with factors and densities that are Gaussian, and we use the next section to show that the elimination algorithm can be carried out in closed form when the factors are Gaussian.  This will allow us to carry out estimation efficiently and effectively.
 
-\section{Gaussian Factors, Elimination, Fusion}
+\subsection{Gaussian Factors, Elimination, Fusion}
 \label{sec:fgelimfus}
 
 Now that we understand factor graphs and the general strategy for carrying out estimation, we show that when our factors are Gaussian we can carry out elimination in closed form.  We know that a Gaussian density has the form
@@ -101,7 +75,7 @@ Another operation that we will perform frequently with Gaussian factors is fusio
 
 We are now prepared to discuss classic discrete-time estimation from a factor-graph perspective.
 
-\section{Linear Discrete-Time Estimation}
+\subsection{Linear Discrete-Time Estimation}
 \label{sec:ldte}
 
 Classic discrete-time state estimation has a chain-like factor graph as depicted in Figure~\ref{fig:dtfg1}.  There is a unary initial-condition factor capturing what we know about the state at the initial time, binary motion-model factors predicting how the system moves from one discrete time to the next, and unary measurement factors that tell us something about the state at each discrete time. 
@@ -202,6 +176,6 @@ The forward pass is the very famous \acf{KF}, which we now understand from a fac
      \label{fig:filtersmoother}
 \end{figure}
 
-It turns out that this discrete-time estimation setup is completely compatible with extending our results to continuous time, we just need to fill in the details of~\eqref{eq:linsys} in the right way.  This will be the subject of the next chapter.
+It turns out that this discrete-time estimation setup is completely compatible with extending our results to continuous time, we just need to fill in the details of~\eqref{eq:linsys} in the right way.  This is the subject of Chapter~\ref{chap:ctls}.
 
 

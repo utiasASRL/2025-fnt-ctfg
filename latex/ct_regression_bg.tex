@@ -1,10 +1,10 @@
 %!TEX root =  main.tex
 
-\chapter{Connection to Gaussian-Process Regression}
+\section{Connection to Gaussian-Process Regression}\label{sec:gp-regression}
 
 \ac{GP} regression is a popular method for function approximation that fits with the Bayesian estimation paradigm \citep{rasmussen06}.  In this chapter, we will show that the continuous-time estimation framework we have developed in the previous chapter is identical to \ac{GP} regression.  This means that the factor-graph framework we have developed is also a powerful tool for \ac{GP} regression (with our particular choice of kernels).  We primarily follow \citet{barfoot_ser24} in this chapter.
 
-\section{Brief Derivation of GP Regression}
+\subsection{Brief Derivation of GP Regression}
 
 In general, we can consider systems with a continuous-time \ac{GP} prior and a discrete-time, linear measurement model:
 \beqn{}
@@ -66,7 +66,7 @@ This is linear interpolation in the state variable (but not necessarily in time)
 
 In general, this \index{Gaussian process} \ac{GP} approach has complexity $O(K^3 + K^2J)$ since the initial solve is $O(K^3)$ (for an arbitrary kernel function such as squared exponential) and the query is $O(K^2J)$; this is quite expensive, and next we will seek to improve the cost by designing a special kernel function.
 
-\section{Exactly Sparse Kernels}
+\subsection{Exactly Sparse Kernels}
 
 Looking at~\eqref{eq:gpgnlin}, we see that the {\em inverse kernel matrix}, $\pri{\mbf{P}}^{-1}$, appears on the left-hand side.  Naively choosing a \ac{GP} kernel function could result in this matrix being dense and therefore the solution expensive.  Instead, we will select our kernel function carefully so that the inverse kernel matrix is {\em exactly sparse}.
 
@@ -136,7 +136,7 @@ Or, breaking it down by time steps,
 \end{multline}
 Each of these terms accounts for exactly one factor in Figure~\ref{fig:dtfg2}.  Therefore, solving at the measurement times is equivalent to our earlier factor-graph formulation for the main solve.
 
-\section{Querying is $O(1)$}
+\subsection{Querying is $O(1)$}
 
 Next, we will show that querying the trajectory at any time $\tau$ is an $O(1)$ operation.  To do this, we will use the interpolation equations~\eqref{eq:gpinterp}, where we notice that the product $\pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}$ plays a critical role.  To simplify matters, let us assume that we have only a single query time, $t_{k-1} < \tau < t_k$.  Then we can show that
 \begin{multline}
