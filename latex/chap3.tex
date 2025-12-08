@@ -1,19 +1,18 @@
 %!TEX root =  main.tex
 
 \chapter{Interpolation During the Solve}
-\alert{title needs work}
-
-Discrete-time state estimation often runs into trouble when dealing with measurement data from many unsynchronized, high-rate sensors (\eg, \ac{lidar}, \ac{radar}, \ac{imu} and rolling shutter cameras). The naive approach of defining a state for every piece of measurement data is untenable in practice due to the size of the resulting optimization problem. Methods to aggregate measurement data across time can lead to tractable problems, but also introduce motion distortion errors~\cite{talbot_tro25}. 
+%Formerly During-the-solve Querying
+Discrete-time state estimation often runs into trouble when dealing with measurement data from many unsynchronized, high-rate sensors (\eg, \ac{lidar}, \ac{radar}, \ac{imu} and rolling shutter cameras). The naive approach of defining a state for every measurement is untenable in practice due to the size of the resulting optimization problem. Methods to aggregate measurement data across time can lead to tractable problems, but also introduce motion distortion errors~\cite{talbot_tro25}. 
 On the other hand, continuous-time estimation offers a principled alternative to the approximations that are typically required to aggregate high-rate sensor data. 
 
 In this chapter, we show that continuous-time estimation can be used to include the \emph{effect} of measurements without needing to explicitly define a state variable at their associated measurement times. Instead, we can use \ac{GP} interpolation to reformulate the associated measurement cost terms as a function of a \emph{reduced set of states} that are included in the optimization problem. The size of this reduced set then leads to a clear trade-off between the accuracy and compute time.
 
-We will see that the factor graph lens continues to bring clarity to the underlying mechanisms of this approach, as well as shedding new light on approximations that are commonly used in practice. 
+We will see that the factor graph lens continues to bring clarity to the underlying mechanisms of this approach, as well as shedding new light on approximations that are commonly used in practice. As in the previous chapter, the key insight is that interpolation in our setting amounts to adding and subsequently eliminating the interpolated state variables from the factor graph.
 
-\section{Interpolation as Block Elimination}
+\section{Block Interpolation}
 
-The core idea is shown in Figure~\ref{fig:gausselim3} where we consider interpolating a group of states, $\mbf{x}_{\tau_1}, \ldots \mbf{x}_{\tau_N}$, rather than including them directly in the estimation problem. 
-In the previous section, we saw that interpolation of a variable is equivalent to including the variable in the factor graph and subsequently eliminating it. By extension, eliminating of a group of states en masse results in the factor graph in the bottom-left of the figure. The resulting conditional density is expressed over the joint variable $\mbf{x}_{\tau_{1:N}}$, meaning it includes the full covariance between all the eliminated states. If the cross-covariances are not required, we can drop these and only compute individual marginal conditional densities as in the bottom-right of the figure. The measurements associated with the interpolated variables are collected into a single factor between 
+The core idea of this section is shown in Figure~\ref{fig:gausselim3} where we consider interpolating a group of states, $\mbf{x}_{\tau_1}, \ldots, \mbf{x}_{\tau_N}$, to reduce the size of the estimation problem to be solved. 
+In the previous section, we saw that interpolation of a variable is equivalent to including the variable in the factor graph and subsequently eliminating it. By extension, eliminating a group of states en masse leads to the factor graph in the bottom-left of the figure. The measurements associated with the interpolated variables are collected into a single factor connecting the bordering states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$. The resulting conditional density is expressed over the joint variable $\mbf{x}_{\tau_{1:N}}$, meaning it includes the full covariance between all the eliminated states. If the cross-covariances are not required, we can drop these and only compute individual marginal conditional densities as in the bottom-right of the figure. 
 
 \begin{figure}[t]
      \centering
@@ -23,6 +22,7 @@ In the previous section, we saw that interpolation of a variable is equivalent t
 \end{figure}
 
 There are a few use cases we can imagine for this type of grouped-state elimination:
+\alert{do we need to update this??}
 \begin{itemize}
 \item For a linear system, if we can find several places in the trajectory to carry out group-state eliminate, these calculations could potentially be done in parallel and then the main solve would also be much faster as the remaining factor graph would be much smaller.
 
