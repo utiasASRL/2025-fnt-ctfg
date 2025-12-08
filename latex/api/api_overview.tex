@@ -24,6 +24,7 @@ motion prior. All classes and functions reside in the \texttt{gtsam} namespace.
 
 % -----------------------------------------------------------------------------
 \newpage
+\footnotesize
 \subsection*{StateData}
 \label{sec:api-statedata}
 
@@ -411,7 +412,7 @@ the outer estimated states used by the main solve.
 		\item \texttt{interp\_states}: Ordered set of states to interpolate (states at query times).
 		\item \texttt{Q\_psd}: Diagonal PSD vector for the WNOA motion prior.
 		\item \texttt{fixed\_noise\_model}: If true, do not augment the measurement noise model with GP interpolation process noise.
-		\item \texttt{precomp\_interp\_mats}: If true, precompute $\Lambda$/$\Psi$ matrices for each interpolated state.
+		\item \texttt{precomp\_interp\_mats}: If true, precompute $\mbs{\Lambda}$/$\mbs{\Psi}$ matrices for each interpolated state.
 		\item \texttt{small\_angle\_approx}: If true, enable the small-angle approximation in interpolation.
 	\end{itemize}
 \end{description}
