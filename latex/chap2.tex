@@ -4,9 +4,9 @@
 
 An inherent limitation of classical discrete-time optimization problems in robotics is that each state of interest must be \emph{explicitly} represented as a variable. This can lead to complications when downstream robotics tasks, such as motion planning or control, require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\citep{mukadamContinuoustimeGaussianProcess2018}. 
 
-In this chapter, we show how to carry out so-called {\em continuous-time} estimation, which uses measurements at given times to estimate a trajectory at \emph{any} arbitrary query time. We will consider this problem through the lens of \emph{factor graphs} -- a common paradigm in modern state estimation for robotics~\cite{dellaert17}. Crucially, this framework will allow us to build key insights into inner workings of continuous-time estimation and will be critical in the next chapter, where we show how we can leverage continuous-time estimation to tackle asynchronous, high-rate measurement data. 
+In this chapter, we show how to carry out so-called {\em continuous-time} estimation, which uses measurements at given times to estimate a trajectory at \emph{any} arbitrary query time. We will consider this problem through the lens of \emph{factor graphs} -- a common paradigm in modern state estimation for robotics~\citep{dellaert17}. Crucially, this framework will allow us to build key insights into the inner workings of continuous-time estimation and will be critical in the next chapter, where we show how we can leverage continuous-time estimation to tackle asynchronous, high-rate measurement data. 
 
-In the next section, we review the core concepts of factor graphs and then proceed to show how these concepts can be applied to continuous-time estimation in the succeeding sections.
+We first introduce some core concepts of state estimation and factor graphs in the next section. The rest of the chapter will show how factor graphs can be applied to continuous-time estimation in the succeeding sections.
 
 \section{State Estimation and Factor Graphs}
 \label{sec:brief-fg}
@@ -42,26 +42,27 @@ We can visually understand the factors by assembling them into a {\em factor gra
      \label{fig:elim_main_body}
 \end{figure}
 
-Aside from the benefits to intuition, factor graphs also lay the groundwork for efficient computation via the \emph{elimination algorithm}. The key idea behind this algorithm is shown in Figure~\ref{fig:elim_main_body}: we eliminate one variable at a time, and update the remaining factors in the graph accordingly. Once all variables have been eliminated, we are left with a structure that allows for efficient recovery of the \ac{MAP} solution.
+Aside from the benefits to intuition, factor graphs also lay the groundwork for efficient computation via the \emph{elimination algorithm}. The key idea behind this algorithm is shown in Figure~\ref{fig:elim_main_body}: we eliminate one variable at a time, and update the remaining factors in the graph accordingly. This update includes generating new factors between neighbouring, remaining variables and identifying \emph{conditional dependencies} between remaining and eliminated variables (indicated by arrows in the factor graph).
+Once all variables have been eliminated, we are left with a \emph{Bayes net} structure that allows for efficient recovery of the optimal posterior density.
 
 The Supplementary Materials provide additional details about this algorithm (Section~\ref{sec:elim-algo}), show standard manipulations of factor graphs (Section~\ref{sec:fgelimfus}), and apply the factor graph approach to linear, discrete-time estimation (Section~\ref{sec:ldte}).
 
-\section{Factor Graphs for Continuous-Time Estimation}% Formerly "Main Solve"
-\begin{figure}[b]
+\section{Factor Graphs for Linear Continuous-Time Estimation}% Formerly "Main Solve"
+\begin{figure}[t]
     \centering
     \includegraphics[width=0.95\textwidth]{ctfg.pdf}
     \caption{A continuous-time estimation problem with measurements at discrete times and a single query time.  We refer to this as `continuous-time' because the query(s) could be at any time along the trajectory.}
     \label{fig:ctfg}
 \end{figure}
 
-It is well-known that \ac{GP}-based, continuous-time state-estimation problems can be solved exactly by applying standard discrete-time estimation tools followed \ac{GP} interpolation equations~\citet{barfoot_rss14}. In this chapter, we show that this insight follows straightforwardly when continuous-time estimation is cast into factor graph framework.
+It has already known that \ac{GP}-based, continuous-time state-estimation problems can be solved exactly by applying a combination of standard discrete-time estimation tools and \ac{GP} interpolation equations~\citep{barfoot_rss14}. In the rest of this chapter, we will show that this insight follows straightforwardly when continuous-time estimation is cast into factor graph framework.
 
-Consider the simple continuous-time estimation problem shown in Figure~\ref{fig:ctfg}. We have introduced a single query state, $\mbf{x}_{\tau}$, at arbitrary time, $\tau$, to the otherwise standard factor graph. As one might expect, we can break the problem down into two main steps:\footnote{Note that this idea is identical to \ac{GP} regression that we present in the Supplementary Materials (Section~\ref{sec:gp-regression})}
+Consider the factor graph of a simple continuous-time estimation problem shown in Figure~\ref{fig:ctfg}. We have introduced a single query state, $\mbf{x}_{\tau}$, at arbitrary time, $\tau$, to the otherwise standard discrete-time factor graph. As one might expect, we can break the problem down into two main steps:\footnote{Note that this idea is identical to \ac{GP} regression that we present in the Supplementary Materials (Section~\ref{sec:gp-regression})}
 \begin{enumerate}
     \item {\em main solve}: solve for the states at the measurement times
     \item {\em interpolation}: solve for the states at the query time
 \end{enumerate}
-The key to this decomposition is to use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}. The remaining factor graph then corresponds to a linear discrete-time factor graph, which we can readily solve with standard tools (see Section~\ref{sec:ldte}, for an overview). Once we have found the solution at the measurement times, it follows that the distribution of the interpolated state, $\mbf{x}_{\tau}$, can be exactly determined via the conditional dependence depicted in Figure~\ref{fig:ctfg2}.  Importantly, the main solve step is completely agnostic to the query time, meaning we can select as many query times as we like after the main solve. The next two sections work through the details of these steps.
+The key to this decomposition is to use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}. The remaining factor graph then corresponds to a linear discrete-time factor graph, which we can readily solve with standard tools (see Section~\ref{sec:ldte}, for an overview). Once we have found the solution at the measurement times, it follows that the distribution of the interpolated state, $\mbf{x}_{\tau}$, can be determined by the conditional dependence depicted in Figure~\ref{fig:ctfg2}.  Importantly, the main solve step is completely agnostic to the query time, meaning we can select as many query times as we like after the main solve. The next two sections work through the details of these steps.
 
 \begin{figure}[t]
      \centering
@@ -71,7 +72,7 @@ The key to this decomposition is to use the elimination algorithm to remove the 
 \end{figure}
 
 \subsection{Main Solve}
-The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  This is precisely the problem discussed in the previous chapter and so we already know how to carry this out.  However, we would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated during the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
+The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  We would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated during the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
 
 We will start with a generic, continuous-time, linear system model:\footnote{See Section~\ref{sec:ldte} for an equivalent derivation starting from a discrete-time, linear system model.}
 \begin{equation}\label{eq:linsysct}
@@ -83,7 +84,7 @@ where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \m
 \end{equation}
 For now we will work with~\eqref{eq:linsysct} due to its generality, but our examples will often use the specific case of \ac{WNOA}.
 
-We expect that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form\footnote{This expectation is based on common derivations of factor graph models. See Sections~\ref{sec:fgelimfus} and~\ref{sec:ldte} of the Supplementary Materials for details.}
+Based on analogy with discrete-time factor-graph models, we expect that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
 \begin{multline}
      \phi(\mbf{x}_k, \mbf{x}_{k-1}) = -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ \propto || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
 \end{multline}
@@ -113,7 +114,7 @@ This is everything we need to populate the motion-model factors in Figure~\ref{f
      \label{fig:gausselim2}
 \end{figure}
 
-In this section, we discuss querying the trajectory at some time(s) of interest, $\mbf{x}_\tau$, as in Figure~\ref{fig:ctfg2}, where the query state {\em does not} have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the Gaussian elimination formula in~\eqref{eq:gausselim} to write
+In this section, we discuss querying the trajectory at some time(s) of interest, $\mbf{x}_\tau$, as in Figure~\ref{fig:ctfg2}, where the query state does not have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the Gaussian elimination formula in~\eqref{eq:gausselim} to write
 \begin{multline}
 || \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbf{x}_\tau - \mbs{\mu}_\tau ||^2_{\mbs{\Sigma}_\tau},
 \end{multline}

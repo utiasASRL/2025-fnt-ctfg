@@ -110,11 +110,10 @@ Additional related works and applications of the \ac{GP} approach are listed by 
 The rest of the article is structured in the following way:
 \alert{Update these}
 \begin{itemize}
-\item Chapter 2:  We briefly introduce factor graphs and in particular Gaussian factors.  We provide an example of how the factor-graph elimination algorithm can recover the famous \ac{RTS} smoother, the forward pass of which is the Kalman filter.  For factor-graph experts, this chapter could be safely skipped.
-\item Chapter 3:  We explain \ac{GP} state estimation from a factor-graph perspective, showing how to solve at the measurement times and then query at other times of interest. This is done in the context of linear systems for pedagogical reasons.
-\item Chapter 4:  We connect Chapter 3 back to \ac{GP} regression, showing the equivalence. This chapter could be safely skipped during an initial read.
-\item Chapter 5:  We extend Chapter 3 to the case of factor graphs on Lie groups.  A novel covariance interpolation method is introduced that is simpler than the one in \citet{anderson_phd16} and more efficient than the one in \citet{barfoot_ser24}.  
-\item Chapter 6:  We provide detailed examples of \ac{GP} continuous-time state estimation implemented using \ac{GTSAM}.  
-\item Chapter 7:  We wrap up and provide an outlook for the future.
+\item Chapter 2:  We briefly introduce factor graphs and explain \ac{GP} state estimation from a factor graph perspective. In particular, we show that this framework naturally leads to the classical solve-then-query paradigm in continuous-time estimation.
+\item Chapter 3:  Leveraging insights from the factor graph perspective, we show how the continuous-time approach can allow us to reduce the size of the state estimation problems.
+\item Chapter 4:  We extend \ac{GP} state estimation to the case of factor graphs on Lie groups.  A novel covariance interpolation method is introduced that is simpler than the one in \citet{anderson_phd16} and more efficient than the one in \citet{barfoot_ser24}.
+\item Chapter 5:  We provide detailed examples of \ac{GP} continuous-time state estimation implemented using \ac{GTSAM}.
+\item Chapter 6:  We wrap up and provide an outlook for the future.
 \end{itemize}
 We hope that this article provides a useful introduction to continuous-time estimation using \ac{GP} regression and that the examples provided will help practitioners to adopt this approach in their own work.

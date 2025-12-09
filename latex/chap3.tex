@@ -1,18 +1,21 @@
 %!TEX root =  main.tex
 
-\chapter{Interpolation During the Solve}
+\chapter{Interpolation During the Solve}\label{chap:interp-during-solve}
 %Formerly During-the-solve Querying
 Discrete-time state estimation often runs into trouble when dealing with measurement data from many unsynchronized, high-rate sensors, \eg, \ac{lidar}, \ac{radar}, \ac{imu} and rolling shutter cameras. The naive approach of defining a state for every measurement is untenable in practice due to the size of the resulting optimization problem. Methods to aggregate measurement data across time can lead to tractable problems, but also introduce motion distortion errors~\cite{talbot_tro25}. 
 On the other hand, continuous-time estimation offers a principled alternative to the approximations that are typically required to aggregate high-rate sensor data. 
 
-In this chapter, we show that continuous-time estimation can be used to include the \emph{effect} of measurements without needing to explicitly define a state variable at their associated measurement times. Instead, we can use \ac{GP} interpolation to reformulate the associated measurement cost terms as a function of a \emph{reduced set of states} that are included in the optimization problem. The size of this reduced set then leads to a clear trade-off between the accuracy and compute time.
+In this chapter, we show that continuous-time estimation can be used to include the \emph{effect} of measurements without needing to explicitly define a state variable at their associated measurement times. Instead, we can use \ac{GP} interpolation to reformulate the associated measurement cost terms as a function of a \emph{reduced set of states} that are included in the optimization problem. The size of this reduced set then leads to a clear trade-off between the accuracy and compute time. 
 
-We will see that the factor graph lens continues to bring clarity to the underlying mechanisms of this approach, as well as shedding new light on approximations that are commonly used in practice. As in the previous chapter, the key insight is that interpolation in our setting amounts to adding and subsequently eliminating the interpolated state variables from the factor graph.
+We will see that the factor graph lens continues to bring clarity to the underlying mechanisms of this approach, as well as shedding new light on approximations that are commonly used in practice. However, in contrast to the previous chapter, we now consider the case where interpolated states \emph{do} have measurements associated with them.
 
-\section{Block Interpolation}
+In the remainder of this chapter, we show that the elimination operations and some suitable approximations that will lead to a practical approach to dealing with asynchronous, high-frequency sensor data.
 
-The core idea of this section is shown in Figure~\ref{fig:gausselim3} where we consider interpolating a group of states, $\mbf{x}_{\tau_1}, \ldots, \mbf{x}_{\tau_N}$, to reduce the size of the estimation problem to be solved. 
-In the previous section, we saw that interpolation of a variable is equivalent to including the variable in the factor graph and subsequently eliminating it. By extension, eliminating a group of states en masse leads to the factor graph in the bottom-left of the figure. The measurements associated with the interpolated variables are collected into a single factor connecting the bordering states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$. The resulting conditional density is expressed over the joint variable $\mbf{x}_{\tau_{1:N}}$, meaning it includes the full covariance between all the eliminated states. If the cross-covariances are not required, we can drop these and only compute individual marginal conditional densities as in the bottom-right of the figure. 
+\section{Grouped Interpolation}
+
+The core idea of this chapter is shown in Figure~\ref{fig:gausselim3}: we wish to interpolating a group of states, $\mbf{x}_{\tau_1}, \ldots, \mbf{x}_{\tau_N}$, to reduce the size of the estimation problem to be solved. In the context of high-rate or asynchronous sensor applications, these states are introduced to register the exact measurement time of the data.
+
+In the previous chapter, we saw that interpolation of a continuous-time variables is equivalent to including the variable in the factor graph and subsequently eliminating it. By extension, eliminating a group of states en masse leads to the factor graph in the bottom-left of the figure. The measurements associated with the interpolated variables are collected into a single factor connecting the bordering states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$. The resulting conditional density is expressed over the joint variable $\mbf{x}_{\tau_{1:N}}$, meaning it includes the full covariance between all the eliminated states. If the cross-covariances are not required, we can drop these and only compute individual marginal conditional densities as in the bottom-right of the figure. 
 
 \begin{figure}[t]
      \centering
@@ -21,15 +24,17 @@ In the previous section, we saw that interpolation of a variable is equivalent t
      \label{fig:gausselim3}
 \end{figure}
 
-There are a few use cases we can imagine for this type of grouped-state elimination:
-\alert{do we need to update this??}
-\begin{itemize}
-\item For a linear system, if we can find several places in the trajectory to carry out group-state eliminate, these calculations could potentially be done in parallel and then the main solve would also be much faster as the remaining factor graph would be much smaller.
-
-\item If we actually have a nonlinear system that has been linearized, we may still want to group-state eliminate several states at once (e.g., classic IMU preintegration), and then we will need the marginal conditionals to update the operating points of the linearizations for the next iteration.  The main solve might carry out several iterations with the grouped elimination only updating its operating point at a lower frequency.
-\end{itemize}
-
 Grouped-state Gaussian elimination is handled by the general formula in~\eqref{eq:gausselim}.  If we do not want the full covariance between the eliminated states, we can compute only the desired diagonal blocks of $\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}$, resulting in the marginal conditional densities for each of the individual eliminated states.
+
+In our context, we may not even care about solving the problem at the interpolated states since they were introduced only to account for certain measurements. In this case, we can just drop the conditionals from the factor graph entirely.\footnote{We may not want to do this in nonlinear factor graphs, where the interpolated states can still serve as linearization points for the remaining factors.} We are left with a single, reduced factor between the states of interest, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$. The remaining sections will show how this factor can be further decomposed.
+
+
+% There are a few use cases we can imagine for this type of grouped-state elimination:
+% \begin{itemize}
+% \item For a linear system, if we can find several places in the trajectory to carry out group-state eliminate, these calculations could potentially be done in parallel and then the main solve would also be much faster as the remaining factor graph would be much smaller.
+% \item If we actually have a nonlinear system that has been linearized, we may still want to group-state eliminate several states at once (e.g., classic IMU preintegration), and then we will need the marginal conditionals to update the operating points of the linearizations for the next iteration.  The main solve might carry out several iterations with the grouped elimination only updating its operating point at a lower frequency.
+% \end{itemize}
+
 
 \section{Decomposing the Residual Factor}
 
@@ -99,8 +104,10 @@ Assuming that the measurements are linear, $p(\mbf{y}_n| \mbf{x}_{\tau_n})=\math
 \end{equation}
 The interpretation of this distribution is straightforward: the mean is obtained by applying the measurement model to the bordering states after mapping through the motion model to the measurement time. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
 
-Dropping the cross-covariance allows us to re-separate the measurements factors even after marginalization. However, this approximation also treats a set of correlated measurements as if they were independent. In practice, this typically does not affect the mean estimate, but can lead to overconfident estimates (i.e., artificially reduces the estimated posterior covariance).
+Dropping the cross-covariance allows us to re-separate the measurements factors even after marginalization. This approximation also treats a set of correlated measurements as if they were independent. In practice, this typically does not affect the mean estimate, but can lead to overconfident estimates (i.e., artificially reduces the estimated posterior covariance).
 
 Many prior works in continuous-time estimation -- including the \ac{STEAM} framework -- further approximate the measurement distribution by removing the $\mbf{C}_i \mbf{\Sigma}_{\tau_i}\mbf{C}_i^T$ term from the covariance~\citep{burnett_tro25}. This has the effect of removing any dependence of measurement certainty on the time that measurement was observed.
 
-Although we considered unary prior factors on the interpolated states above, it is worth noting that the derivation shown here can be easily extended to factors that involve other variables. For instance, a binary factor between a landmark variable and the interpolated variable would lead to a ternary factor between the bordering variables and the landmark variable.
+Our full progress in this chapter is summarized in the factor graphs of Figure~\ref{fig:gausselim3b}: the final factor graph no longer requires separate states at each measurement time. Moreover, the new factors correctly account for the measurement times of the data, providing a principled way to deal with high-rate or asynchronous sensor data without needing to define a state for each measurement time. 
+
+Although we considered unary prior factors on the interpolated states above, the derivation shown here can be easily extended to factors that involve other variables. For instance, a binary factor between a landmark variable and the interpolated variable would lead to a ternary factor between the bordering variables and the landmark variable.
