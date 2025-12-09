@@ -2,7 +2,7 @@
 \chapter{Continuous-Time Linear Systems}
 \label{chap:ctls}
 
-An inherent limitation of classical discrete-time optimization problems in robotics is that each state of interest must be \emph{explicitly} represented as a variable. This can lead to complications when downstream robotics tasks, such as motion planning or control, require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\citep{mukadamContinuoustimeGaussianProcess2018}. 
+An inherent limitation of classical discrete-time optimization problems in robotics is that each state of interest must be  represented \emph{explicitly} as a variable. This can lead to complications when downstream robotics tasks, such as motion planning or control, require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\citep{mukadamContinuoustimeGaussianProcess2018}. 
 
 In this chapter, we show how to carry out so-called {\em continuous-time} estimation, which uses measurements at given times to estimate a trajectory at \emph{any} arbitrary query time. We will consider this problem through the lens of \emph{factor graphs} -- a common paradigm in modern state estimation for robotics~\citep{dellaert17}. Crucially, this framework will allow us to build key insights into the inner workings of continuous-time estimation and will be critical in the next chapter, where we show how we can leverage continuous-time estimation to tackle asynchronous, high-rate measurement data. 
 
