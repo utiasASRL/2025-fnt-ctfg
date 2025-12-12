@@ -1,14 +1,14 @@
 %!TEX root =  main.tex
-\chapter{Continuous-Time Linear Systems}
-\label{chap:ctls}
+\chapter{The Factor Graph Point of View}
+\label{chap:fg-ctls}
 
-An inherent limitation of classical discrete-time optimization problems in robotics is that each state of interest must be  represented \emph{explicitly} as a variable. This can lead to complications when downstream robotics tasks, such as motion planning or control, require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\citep{mukadamContinuoustimeGaussianProcess2018}. 
+We will consider \ac{GP}-based continuous-time estimation through the lens of \emph{factor graphs} -- a common paradigm in modern state estimation for robotics~\citep{dellaert17}. Crucially, this framework will allow us to build key insights into the inner workings of continuous-time estimation. 
 
-In this chapter, we show how to carry out so-called {\em continuous-time} estimation, which uses measurements at given times to estimate a trajectory at \emph{any} arbitrary query time. We will consider this problem through the lens of \emph{factor graphs} -- a common paradigm in modern state estimation for robotics~\citep{dellaert17}. Crucially, this framework will allow us to build key insights into the inner workings of continuous-time estimation and will be critical in the next chapter, where we show how we can leverage continuous-time estimation to tackle asynchronous, high-rate measurement data. 
+We first brief introduction to factor graphs in the next section. This section can be safely skipped by readers that are already familiar with this concept. For readers that are new to factor graphs, we recommend reading this section as well as the additional background in the Appendix before continuing to the rest of this chapter.
 
-We first introduce some core concepts of state estimation and factor graphs in the next section. The rest of the chapter will show how factor graphs can be applied to continuous-time estimation in the succeeding sections.
+The rest of the chapter will show how factor graphs can be applied to continuous-time estimation in the succeeding sections.
 
-\section{State Estimation and Factor Graphs}
+\section{A Brief Introduction to Factor Graphs}
 \label{sec:brief-fg}
 
 \begin{figure}[t]
@@ -45,7 +45,7 @@ We can visually understand the factors by assembling them into a {\em factor gra
 Aside from the benefits to intuition, factor graphs also lay the groundwork for efficient computation via the \emph{elimination algorithm}. The key idea behind this algorithm is shown in Figure~\ref{fig:elim_main_body}: we eliminate one variable at a time, and update the remaining factors in the graph accordingly. This update includes generating new factors between neighbouring, remaining variables and identifying \emph{conditional dependencies} between remaining and eliminated variables (indicated by arrows in the factor graph).
 Once all variables have been eliminated, we are left with a \emph{Bayes net} structure that allows for efficient recovery of the optimal posterior density.
 
-The Supplementary Materials provide additional details about this algorithm (Section~\ref{sec:elim-algo}), show standard manipulations of factor graphs (Section~\ref{sec:fgelimfus}), and apply the factor graph approach to linear, discrete-time estimation (Section~\ref{sec:ldte}).
+In the Appendix, we provide additional details about factor graphs, including the elimination algorithm (Section~\ref{sec:elim-algo}), show standard manipulations of factor graphs (Section~\ref{sec:fgelimfus}), and apply the factor graph approach to linear, discrete-time estimation (Section~\ref{sec:ldte}).
 
 \section{Factor Graphs for Linear Continuous-Time Estimation}% Formerly "Main Solve"
 \begin{figure}[t]
@@ -55,9 +55,9 @@ The Supplementary Materials provide additional details about this algorithm (Sec
     \label{fig:ctfg}
 \end{figure}
 
-It has already known that \ac{GP}-based, continuous-time state-estimation problems can be solved exactly by applying a combination of standard discrete-time estimation tools and \ac{GP} interpolation equations~\citep{barfoot_rss14}. In the rest of this chapter, we will show that this insight follows straightforwardly when continuous-time estimation is cast into factor graph framework.
+We have already shown that \ac{GP}-based, continuous-time state-estimation problems can be solved exactly by applying a combination of standard discrete-time estimation tools and \ac{GP} interpolation equations~\citep{barfoot_rss14}. In the rest of this chapter, we will show that this insight follows straightforwardly when continuous-time estimation is cast into factor graph framework.
 
-Consider the factor graph of a simple continuous-time estimation problem shown in Figure~\ref{fig:ctfg}. We have introduced a single query state, $\mbf{x}_{\tau}$, at arbitrary time, $\tau$, to the otherwise standard discrete-time factor graph. As one might expect, we can break the problem down into two main steps:\footnote{Note that this idea is identical to \ac{GP} regression that we present in the Supplementary Materials (Section~\ref{sec:gp-regression})}
+Consider the factor graph of a simple continuous-time estimation problem shown in Figure~\ref{fig:ctfg}. We have introduced a single query state, $\mbf{x}_{\tau}$, at arbitrary time, $\tau$, to the otherwise standard discrete-time factor graph. As one might expect, we can break the problem down into two main steps:\footnote{Note that this idea is identical to \ac{GP} regression that we present in the Appendix (Section~\ref{sec:gp-regression})}
 \begin{enumerate}
     \item {\em main solve}: solve for the states at the measurement times
     \item {\em interpolation}: solve for the states at the query time
@@ -140,7 +140,9 @@ where
 \mbs{\Lambda}_\tau & = & \mbs{\Sigma}_\tau \mbf{Q}_{\tau,k-1}^{-1} \mbf{A}_{\tau,k-1}, \\ 
 \mbs{\Psi}_\tau & = & \mbs{\Sigma}_\tau \mbf{A}_{k,\tau}^T \mbf{Q}_{k,\tau}^{-1}.
 \eeqn
-We can carry out this type of query for as many query times as we like.  The complexity of each query is $O(1)$, since we only need the marginal of the separator states from the main solve.
+We can carry out this type of query for as many query times as we like.  The complexity of each query is $O(1)$, since we only need the marginal of the separator states from the main solve. 
+
+This result is equivalent to the traditional \ac{GP} interpolation result that we showed in the previous chapter. However, we argue that the factor-graph approach is more intuitive and elegant because the sparse structure of the problem is plain to see; the separator for $\mbf{x}_\tau$ is clearly $\{ \mbf{x}_{k-1}, \mbf{x}_k\}$, so that the query will clearly be an $O(1)$ operation. 
 
 \section{Example}
 
@@ -161,5 +163,54 @@ We follow the procedure outlined in the previous sections: (i) solve for the sta
      \caption{The ground truth sinusoidal trajectory is shown in green.  Noisy position-only measurements are shown in red.  Our continuous-time solver first computes the solution at the measurement times (blue dots) and then interpolates (both mean and covariance) at several query times between the measurements times (blue line).  We see that the solution is smooth and continuous, as expected, following the ground truth closely.}
      \label{fig:linear_WNOA_example}
 \end{figure}
+
+\section{Interpolation With Measurements}
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=0.90\textwidth]{elim_w_meas.jpeg}
+     \caption{When eliminating an interpolated state with a measurement, we can exactly decompose the residual factor into two factors: a measurement factor $\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})$ and a motion-prior factor $\phi_v(\mbf{x}_{k-1}, \mbf{x}_{k})$.}
+     \label{fig:elim-w-meas}
+\end{figure}
+
+Up to this point, we have only considered the case where our interpolated query states are not associated with any measurements. Owing to our particular choice of continuous-time motion model, we showed that elimination of these query states resulted in a residual factor between its neighbours that represented the same motion model. 
+
+We would also like to consider what happens when we eliminate a state that \emph{does} have an associated measurement. The idea here is that we can incorporate measurements without needing to explicitly include an associated state in the optimization. Practically speaking this is useful in two scenarios:
+\begin{enumerate}
+     \item It can reduce the size of the optimization problem when dealing with measurements from high-rate sensors, such as \ac{lidar}, \ac{radar}, or \ac{imu}.
+     \item It can allow us estimate states that are regularly spaced in time even when measurements are asynchronous.
+\end{enumerate}
+
+As shown in Figure~\ref{fig:elim-w-meas}, when we eliminate a single state with a measurement, we get \emph{two} residual factors: one that recovers the motion model (as in the last section) and one that represents the \emph{effect} of the measurement. 
+To see why this is true, consider that the probability density function of the factor graph on the left of Figure~\ref{fig:elim-w-meas} can be factored into a term that contains only measurement factors and a term that contains only motion-model prior factors,
+\begin{equation}
+     p(\mbf{x}_k, \mbf{x}_{\tau} | \mbf{x}_{k-1}, \mbf{y}, \mbf{v}) \propto p(\mbf{y}| \mbf{x}_{\tau}) p(\mbf{x}_k, \mbf{x}_{\tau}| \mbf{x}_{k-1}, \mbf{v}).
+\end{equation}
+
+Assuming a motion prior of the type discussed in this article, it turns out that the second term can be alternatively factored as
+\begin{equation}
+     p(\mbf{x}_k, \mbf{x}_{\tau} | \mbf{x}_{k-1}, \mbf{v}) = p(\mbf{x}_{\tau}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}) p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1}), 
+\end{equation} 
+
+The residual factor is obtained by marginalizing\footnote{Recall that marginalization is to the probabilistic equivalent of elimination.} the full joint distribution with respect to the interpolated variable:
+\begin{equation}
+     \phi(\mbf{x}_{k-1}, \mbf{x}_{k}) = \underbrace{\int p(\mbf{y}| \mbf{x}_{\tau}) p(\mbf{x}_{\tau}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v})  \, d\mbf{x}_{\tau}}_{\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})} \, \underbrace{p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi_v(\mbf{x}_{k-1}, \mbf{x}_{k})},
+\end{equation}
+where we have moved the last term of the integral since it does not depend on $\mbf{x}_{\tau}$. The second factor in the equation above is exactly the motion prior:
+\begin{equation}
+     p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1}) = \mathcal{N}\left(\mbf{A}_{k,k-1}\mbf{x}_{k-1} + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1} \right),
+\end{equation}
+
+Assuming that the measurement is linear, $p(\mbf{y}| \mbf{x}_{\tau})=\mathcal{N}\left(\mbf{C} \mbf{x}_{\tau}, \mbf{R}\right)$, it is fairly straightforward to show that this measurement factor has the following distribution:
+\begin{equation}
+     \phi_{y}(\mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}\left(\mbf{C} \check{\mbf{x}}_{\tau}, \mbf{C} \mbf{\Sigma}_{\tau}\mbf{C}^T + \mbf{R} \right).
+\end{equation}
+
+The interpretation of this distribution is straightforward: the mean is obtained by applying the measurement model to the bordering states after mapping through the motion model to the measurement time. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
+
+The now-eliminated state $\mbf{x}_{\tau}$ can actually be completely dropped from the optimization,\footnote{This is not true if we are dealing with nonlinear state-estimation problems where it is important to keep a record of $\mbf{x}_{\tau}$ for linearization updates.} leaving a motion prior and a new measurement factor between the non-interpolated states, $\mbf{x}_{k-1}$ and $ \mbf{x}_{k}$.
+
+A similar situation also holds when we eliminate multiple query states with measurements between two non-interpolated states. However, we need to make an additional approximation transform the original measurements into \emph{separate} factors. The interested reader can find a more detailed derivation for multiple factors in Appendix~\ref{chap:interp-during-solve}.
+
 
 

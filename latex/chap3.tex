@@ -1,6 +1,6 @@
 %!TEX root =  main.tex
 
-\chapter{Interpolation During the Solve}\label{chap:interp-during-solve}
+\chapter{Interpolating Multiple States with Measurements}\label{chap:interp-during-solve}
 %Formerly During-the-solve Querying
 Discrete-time state estimation often runs into trouble when dealing with measurement data from many unsynchronized, high-rate sensors, \eg, \ac{lidar}, \ac{radar}, \ac{imu} and rolling shutter cameras. The naive approach of defining a state for every measurement is untenable in practice due to the size of the resulting optimization problem. Methods to aggregate measurement data across time can lead to tractable problems, but also introduce motion distortion errors~\cite{talbot_tro25}. 
 On the other hand, continuous-time estimation offers a principled alternative to the approximations that are typically required to aggregate high-rate sensor data. 

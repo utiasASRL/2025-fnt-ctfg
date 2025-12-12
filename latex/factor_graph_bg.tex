@@ -1,8 +1,6 @@
 %!TEX root =  main.tex
 
-\section{Additional Factor Graph Background}\label{chap:add-fg-bg}
-
-In Section~\ref{sec:brief-fg}, we introduced the basic concept of a factor graph. In this chapter, provide additional details about how a factor graph can be used to efficiently solve state estimation problems. Following this, we will work through the specific example of classic discrete-time filtering/smoothing. Although this section can be safely skipped by readers that are already familiar with factor graphs, it sets the stage for Chapter~\ref{chap:ctls}, which shows that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction to factor graphs, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
+In Section~\ref{sec:brief-fg}, we introduced the basic concept of a factor graph. In this appendix, provide additional details about how a factor graph can be used to efficiently solve state estimation problems. Following this, we will work through the specific example of classic discrete-time filtering/smoothing. Although this section can be safely skipped by readers that are already familiar with factor graphs, it sets the stage for Chapter~\ref{chap:fg-ctls}, which shows that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction to factor graphs, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
 
 \subsection{The Elimination Algorithm}\label{sec:elim-algo}
 
@@ -176,6 +174,6 @@ The forward pass is the very famous \acf{KF}, which we now understand from a fac
      \label{fig:filtersmoother}
 \end{figure}
 
-It turns out that this discrete-time estimation setup is completely compatible with extending our results to continuous time, we just need to fill in the details of~\eqref{eq:linsys} in the right way.  This is the subject of Chapter~\ref{chap:ctls}.
+It turns out that this discrete-time estimation setup is completely compatible with extending our results to continuous time, we just need to fill in the details of~\eqref{eq:linsys} in the right way.  This is the subject of Chapter~\ref{chap:fg-ctls}.
 
 

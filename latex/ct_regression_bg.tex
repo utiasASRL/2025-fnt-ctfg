@@ -1,10 +1,12 @@
 %!TEX root =  main.tex
 
-\section{Connection to Gaussian-Process Regression}\label{sec:gp-regression}
+\chapter{Gaussian-Process Regression}\label{sec:gp-regression}
 
-\ac{GP} regression is a popular method for function approximation that fits with the Bayesian estimation paradigm \citep{rasmussen06}.  In this chapter, we will show that the continuous-time estimation framework we have developed in the previous chapter is identical to \ac{GP} regression.  This means that the factor-graph framework we have developed is also a powerful tool for \ac{GP} regression (with our particular choice of kernels).  We primarily follow \citet{barfoot_ser24} in this chapter.
+An inherent limitation of classical discrete-time optimization problems in robotics is that each state of interest must be  represented \emph{explicitly} as a variable. This can lead to complications when downstream robotics tasks, such as motion planning or control, require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\citep{mukadamContinuoustimeGaussianProcess2018}. On the other hand, {\em continuous-time} estimation processes measurements at given times to estimate a trajectory that can be queried at \emph{any} time by downstream processes. 
 
-\subsection{Brief Derivation of GP Regression}
+In this chapter, we show how \ac{GP} regression -- a popular method for function approximation that fits with the Bayesian estimation paradigm \citep{rasmussen06} -- can be used to carry out {\em continuous-time} estimation. Here, we primarily follow \citet{barfoot_ser24} to provide a background on \ac{GP} regression and set the stage for the factor graph interpretation that will be the subject of the next chapter.
+
+\section{Brief Derivation of GP Regression}
 
 In general, we can consider systems with a continuous-time \ac{GP} prior and a discrete-time, linear measurement model:
 \beqn{}
@@ -66,7 +68,7 @@ This is linear interpolation in the state variable (but not necessarily in time)
 
 In general, this \index{Gaussian process} \ac{GP} approach has complexity $O(K^3 + K^2J)$ since the initial solve is $O(K^3)$ (for an arbitrary kernel function such as squared exponential) and the query is $O(K^2J)$; this is quite expensive, and next we will seek to improve the cost by designing a special kernel function.
 
-\subsection{Exactly Sparse Kernels}
+\section{Exactly Sparse Kernels}
 
 Looking at~\eqref{eq:gpgnlin}, we see that the {\em inverse kernel matrix}, $\pri{\mbf{P}}^{-1}$, appears on the left-hand side.  Naively choosing a \ac{GP} kernel function could result in this matrix being dense and therefore the solution expensive.  Instead, we will select our kernel function carefully so that the inverse kernel matrix is {\em exactly sparse}.
 
@@ -78,7 +80,7 @@ with
 \begin{equation}
 \mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \, \delta(t-t^\prime)),
 \end{equation}
-a (stationary) zero-mean \index{Gaussian process} \ac{GP} with (symmetric, positive-definite) \index{power spectral density matrix} {\em power spectral density matrix}, $\mbs{Q}$.  This is the same motion model that we introduced in~\eqref{eq:linsysct}.
+a (stationary) zero-mean \index{Gaussian process} \ac{GP} with (symmetric, positive-definite) \index{power spectral density matrix} {\em power spectral density matrix}, $\mbs{Q}$.
 
 Referring to \citep{barfoot_ser24}, we can show that the solution to this \ac{SDE} is a \ac{GP} with the following kernel function:
 \begin{multline}
@@ -136,7 +138,7 @@ Or, breaking it down by time steps,
 \end{multline}
 Each of these terms accounts for exactly one factor in Figure~\ref{fig:dtfg2}.  Therefore, solving at the measurement times is equivalent to our earlier factor-graph formulation for the main solve.
 
-\subsection{Querying is $O(1)$}
+\section{Querying is $O(1)$}
 
 Next, we will show that querying the trajectory at any time $\tau$ is an $O(1)$ operation.  To do this, we will use the interpolation equations~\eqref{eq:gpinterp}, where we notice that the product $\pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}$ plays a critical role.  To simplify matters, let us assume that we have only a single query time, $t_{k-1} < \tau < t_k$.  Then we can show that
 \begin{multline}
@@ -147,6 +149,8 @@ so that only block-columns $k-1$ and $k$ are non-zero.  This means that we only 
 \est{\mbf{x}}_\tau & = & \pri{\mbf{x}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{1} \ebm - \bbm \pri{\mbf{x}}_{k-1} \\  \pri{\mbf{x}}_{k} \ebm \right), \label{eq:meaninterp} \\
 \est{\mbf{P}}_\tau & = & \pri{\mbf{P}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{P}}_{k-1,k-1} & \est{\mbf{P}}_{k-1,k}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k,k} \ebm \right.  \label{eq:covinterp} \\ & & \qquad\qquad\qquad\qquad \quad\left. - \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \right) \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm. \nonumber
 \eeqn
+
+\alert{Rework below to flow into next chap}
 It turns out this is identical to~\eqref{eq:fgquery}, which requires that we show
 \beqn{}
 \mbs{\eta}_t & = & \pri{\mbf{x}}_\tau - \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \pri{\mbf{x}}_{k-1} \\  \pri{\mbf{x}}_{k} \ebm, \\
@@ -154,5 +158,6 @@ It turns out this is identical to~\eqref{eq:fgquery}, which requires that we sho
 \eeqn
 left an exercise for the reader.  
 
+\alert{already added this para to other chapter}
 This means that using the traditional \ac{GP} interpolation equations is exactly equivalent to our factor-graph elimination approach from the previous chapter.  We argue that the factor-graph approach is more intuitive and elegant because the sparse structure of the problem is plain to see; the separator for $\mbf{x}_\tau$ is clearly $\{ \mbf{x}_{k-1}, \mbf{x}_k\}$, so that the query will clearly be an $O(1)$ operation. 
 
