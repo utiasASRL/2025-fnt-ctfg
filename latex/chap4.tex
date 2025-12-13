@@ -8,13 +8,13 @@ In this chapter, we will adapt the factor-graph approach to continuous-time syst
 
 Lie groups are widely used in several fields including robotics, computer vision, and graphics (see e.g., \citet{chirikjian01,stillwell08,absil09,chirikjian09,chirikjian16,sola18,gallierDifferentialGeometryLie2020,boumal23}).  Within robotics, they are employed within modelling \citep{deleuterio85,park95,lynch17}, state estimation \citep{wang06,wang08,bonnabel08,blanco10,wolfe11,long12,forster15,dellaertFactorGraphsRobot2017,bonnabel17,mahony21,barfoot_ser24}, and control theory \citep{murray94,bullo95,sastry99}.  They provide the mathematical tools to describe important concepts such as rotations and rigid-body motions, to name a few.  We will primarily use the notation of \citet{barfoot_ser24} with some improvements from~\citet{sola18} and refer to those sources for more details.
 
-We consider a general Lie group quantity $\Tsmall \in G$, where $G$ is a Lie group.  The Lie group is a smooth manifold with a group structure, which means that it has a smooth multiplication operation and an inverse operation.  The tangent space at the identity element of the Lie group is called the Lie algebra, denoted $g$.  The exponential map $\mbox{exp}: g \to G$ maps elements of the Lie algebra to the Lie group, while the logarithm map $\mbox{log}: G \to g$ maps elements of the Lie group back to the Lie algebra.  This allows us to write
+We consider a general Lie group quantity $\Tsmall \in G$, where $G$ is a Lie group.  The Lie group is a smooth manifold with a group structure, which means that it has a smooth multiplication operation and an inverse operation.  The tangent space at the identity element of the Lie group is called the Lie algebra, denoted $\mathfrak{g}$.  The exponential map $\mbox{exp}: \mathfrak{g} \to G$ maps elements of the Lie algebra to the Lie group, while the logarithm map $\mbox{log}: G \to \mathfrak{g}$ maps elements of the Lie group back to the Lie algebra.  This allows us to write
 \begin{equation}
 \Tsmall = \mbox{exp}(\mbs{\xi}^\wdg) = \mbox{Exp}(\mbs{\xi}), \quad \mbs{\xi} = \mbox{log}(\Tsmall)^\vee = \mbox{Log}(\Tsmall),
 \end{equation}
-where $\mbs{\xi}^\wdg \in g$ is the state in the Lie algebra.  The {\em wedge operator} $\wdg$ is unique to each Lie group and $\vee$ undoes $\wdg$ and can be used to map members of a vector space to those of the Lie algebra isomorphically; as such we will refer to $\mbs{\xi}$ as an element of the Lie algebra.
+where $\mbs{\xi}^\wdg \in \mathfrak{g}$ is the state in the Lie algebra.  The {\em wedge operator} $\wdg$ is unique to each Lie group and $\vee$ undoes $\wdg$ and can be used to map members of a vector space to those of the Lie algebra isomorphically; as such we will refer to $\mbs{\xi}$ as an element of the Lie algebra.
 
-Some common Lie groups include the special orthogonal group $SO(3)$, which represents rotations in three-dimensional space, and the special Euclidean group $SE(3)$, which represents rigid-body motions in three-dimensional space.  The Lie algebra for $SO(3)$ is $so(3)$, which can be represented as a skew-symmetric matrix, while the Lie algebra for $SE(3)$ is $se(3)$, which can be represented as a six-dimensional vector (the twist) that combines rotation and translation.
+Some common Lie groups include the special orthogonal group $SO(3)$, which represents rotations in three-dimensional space, and the special Euclidean group $SE(3)$, which represents rigid-body motions in three-dimensional space.  The Lie algebra for $SO(3)$ is $\mathfrak{so}(3)$, which can be represented as a skew-symmetric matrix, while the Lie algebra for $SE(3)$ is $\mathfrak{se}(3)$, which can be represented as a six-dimensional vector (the twist) that combines rotation and translation.
 
 For the groups in which we are interested, such as $SE(3)$, there are constraints on the scalar elements of the Lie group elements, $\mbf{T}$.  This makes it a bit challenging to work with these elements directly, so we will often work with the Lie algebra elements, $\mbs{\xi}$, instead.  The exponential map $\mbox{Exp}(\mbs{\xi})$ is a local diffeomorphism around the identity element of the Lie group, which means that we can use it to approximate the Lie group elements near the identity.  For example, when perturbing a Lie group element, we can write
 \begin{equation}\label{eq:lie-perturb}
@@ -22,7 +22,7 @@ For the groups in which we are interested, such as $SE(3)$, there are constraint
 \end{equation}
 where $\Tsmall_{\rm op}$ is the operating point of the perturbation.  This type of approximation can be used to linearize our error terms involving elements of a Lie group.  For example,
 \begin{multline}
-\mbf{e} = \mbf{y} - \mbf{f}(\mbf{T}^{-1} \mbf{p}) = \mbf{y} - \mbf{f}\left(\mbox{Exp}(-\mbs{\xi}) \mbf{T}_{\rm op}^{-1} \mbf{p}\right) \\ \approx \mbf{y} - \mbf{f}\left((\mbf{I}-\mbs{\xi}^\wdg) \mbf{T}_{\rm op}^{-1} \mbf{p}\right) = \underbrace{\mbf{y} - \mbf{f}(\mbf{T}_{\rm op}^{-1} \mbf{p})}_{\mbf{e}_{\rm op}} + \frac{\partial \mbf{f}}{\partial \mbf{T}^{-1}\mbf{p}} \bigg|_{\mbf{T}_{\rm op}^{-1} \mbf{p}} \mbs{\xi}^\wdg \mbf{T}_{\rm op}^{-1} \mbf{p} \\ \mbf{e}_{\rm op} + \mbf{E} \, \mbs{\xi},
+\mbf{e} = \mbf{y} - \mbf{f}(\mbf{T}^{-1} \mbf{p}) = \mbf{y} - \mbf{f}\left(\mbox{Exp}(-\mbs{\xi}) \mbf{T}_{\rm op}^{-1} \mbf{p}\right) \\ \approx \mbf{y} - \mbf{f}\left((\mbf{I}-\mbs{\xi}^\wdg) \mbf{T}_{\rm op}^{-1} \mbf{p}\right) = \underbrace{\mbf{y} - \mbf{f}(\mbf{T}_{\rm op}^{-1} \mbf{p})}_{\mbf{e}_{\rm op}} + \frac{\partial \mbf{f}}{\partial \mbf{T}^{-1}\mbf{p}} \bigg|_{\mbf{T}_{\rm op}^{-1} \mbf{p}} \mbs{\xi}^\wdg \mbf{T}_{\rm op}^{-1} \mbf{p} \\ =\mbf{e}_{\rm op} + \mbf{E} \, \mbs{\xi},
 \end{multline}
 where $\mbf{E}$ is the Jacobian of the error with respect to the perturbation $\mbs{\xi}$.  This simple approach can be used to linearize factors comprising elements of Lie groups.
 
@@ -36,9 +36,9 @@ In other words, we define a zero-mean Gaussian distribution on the Lie algebra, 
 
 For Lie groups, a kinematic motion model is typically of the form
 \begin{equation}
-\Tsmall(t) = \Tsmall(t) \mbs{\varpi}(t)^\wdg,
+\dot{\Tsmall}(t) = \Tsmall(t) \mbs{\varpi}(t)^\wdg,
 \end{equation}
-where $\Tsmall(t)$ is the kinematic configuration expressed in some Lie group (e.g., $SE(3)$), $\mbs{\varpi}(t)$ is the generalized velocity (e.g., $\mathbb{R}^6$ twist for $SE(3)$), and $\wdg$ is the wedge operator for the Lie group. Here we assume that $\Tsmall$ maps vectors from a local frame to a global frame. The challenge with this model is that not only is it nonlinear, the state does not live in a vector space.  Alternatively, we could write this same motion model in the Lie algebra as
+where $\Tsmall(t)$ is the kinematic configuration expressed in some Lie group (e.g., $SE(3)$), $\mbs{\varpi}(t)$ is the generalized velocity (e.g., $\mathbb{R}^6$ twist for $SE(3)$), and $\wdg$ is the wedge operator for the Lie group. Here we assume that $\Tsmall$ maps homogeneous points from a local frame to a global frame. The challenge with this model is that not only is it nonlinear, the state does not live in a vector space.  Alternatively, we could write this same motion model in the Lie algebra as
 \begin{equation}
 \dot{\mbs{\xi}}(t) = \Jbig(\mbs{\xi}(t))^{-1} \mbs{\varpi}(t),
 \end{equation}
@@ -81,8 +81,10 @@ where $\mbs{\gamma}(t)$ is a stacking of $\mbs{\xi}(t)$ and an appropriate numbe
      \label{fig:lgfg}
 \end{figure}
 
+\alert{(Tim): Add figure of the "stitched" trajectory}
+
 To stitch several of these models together, for example one per measurement time, we can redefine $\mbs{\xi}(t)$ to be
-\begin{equation}
+\begin{equation}\label{eq:local-lie-var}
 \mbs{\xi}_k(t) = \mbox{Log} \left(\Tsmall_k^{-1} \Tsmall(t)\right),
 \end{equation}
 where $\Tsmall_k$ is the Lie group element at the $k$th measurement time.  Then, from one measurement time to the next, we can write
@@ -93,15 +95,15 @@ recalling our linear results to compute $\mbf{A}_{k,k-1}$, $\mbf{v}_{k,k-1}$, an
 \begin{equation}\label{eq:lgmp}
 || \underbrace{\mbs{\gamma}_{k-1}(t_k) - \mbf{A}_{k,k-1} \mbs{\gamma}_{k-1}(t_{k-1}) - \mbf{v}_{k,k-1}}_{\mbf{e}_{k,k-1}} ||_{\mbf{Q}_{k,k-1}}^2.
 \end{equation}
-We can leave our motion model in this form and rely on the chain rule during optimization, but we can also work directly with the Lie group elements by substituting out the $\mbs{\gamma}_k(t)$ variables.  For example, if we want to use \ac{WNOA} as our motion model, we can substitute in the definitions of $\mbs{\xi}_k(t)$ to see that
+We can leave our motion model in this form and rely on the chain rule during optimization, but we can also use \eqref{eq:local-lie-var} to re-express the local $\mbs{\gamma}_k(t)$ variables in terms of Lie group elements and generalized velocities.  For example, if we want to use \ac{WNOA} as our motion model, we can substitute in the definitions of $\mbs{\xi}_k(t)$ to see that
 \begin{equation}
 \mbs{\gamma}_{k-1}(t) = \bbm \mbox{Log} \left(\Tsmall_{k-1}^{-1} \Tsmall(t)\right) \\ \Jbig\left(\mbox{Log} \left(\Tsmall_{k-1}^{-1} \Tsmall(t)\right)\right)^{-1} \mbs{\varpi}(t) \ebm,
 \end{equation}
-and in turn
-\begin{equation}
+and at $t=\{t_k, t_{k-1}\}$,
+\begin{equation}\label{eq:gamma-tk-tkm1}
 \mbs{\gamma}_{k-1}(t_k) = \bbm \mbox{Log} \left(\Tsmall_{k-1}^{-1} \Tsmall_k\right) \\ \Jbig\left(\mbox{Log} \left(\Tsmall_{k-1}^{-1} \Tsmall_k\right)\right)^{-1} \mbs{\varpi}_k \ebm, \quad \mbs{\gamma}_{k-1}(t_{k-1}) = \bbm \mbf{0} \\ \mbs{\varpi}_{k-1} \ebm.
 \end{equation}
-Putting it all together, the negative log-likelihood cost term becomes
+Substituting \eqref{eq:gamma-tk-tkm1} into \eqref{eq:lgmp}, the negative log-likelihood cost term becomes
 \begin{equation}
 \left|\left| \bbm \mbox{Log} \left(\Tsmall_{k-1}^{-1} \Tsmall_k\right) - t_{k,k-1} \mbs{\varpi}_{k-1} \\ \Jbig\left(\mbox{Log} \left(\Tsmall_{k-1}^{-1} \Tsmall_k\right)\right)^{-1} \mbs{\varpi}_k - \mbs{\varpi}_{k-1} \ebm \right|\right|_{\mbf{Q}_{k,k-1}}^2.
 \end{equation}

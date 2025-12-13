@@ -19,11 +19,11 @@ Typically in state estimation, we are interested in computing a posterior densit
 \begin{equation}
 p(\mbf{x} | \mbf{v}, \mbf{y}),
 \end{equation}
-where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ldots, t_K$, $\mbf{v} = (\mbf{v}_0, \ldots, \mbf{v}_K)$ is a set of inputs/commands, and $\mbf{y} = (\mbf{y}_0, \ldots, \mbf{y}_K)$ is a set of measurements.  In most practical scenarios, we can factor this posterior density into a product of factors, each of which depends on only a subset of the variables in the problem.  For example, we might have
+where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ldots, t_K$, $\mbf{v} = (\mbf{v}_{1,0}, \ldots, \mbf{v}_{K,K-1})$ is a set of inputs/commands, and $\mbf{y} = (\mbf{y}_0, \ldots, \mbf{y}_K)$ is a set of measurements.  In most practical scenarios, we can factor this posterior density into a product of factors, each of which depends on only a subset of the variables in the problem.  For example, we might have
 \begin{equation}
 p(\mbf{x} | \mbf{v}, \mbf{y}) \propto \underbrace{p(\mbf{x}_0)}_{\phi(\mbf{x}_0)} \prod_{k=1}^K \underbrace{p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi(\mbf{x}_{k-1},\mbf{x}_k)} \prod_{k=0}^K \underbrace{p(\mbf{y}_k | \mbf{x}_k)}_{\varphi(\mbf{x}_k)}.
 \end{equation}
-where each $\phi(\cdot)$, is a {\em factor} of the posterior density.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
+where each $\phi(\cdot)$ and $\varphi(\cdot)$, is a {\em factor} of the posterior density corresponding to motion priors and measurements, respectively.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
 
 The normalization constant associated with this factorization is typically expensive to compute so we often satisfy ourselves with finding the $\mbf{x}$ that maximizes the posterior density, or equivalently the $\mbf{x}$ that minimizes the negative log-likelihood cost:
 \begin{equation}\label{eq:cost}
@@ -195,7 +195,7 @@ Assuming a motion prior of the type discussed in this article, it turns out that
      p(\mbf{x}_k, \mbf{x}_{\tau} | \mbf{x}_{k-1}, \mbf{v}) = p(\mbf{x}_{\tau}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}) p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1}), 
 \end{equation} 
 
-The residual factor is obtained by marginalizing\footnote{Recall that marginalization (a probabilistic operation) and elimination (a linear-algebra operation) are equivalent for Gaussian variables and linear factors.} the full joint distribution with respect to the interpolated variable:
+The residual factor, $\phi(\mbf{x}_{k-1}, \mbf{x}_{k})$, is obtained by marginalizing\footnote{Recall that marginalization (a probabilistic operation) and elimination (a linear-algebra operation) are equivalent for Gaussian variables and linear factors.} the full joint distribution with respect to the interpolated variable:
 \begin{equation}
      \phi(\mbf{x}_{k-1}, \mbf{x}_{k}) = \underbrace{\int p(\mbf{y}| \mbf{x}_{\tau}) p(\mbf{x}_{\tau}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v})  \, d\mbf{x}_{\tau}}_{\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})} \, \underbrace{p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi_v(\mbf{x}_{k-1}, \mbf{x}_{k})},
 \end{equation}

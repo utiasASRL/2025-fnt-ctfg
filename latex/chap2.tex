@@ -154,12 +154,4 @@ so that only block-columns $k-1$ and $k$ are non-zero.  This means that we only 
 \est{\mbf{P}}_\tau & = & \pri{\mbf{P}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{P}}_{k-1,k-1} & \est{\mbf{P}}_{k-1,k}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k,k} \ebm \right.  \label{eq:covinterp} \\ & & \qquad\qquad\qquad\qquad \quad\left. - \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \right) \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm. \nonumber
 \eeqn
 
-\alert{Rework below to flow into next chap}
-It turns out this is identical to~\eqref{eq:fgquery}, which requires that we show
-\beqn{}
-\mbs{\eta}_t & = & \pri{\mbf{x}}_\tau - \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \pri{\mbf{x}}_{k-1} \\  \pri{\mbf{x}}_{k} \ebm, \\
-\mbs{\Sigma}_t & = & \pri{\mbf{P}}_\tau - \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm,
-\eeqn
-left an exercise for the reader.  
-
 \alert{Add flow to next section: this represents the classical view of gp regression, but we now take a new perspective using factor graphs.}

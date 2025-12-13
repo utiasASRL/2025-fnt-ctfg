@@ -6,9 +6,9 @@ In this article, we consider the problem of estimating a continuous-time traject
 
 Specifically, we will discuss using continuous-time estimation based on \ac{GP} regression.  This topic is not itself new and therefore this article should be considered mostly of tutorial value.  Its contributions beyond the existing literature are:
 \begin{itemize}
-\item {\em We provide new insights on the connections between continuous-time \ac{GP} regression and factor graphs.}  In particular, we show that querying the trajectory at any time of interest can be accomplished by an application of the factor-graph elimination algorithm.  This leads to a novel way to do covariance interpolation.
+\item {\em We provide new insights on the connections between continuous-time \ac{GP} regression and factor graphs.}  In particular, we show that querying the trajectory at any time of interest can be accomplished by an application of the factor-graph elimination algorithm.  This leads to a novel way to do covariance interpolation and a new interpretation of interpolating states with measurements.
 
-\item {\em We implement three tutorial examples in the popular \ac{GTSAM} framework.}  This allows us to demonstrate the use of continuous-time estimation in a practical setting, including how to handle high-rate and asynchronous measurements.
+\item {\em We implement \ac{GP}-based continuous-time estimation in the popular \ac{GTSAM} framework and apply it on three tutorial examples.}  This allows us to demonstrate the use of continuous-time estimation in a practical setting, including how to handle high-rate and asynchronous measurements.
 
 \item {\em We release the code and the datasets used in the examples open source.}  This will hopefully make adoption by others easier and allow for further experimentation and development in this area.
 \end{itemize}
@@ -42,33 +42,33 @@ The ability to separate the roles of {\em measurement times}, {\em estimation ti
 
 A common way to perform continuous-time estimation is to use a {\em parametric} representation of the trajectory, such as a spline or temporal basis functions.  In this case, we assume that the trajectory can be represented by a finite number of parameters, and we estimate these parameters from the measurements.  For example, we might use a representation such as 
 \begin{equation}\label{eq:spline}
-\mbf{x}(t) = \sum_{n=0}^N \mbf{B}_n(t) \mbf{p}_n,
+\mbf{x}(t) = \sum_{n=0}^N \mbf{B}_n(t) \mbs{\theta}_n, 
 \end{equation}
-where $\mbf{p}_n$ are the coefficient parameters to be estimated and $\mbf{B}_n(t)$ are known temporal basis functions.  We receive some discrete-time measurements $\mbf{y}_k$ at times $t_k$, given by the linear measurement function,
+where $\mbs{\theta}_n$ are the coefficient parameters to be estimated and $\mbf{B}_n(t)$ are known temporal basis functions.  We receive some discrete-time measurements $\mbf{y}_k$ at times $t_k$, given by the linear measurement function,
 \begin{equation}
 \mbf{y}_k = \mbf{C}_k \mbf{x}(t_k) + \mbf{n}_k,
 \end{equation}
-with $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k)$ measurement noise.  We can then estimate the parameters $\mbf{p}_n$ by minimizing the residuals between the measurements and the predicted values from the trajectory,
+with $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k)$ measurement noise.  We can then estimate the parameters $\mbs{\theta}_n$ by minimizing the residuals between the measurements and the predicted values from the trajectory,
 \begin{multline}
-\min_{\mbf{p}_n} \left( \sum_{k=0}^K \|\mbf{y}_k - \mbf{C}_k\mbf{x}(t_k)\|^2_{\mbf{R}_k} + \sum_{n=0}^N \|\mbf{p}_n\|^2 \right) \\ = \min_{\mbf{p}_n} \left( \sum_{k=0}^K \|\mbf{y}_k - \mbf{C}_k \sum_{n=0}^N \mbf{B}_n(t) \mbf{p}_n \|^2_{\mbf{R}_k} + \sum_{n=0}^N \|\mbf{p}_n\|^2 \right),
+\min_{\mbs{\theta}_n} \left( \sum_{k=0}^K \|\mbf{y}_k - \mbf{C}_k\mbf{x}(t_k)\|^2_{\mbf{R}_k} + \sum_{n=0}^N \|\mbs{\theta}_n\|^2 \right) \\ = \min_{\mbs{\theta}_n} \left( \sum_{k=0}^K \|\mbf{y}_k - \mbf{C}_k \sum_{n=0}^N \mbf{B}_n(t) \mbs{\theta}_n \|^2_{\mbf{R}_k} + \sum_{n=0}^N \|\mbs{\theta}_n\|^2 \right),
 \end{multline}
 where we have substituted in the trajectory from~\eqref{eq:spline}.  
-The second term $\|\mbf{p}_n\|^2$ regularizes the problem by penalizing the magnitude of the parameters, $\mbf{p}_n$ (i.e., minimum description length prior).
+The second term $\|\mbs{\theta}_n\|^2$ regularizes the problem by penalizing the magnitude of the parameters, $\mbs{\theta}_n$ (i.e., minimum description length prior).
 Stacking all the quantities up into vectors/matrices, we can write this problem cleanly as
-\begin{equation}
-\min_{\mbf{p}} \left( \|\mbf{y} - \mbf{C}\mbf{B}\mbf{p}\|^2_{\mbf{R}} + \|\mbf{p}\|^2 \right),
+\begin{equation}\label{eq:least-sqr-intro}
+\min_{\mbs{\theta}} \left( \|\mbf{y} - \mbf{C}\mbf{B}\mbs{\theta}\|^2_{\mbf{R}} + \|\mbs{\theta}\|^2 \right),
 \end{equation}
 The solution to this least-squares problem is the solution to the following linear system of equations:
 \begin{equation}
-\left( \mbf{B}^T \mbf{C}^T \mbf{R}^{-1} \mbf{C} \mbf{B} + \mbf{I} \right) \mbf{p} = \mbf{B}^T\mbf{C}^T \mbf{R}^{-1} \mbf{y}.
+\left( \mbf{B}^T \mbf{C}^T \mbf{R}^{-1} \mbf{C} \mbf{B} + \mbf{I} \right) \mbs{\theta} = \mbf{B}^T\mbf{C}^T \mbf{R}^{-1} \mbf{y}.
 \end{equation}
 One challenge with parametric methods is to choose the right basis functions $\mbf{B}_n(t)$, which can be difficult in practice; too few and the trajectory does not have enough flexibility to fit the data, too many and the solution becomes overfit, although the regularization term can help with this.  
 
-The state at the measurement times is $\mbf{x} = \mbf{B} \mbf{p}$ and so we can manipulate the linear system of equations above to become
+The state at the measurement times is $\mbf{x} = \mbf{B} \mbs{\theta}$ and so we can manipulate the linear system of equations above to become
 \begin{equation}\label{eq:nonparametric_system}
 \left( \mbf{C}^T \mbf{R}^{-1} \mbf{C} + \mbf{K}^{-1} \right) \mbf{x} = \mbf{C}^T \mbf{R}^{-1} \mbf{y},
 \end{equation}
-where $\mbf{K} = \mbf{B}\mbf{B}^T$ can now be interpreted as a prior or regularizer term on the state $\mbf{x}$.  
+where $\mbf{K} = \mbf{B}\mbf{B}^T$ can now be interpreted as a prior or regularizer term on the state $\mbf{x}$.\footnote{Note that the $\mbf{K}^{-1}\mbf{x} $ term in~\eqref{eq:nonparametric_system} corresponds exactly to the regularization term on $\mbs{\theta}$ in~\eqref{eq:least-sqr-intro}.}
 
 The leap from parametric to {\em nonparametric} comes from the observation that we do not actually need the individual basis functions, only their inner products in order to construct $\mbf{K}$. As such, we can instead select a {\em kernel function} $\mbf{K}(t_k, t_\ell)$ that defines the inner product between two points in time, and we can write the now {\em kernel matrix} as
 \begin{equation}

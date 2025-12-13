@@ -11,7 +11,10 @@ Mathematically, the elimination algorithm starts from a factor graph and ends wi
 \begin{equation}\label{eq:elimfactors}
 p(\mbf{x}) = p(\mbf{x}_0 | \mbf{s}_0) p(\mbf{x}_1 | \mbf{s}_1) \cdots p(\mbf{x}_K) = \prod_{k=0}^K p(\mbf{x}_k | \mbf{s}_k),
 \end{equation}
-where $\mbf{s}_k$ is the {\em separator} for $\mbf{x}_k$, defined as the set of variables on which $\mbf{x}_k$ is conditioned after it is eliminated.  Without loss of generality, here $k=0\ldots K$ is the order in which the variables have been eliminated. It is important to note that each variable's separator cannot include any variables that have already been eliminated, which means that once all the conditional densities are computed, we can work backwards from $K$ to $0$ to compute the posterior densities for each variable.  
+where $\mbf{s}_k$ is the {\em separator} for $\mbf{x}_k$, defined as the set of variables on which $\mbf{x}_k$ is conditioned after it is eliminated.  
+Without loss of generality, here $k=0\ldots K$ is the order in which the variables have been eliminated. 
+
+Once all the conditional densities are computed, we can work backwards from $K$ to $0$ to compute the posterior densities for each variable.  This operation is well-defined because there are can be no (directed) cycles in the resulting graph; a consequence of the fact that each variable's separator cannot include any variables that have already been eliminated.
 
 Each step of the elimination algorithm consists of three operations:  (i) select a variable to eliminate, (ii) multiply all factors involving that variable together to form the {\em product factor}, and (iii) factor the product factor into a {\em conditional density} on the eliminated variable and a {\em residual factor} on the separator variables.  The new factor is then added to the factor graph, and the eliminated variable is removed from the graph.  This process is repeated until all variables have been eliminated.  
 
@@ -39,11 +42,12 @@ The elimination algorithm is quite powerful in that it can be applied to any fac
 
 Now that we understand factor graphs and the general strategy for carrying out estimation, we show that when our factors are Gaussian we can carry out elimination in closed form.  We know that a Gaussian density has the form
 \begin{equation}
-p(\mbf{x}) \propto \exp\left( -\frac{1}{2} (\mbf{x} - \mbs{\mu})^T \mbs{\Sigma}^{-1} (\mbf{x} - \mbs{\mu}) \right) = \exp\left( -\frac{1}{2} || \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma} \right).
+p(\mbf{x}) \propto \exp\left( -\frac{1}{2} (\mbf{x} - \mbs{\mu})^T \mbs{\Sigma}^{-1} (\mbf{x} - \mbs{\mu}) \right) = \exp\left( -\frac{1}{2} || \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma} \right),
 \end{equation}
+where $\mbs{\mu}$ is the mean value and $\mbs{\Sigma}$ is the covariance.
 After taking the negative logarithm, we will only need the $|| \mbf{x} - \mbs{\mu} ||^2_\mbs{\Sigma}$ part, which forms a term in the negative-log likelihood cost that we are seeking to minimize; we will often then label our factors on our factor graphs using this cost term for simplicity.  We may also sometimes write $p(\mbf{x}) \sim \mathcal{N}(\mbs{\mu}, \mbs{\Sigma})$ as a shorthand for Gaussian densities.
 
-In general, we can use the following relationship to carry out elimination when all the factors are Gaussian:
+In general, we can use the following relationship -- based on the Schur complement -- to carry out elimination when all the factors are Gaussian:
 \begin{multline}\label{eq:gausselim}
 \underbrace{\left\| \bbm \mbf{x} \\ \mbf{s} \ebm - \bbm \mbs{\mu}_x \\ \mbs{\mu}_s \ebm \right\|^2_{\bbm \mbs{\Sigma}_{xx} & \mbs{\Sigma}_{xs} \\ \mbs{\Sigma}_{sx} & \mbs{\Sigma}_{ss} \ebm} }_{-\log p(\mbf{x}, \mbf{s})} \\ = \underbrace{|| \mbf{x} - \mbs{\mu}_x - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} (\mbf{s} - \mbs{\mu}_s) ||^2_{\mbs{\Sigma}_{xx} - \mbs{\Sigma}_{xs} \mbs{\Sigma}_{ss}^{-1} \mbs{\Sigma}_{sx}}}_{-\log p(\mbf{x} | \mbf{s})} + \underbrace{|| \mbf{s} - \mbs{\mu}_s ||^2_{\mbs{\Sigma}_{ss}}}_{-\log p(\mbf{s})}. \\
 \end{multline}
@@ -166,7 +170,7 @@ and $\mbf{K}_0 = \pri{\mbf{P}}_{0} \mbf{C}_0^T \left( \mbf{C}_0 \pri{\mbf{P}}_{0
 \end{equation}
 and can be calculated during the backward pass.  The computational complexity of the \ac{RTS} smoother is $O(K)$, in other words, linear in the length of the trajecotry.
 
-The forward pass is the very famous \acf{KF}, which we now understand from a factor-graph perspective.  The $p(\mbf{x}_k | \mbf{v}_{0:k}, \mbf{y}_{0:k}) = \mathcal{N}\left(\est{\mbf{x}}_{k,f}, \est{\mbf{P}}_{k,f} \right)$ quantities can be referred to as {\em filtered} (accounting only for up-to-the-present measurements) while the $p(\mbf{x}_k | \mbf{v}_{0:K}, \mbf{y}_{0:K}) = \mathcal{N}\left( \est{\mbf{x}}_k, \est{\mbf{P}}_k \right)$ quantities are {\em smoothed} (accounting for all measurements: past, present, and future); see Figure~\ref{fig:filtersmoother}.
+The forward pass is the \acf{KF}, which we now understand from a factor-graph perspective.  The $p(\mbf{x}_k | \mbf{v}_{0:k}, \mbf{y}_{0:k}) = \mathcal{N}\left(\est{\mbf{x}}_{k,f}, \est{\mbf{P}}_{k,f} \right)$ quantities can be referred to as {\em filtered} (accounting only for up-to-the-present measurements) while the $p(\mbf{x}_k | \mbf{v}_{0:K}, \mbf{y}_{0:K}) = \mathcal{N}\left( \est{\mbf{x}}_k, \est{\mbf{P}}_k \right)$ quantities are {\em smoothed} (accounting for all measurements: past, present, and future); see Figure~\ref{fig:filtersmoother}.
 
 \begin{figure}[t]
      \centering

@@ -59,11 +59,11 @@ where
 and, as above, the conditional density, $p(\mbf{x}_{\tau_{1:N}}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v})$, can be found by applying the general formula in~\eqref{eq:gausselim}. 
 % Note that we have also introduced a unary prior term, $p(\mbf{x}_1)$.
 
-The residual factor is obtained by marginalizing the full joint distribution with respect to the interpolated variables:
+The residual factor, $\phi(\mbf{x}_{k-1}, \mbf{x}_{k})$, is obtained by marginalizing the full joint distribution with respect to the interpolated variables:
 \begin{equation}
      \phi(\mbf{x}_{k-1}, \mbf{x}_{k}) = \int p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) p(\mbf{x}_{\tau_{1:N}}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}) p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \, d\mbf{x}_{\tau_{1:N}} .
 \end{equation}
-The final factor can be pulled out of the integral and corresponds to a motion-prior factor between bordering states, $\mbf{x}_k$ and $\mbf{x}_{k-1}$. The remaining terms in the integral correspond to the measurement distribution conditioned on the border states.  Thus, our original factor in Figure~\ref{fig:gausselim3} can be broken into two parts:
+The rightmost term, $p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1})$, can be pulled out of the integral and corresponds to a motion-prior factor between bordering states, $\mbf{x}_k$ and $\mbf{x}_{k-1}$. The remaining terms in the integral correspond to the measurement distribution conditioned on the border states.  Thus, our original factor in Figure~\ref{fig:gausselim3} can be broken into two parts:
 % \begin{equation}
 %      p(\mbf{y}| \mbf{x}_k,\mbf{x}_{k-1}, \mbf{v}) = \int p(\mbf{y}| \mbf{x}_{\tau_{1:N}}) p(\mbf{x}_{\tau_{1:N}}|\mbf{x}_k, \mbf{x}_{k-1}) d\mbf{x}_{\tau_{1:N}}.
 % \end{equation} 
