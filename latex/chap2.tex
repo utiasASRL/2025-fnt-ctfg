@@ -8,7 +8,7 @@ In this chapter, we show how \ac{GP} regression -- a popular method for function
 
 \section{Brief Derivation of GP Regression}
 
-\alert{flow could be improved here. Consider introducing SDE here?}
+\alert{flow could be improved here}
 
 We begin by considering systems with a continuous-time \ac{GP} prior and a discrete-time, linear measurement model:
 \beqn{}
@@ -17,7 +17,7 @@ We begin by considering systems with a continuous-time \ac{GP} prior and a discr
 \eeqn 
 where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. Initially, $\mbf{x}(0) = \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$; it captures our prior belief about the likelihood of all possible trajectories that the state could take. 
 
-\alert{Consider a didactic diagram here showing the mean trajectory, 3-sigma bound, sample trajectory and measurement/query points. }
+\alert{Suggestion: consider a didactic diagram here showing a mean trajectory, 3-sigma bound, sample trajectory and measurement/query points. }
 
 We consider that we want to query the state at a number of times ($\tau_0 < \tau_1< \ldots < \tau_J$) that may or may not be different from the measurement times ($t_0 < t_1 < \ldots < t_K$). 
 The joint density between the state (at the query times) and the measurements (at the measurement times) is written as
@@ -136,11 +136,11 @@ We can also view~\eqref{eq:gpgnlinsparse} as the solution to the following least
 \begin{equation}
 \est{\mbf{x}} = \mbox{arg}\min_{\mbf{x}} || \mbf{v} - \mbf{A}^{-1}\,\mbf{x} ||^2_{\mbf{Q}} + || \mbf{y} - \mbf{C}\mbf{x}||^2_{\mbf{R}}.
 \end{equation}
-Or, breaking it down by time steps, 
+Or, breaking it down by time steps,
 \begin{multline}
 \est{\mbf{x}} = \mbox{arg}\min_{\mbf{x}} || \pri{\mbf{x}}_0 - \mbf{x}_0 ||^2_{\pri{\mbf{P}}_0} + \sum_{k=1}^K || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} \\ + \sum_{k=0}^K || \mbf{y}_k - \mbf{C}_k \mbf{x}_k||^2_{\mbf{R}_k}.
 \end{multline}
-Each of these terms accounts for exactly one factor in Figure~\ref{fig:dtfg2}.  Therefore, solving at the measurement times is equivalent to our earlier factor-graph formulation for the main solve.
+It is clear from this expression that solving at the measurement times can be carried out using classical, discrete-time state estimation tools.\footnote{Note that from the factor graph perspective presented in the next Chapter~\ref{chap:fg-ctls}, each of these terms accounts for exactly one factor.}
 
 \section{Querying is $O(1)$}
 
@@ -161,8 +161,5 @@ It turns out this is identical to~\eqref{eq:fgquery}, which requires that we sho
 \mbs{\Sigma}_t & = & \pri{\mbf{P}}_\tau - \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm,
 \eeqn
 left an exercise for the reader.  
-
-\alert{already added this para to other chapter}
-This means that using the traditional \ac{GP} interpolation equations is exactly equivalent to our factor-graph elimination approach from the previous chapter.  We argue that the factor-graph approach is more intuitive and elegant because the sparse structure of the problem is plain to see; the separator for $\mbf{x}_\tau$ is clearly $\{ \mbf{x}_{k-1}, \mbf{x}_k\}$, so that the query will clearly be an $O(1)$ operation. 
 
 \alert{Add flow to next section: this represents the classical view of gp regression, but we now take a new perspective using factor graphs.}
