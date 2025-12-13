@@ -67,7 +67,7 @@ Our implementation of the \ac{WNOA} requires two such state structures as well a
 
 Note that in this example, our factor is templated on a 2D point and an $SE(3)$ pose. In general, \texttt{WNOAMotionFactor}, as well as most novel structures below, support any vector space or Lie group defined in \ac{GTSAM}. 
 
-\subsection{During-Main-Solve Querying}\label{sec:during-query-implem}
+\subsection{Interpolating States with Measurements}\label{sec:during-query-implem}
 
 As mentioned in the preceding chapters, one key reason for using continuous-time estimation is that it can allow the practitioner to reduce the number of variables in a given optimization problem.
 We can treat a subset of the variables as interpolated states and use the methodology outlined in Chapter \ref{chap:interp-during-solve} to eliminate them from the optimization, while still accounting for the effect of factors that are defined on these states.
