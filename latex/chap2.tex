@@ -1,216 +1,168 @@
 %!TEX root =  main.tex
-\chapter{The Factor Graph Point of View}
-\label{chap:fg-ctls}
 
-We will consider \ac{GP}-based continuous-time estimation through the lens of \emph{factor graphs} -- a common paradigm in modern state estimation for robotics~\citep{dellaert17}. Crucially, this framework will allow us to build key insights into the inner workings of continuous-time estimation. 
+\chapter{Gaussian-Process Regression}\label{sec:gp-regression}
 
-We first brief introduction to factor graphs in the next section. This section can be safely skipped by readers that are already familiar with this concept. For readers that are new to factor graphs, we recommend reading this section as well as the additional background in the Appendix before continuing to the rest of this chapter.
+An inherent limitation of classical discrete-time optimization problems in robotics is that each state of interest must be  represented \emph{explicitly} as a variable. This can lead to complications when downstream robotics tasks, such as motion planning or control, require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\citep{mukadamContinuoustimeGaussianProcess2018}. Similar failings occur when performing estimation of {\emph smooth shapes} (\eg for continuum robotics~\citet{lilge_tro25}). These issues can be readily handled by {\em continuous-time} estimation, which processes measurements at given times to estimate a trajectory that can be queried at \emph{any} time by a downstream process. 
 
-The rest of the chapter will show how factor graphs can be applied to continuous-time estimation in the succeeding sections.
+In this chapter, we show how \ac{GP} regression -- a popular method for function approximation that fits with the Bayesian estimation paradigm \citep{rasmussen06} -- can be used to carry out {\em continuous-time} estimation. Here, we primarily follow \citet{barfoot_ser24} to provide a background on \ac{GP} regression and set the stage for the factor graph interpretation that will be the subject of the next chapter. Readers who are already familiar with the details of \ac{GP} regression can safely skip this chapter.
 
-\section{A Brief Introduction to Factor Graphs}
-\label{sec:brief-fg}
+\section{Brief Derivation of GP Regression}
 
-\begin{figure}[t]
-     \includegraphics[width=\textwidth]{dtfg1.pdf}
-     \caption{A simple factor graph for a classic estimation problem.  The unary factor on $\mbf{x}_0$ represents the prior knowledge about the initial state, the binary factors represent the motion model, and the remaining unary factors represent the measurements.  In practice, we can have much more complicated factor graphs with loops.}
-     \label{fig:dtfg1}
-\end{figure}
+\alert{flow could be improved here. Consider introducing SDE here?}
 
-Typically in state estimation, we are interested in computing a posterior density representing the likelihood of a state given some inputs and measurements of the form
+We begin by considering systems with a continuous-time \ac{GP} prior and a discrete-time, linear measurement model:
+\beqn{}
+\mbf{x}(t) & \sim & \mathcal{GP}( \pri{\mbf{x}}(t), \pri{\mbf{P}}(t,t^\prime) ), \qquad t_0 < t,t^\prime, \\
+\mbf{y}_k & = & \mbf{C}_k\mbf{x}(t_k) + \mbf{n}_k, \qquad t_0 < t_1 < \cdots < t_K,
+\eeqn 
+where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. Initially, $\mbf{x}(0) = \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$; it captures our prior belief about the likelihood of all possible trajectories that the state could take. 
+
+\alert{Consider a didactic diagram here showing the mean trajectory, 3-sigma bound, sample trajectory and measurement/query points. }
+
+We consider that we want to query the state at a number of times ($\tau_0 < \tau_1< \ldots < \tau_J$) that may or may not be different from the measurement times ($t_0 < t_1 < \ldots < t_K$). 
+The joint density between the state (at the query times) and the measurements (at the measurement times) is written as
+\begin{equation}\label{eq:gaussjoint}
+p\left( \bbm   \mbf{x}_\tau \\ \mbf{y} \ebm \right) = \mathcal{N} \left( \bbm   \pri{\mbf{x}}_\tau  \\ \mbf{C} \pri{\mbf{x}} \ebm, \bbm  \pri{\mbf{P}}_{\tau\tau} & \pri{\mbf{P}}_\tau \mbf{C}^T \\ \mbf{C} \pri{\mbf{P}}_\tau^T &   \mbf{R} + \mbf{C} \pri{\mbf{P}}\mbf{C}^T \ebm  \right),
+\end{equation}
+where
+\begin{gather*}
+\mbf{x} = \bbm \mbf{x}(t_0) \\ \vdots \\ \mbf{x}(t_K) \ebm,  \quad \pri{\mbf{x}} = \bbm \pri{\mbf{x}}(t_0)  \\ \vdots \\ \pri{\mbf{x}}(t_K) \ebm, \quad \mbf{x}_\tau = \bbm \mbf{x}(\tau_0) \\ \vdots \\ \mbf{x}(\tau_J) \ebm,  \quad \pri{\mbf{x}}_\tau = \bbm \pri{\mbf{x}}(\tau_0) \\ \vdots \\ \pri{\mbf{x}}(\tau_J) \ebm, \\
+\mbf{y} = \bbm \mbf{y}_0 \\ \vdots \\ \mbf{y}_K \ebm,  \quad \mbf{C} = \mbox{diag}\left( \mbf{C}_0, \ldots, \mbf{C}_K \right), \quad \mbf{R} = \mbox{diag}\left( \mbf{R}_0, \ldots, \mbf{R}_K \right), \\
+\pri{\mbf{P}} = \bbm \pri{\mbf{P}}(t_i, t_j) \ebm_{ij}, \quad \pri{\mbf{P}}_\tau = \bbm \pri{\mbf{P}}(\tau_i, t_j) \ebm_{ij}, \quad \pri{\mbf{P}}_{\tau\tau} = \bbm \pri{\mbf{P}}(\tau_i, \tau_j) \ebm_{ij}.
+\end{gather*}
+In \ac{GP} regression, the matrix, $\pri{\mbf{P}}$, is known as the \index{kernel matrix} {\em kernel matrix} and comprises evaluations of the kernel covariance function between all pairs of measurement times.  Factoring~\eqref{eq:gaussjoint},\footnote{This factorization is common in Gaussian state-estimation and is provided in more general form in \eqref{eq:gausselim} of Appendix~\ref{app:add-fg-bg}.} we can show that
+\begin{multline}
+\label{eq:gpquerytimes}
+p(\mbf{x}_\tau | \mbf{y}) = \mathcal{N}\biggl( \underbrace{\pri{\mbf{x}}_\tau + \pri{\mbf{P}}_{\tau} \mbf{C}^T( \mbf{C} \pri{\mbf{P}} \mbf{C}^T + \mbf{R})^{-1} (\mbf{y} - \mbf{C}\pri{\mbf{x}} )}_{\est{\mbf{x}}_{\tau}, \;\mbox{\small mean}}, \biggr. \\ \biggl. 
+\underbrace{\pri{\mbf{P}}_{\tau\tau} - \pri{\mbf{P}}_\tau \mbf{C}^T ( \mbf{C} \pri{\mbf{P}} \mbf{C}^T + \mbf{R}  )^{-1} \mbf{C} \pri{\mbf{P}}_\tau^T }_{\est{\mbf{P}}_{\tau\tau}, \;\mbox{\small covariance}}\biggr),
+\end{multline}
+for the density of the predicted state at the query times, given the measurements.  
+
+The expression simplifies further if we take the query times to be exactly the same as the measurement times (i.e., $\tau_k = t_k, K=J$).  This implies that 
 \begin{equation}
-p(\mbf{x} | \mbf{v}, \mbf{y}),
+\pri{\mbf{P}} = \pri{\mbf{P}}_\tau = \pri{\mbf{P}}_{\tau\tau},
 \end{equation}
-where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ldots, t_K$, $\mbf{v} = (\mbf{v}_0, \ldots, \mbf{v}_K)$ is a set of inputs/commands, and $\mbf{y} = (\mbf{y}_0, \ldots, \mbf{y}_K)$ is a set of measurements.  In most practical scenarios, we can factor this posterior density into a product of factors, each of which depends on only a subset of the variables in the problem.  For example, we might have
+and then we can write
+\begin{multline}
+\label{eq:gpmeastimes2}
+p(\mbf{x} | \mbf{y}) = \mathcal{N}\biggl( \underbrace{\pri{\mbf{x}} + \pri{\mbf{P}} \mbf{C}^T( \mbf{C} \pri{\mbf{P}} \mbf{C}^T + \mbf{R})^{-1} (\mbf{y} - \mbf{C}\pri{\mbf{x}} )}_{\est{\mbf{x}}, \;\mbox{\small mean}}, \biggr. \\ \biggl.
+\underbrace{\pri{\mbf{P}} - \pri{\mbf{P}} \mbf{C}^T ( \mbf{C} \pri{\mbf{P}} \mbf{C}^T + \mbf{R}  )^{-1} \mbf{C} \pri{\mbf{P}}^T }_{\est{\mbf{P}}, \;\mbox{\small covariance}}\biggr).
+\end{multline}
+We can rearrange this using the {\em matrix-inversion lemma} so that
+\begin{multline}
+\label{eq:gpmeastimes}
+p(\mbf{x} | \mbf{y}) = \mathcal{N}\biggl(  \underbrace{\left( \pri{\mbf{P}}^{-1} + \mbf{C}^T \mbf{R}^{-1} \mbf{C} \right)^{-1} \left( \pri{\mbf{P}}^{-1} \pri{\mbf{x}}  + \mbf{C}^T \mbf{R}^{-1}\mbf{y} \right)}_{\est{\mbf{x}}, \;\mbox{\small mean}}, \biggr. \\ \biggl.\underbrace{\left( \pri{\mbf{P}}^{-1} + \mbf{C}^T \mbf{R}^{-1} \mbf{C} \right)^{-1} }_{\est{\mbf{P}}, \;\mbox{\small covariance}} \biggr).
+\end{multline}
+Further rearranging the mean expression, we have a linear system for $\est{\mbf{x}}$:
 \begin{equation}
-p(\mbf{x} | \mbf{v}, \mbf{y}) \propto \underbrace{p(\mbf{x}_0)}_{\phi(\mbf{x}_0)} \prod_{k=1}^K \underbrace{p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi(\mbf{x}_{k-1},\mbf{x}_k)} \prod_{k=0}^K \underbrace{p(\mbf{y}_k | \mbf{x}_k)}_{\varphi(\mbf{x}_k)}.
+\label{eq:gpgnlin}
+ \left( \pri{\mbf{P}}^{-1} + \mbf{C}^T \mbf{R}^{-1} \mbf{C} \right) \, \est{\mbf{x}} =  \pri{\mbf{P}}^{-1} \pri{\mbf{x}} + \mbf{C}^T \mbf{R}^{-1}\mbf{y}.
 \end{equation}
-where each $\phi(\cdot)$, is a {\em factor} of the posterior density.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
+The solution to this linear system gives us the estimate of the state at the measurement times.
 
-The normalization constant associated with this factorization is typically expensive to compute so we often satisfy ourselves with finding the $\mbf{x}$ that maximizes the posterior density, or equivalently the $\mbf{x}$ that minimizes the negative log-likelihood cost:
-\begin{equation}\label{eq:cost}
-\mathcal{C}(\mbf{x}) = -\log \phi(\mbf{x}_0) - \sum_{k=1}^K \log \phi(\mbf{x}_k, \mbf{x}_{k-1}) - \sum_{k=0}^K \log \varphi(\mbf{x}_k).
-\end{equation}
-This is a common approach in estimation, referred to as {\em \ac{MAP}} estimation.
+If, after solving for the estimate at the measurement times, we later want to query the state at some other times of interest ($\tau_0 < \tau_1< \ldots < \tau_J$), we can use the classic \ac{GP}  interpolation equations \citep{rasmussen06} to do so:
+\begin{subequations}
+\label{eq:gpinterp}
+\begin{eqnarray}
+\est{\mbf{x}}_\tau & = & \pri{\mbf{x}}_\tau + \left( \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1} \right) (\est{\mbf{x}} - \pri{\mbf{x}}), \\
+\est{\mbf{P}}_{\tau\tau} & = & \pri{\mbf{P}}_{\tau\tau} + \left( \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}\right) \left( \est{\mbf{P}} - \pri{\mbf{P}} \right) \left( \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}\right)^T.
+\end{eqnarray}
+\end{subequations}
+This is linear interpolation in the state variable (but not necessarily in time).  
 
-We can visually understand the factors by assembling them into a {\em factor graph}, which is a bipartite graph with two types of nodes: variable nodes and factor nodes.  The variable nodes represent the variables in the problem, such as $\mbf{x}_0, \ldots, \mbf{x}_K$, and the factor nodes represent the factors, such as $\phi(\mbf{x}_0)$, $\phi(\mbf{x}_{k-1},\mbf{x}_k)$, and $\varphi(\mbf{x}_k)$.  The edges connect variable nodes to factor nodes, indicating which variables are involved in each factor.  This graphical representation allows us to see the dependencies between variables and factors in a very intuitive way.  Figure~\ref{fig:dtfg1} shows a simple factor graph for a classic discrete-time estimation problem.
+In general, this \index{Gaussian process} \ac{GP} approach has complexity $O(K^3 + K^2J)$ since the initial solve is $O(K^3)$ (for an arbitrary kernel function such as squared exponential) and the query is $O(K^2J)$; this is quite expensive, and next we will seek to improve the cost by designing a special kernel function.
 
-\begin{figure}[t]
-     \includegraphics[width=\textwidth]{elim.pdf}
-     \centering
-     \caption{Example of the elimination algorithm.  The left shows the factor graph before elimination, the middle shows the product factor formed by multiplying all factors involving $\mbf{x}$, and the right shows the result of eliminating $\mbf{x}$ from the factor graph, resulting in a new factor on the separator variables and a conditional density for $\mbf{x}$.\alert{This figure was copied from the supplementary. It may need to be simplified to just convey the main idea of elimination. It should just serve as a refresher for readers so that we can refer to elimination in the next section. Caption can likely be simplified}}
-     \label{fig:elim_main_body}
-\end{figure}
+\section{Exactly Sparse Kernels}
 
-Aside from the benefits to intuition, factor graphs also lay the groundwork for efficient computation via the \emph{elimination algorithm}. The key idea behind this algorithm is shown in Figure~\ref{fig:elim_main_body}: we eliminate one variable at a time, and update the remaining factors in the graph accordingly. This update includes generating new factors between neighbouring, remaining variables and identifying \emph{conditional dependencies} between remaining and eliminated variables (indicated by arrows in the factor graph).
-Once all variables have been eliminated, we are left with a \emph{Bayes net} structure that allows for efficient recovery of the optimal posterior density.
+Looking at~\eqref{eq:gpgnlin}, we see that the {\em inverse kernel matrix}, $\pri{\mbf{P}}^{-1}$, appears on the left-hand side.  Naively choosing a \ac{GP} kernel function could result in this matrix being dense and therefore the solution expensive.  Instead, we will select our kernel function carefully so that the inverse kernel matrix is {\em exactly sparse}.
 
-In the Appendix, we provide additional details about factor graphs, including the elimination algorithm (Section~\ref{sec:elim-algo}), show standard manipulations of factor graphs (Section~\ref{sec:fgelimfus}), and apply the factor graph approach to linear, discrete-time estimation (Section~\ref{sec:ldte}).
-
-\section{Factor Graphs for Linear Continuous-Time Estimation}% Formerly "Main Solve"
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.95\textwidth]{ctfg.pdf}
-    \caption{A continuous-time estimation problem with measurements at discrete times and a single query time.  We refer to this as `continuous-time' because the query(s) could be at any time along the trajectory.}
-    \label{fig:ctfg}
-\end{figure}
-
-We have already shown that \ac{GP}-based, continuous-time state-estimation problems can be solved exactly by applying a combination of standard discrete-time estimation tools and \ac{GP} interpolation equations~\citep{barfoot_rss14}. In the rest of this chapter, we will show that this insight follows straightforwardly when continuous-time estimation is cast into factor graph framework.
-
-Consider the factor graph of a simple continuous-time estimation problem shown in Figure~\ref{fig:ctfg}. We have introduced a single query state, $\mbf{x}_{\tau}$, at arbitrary time, $\tau$, to the otherwise standard discrete-time factor graph. As one might expect, we can break the problem down into two main steps:\footnote{Note that this idea is identical to \ac{GP} regression that we present in the Appendix (Section~\ref{sec:gp-regression})}
-\begin{enumerate}
-    \item {\em main solve}: solve for the states at the measurement times
-    \item {\em interpolation}: solve for the states at the query time
-\end{enumerate}
-The key to this decomposition is to use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}. The remaining factor graph then corresponds to a linear discrete-time factor graph, which we can readily solve with standard tools (see Section~\ref{sec:ldte}, for an overview). Once we have found the solution at the measurement times, it follows that the distribution of the interpolated state, $\mbf{x}_{\tau}$, can be determined by the conditional dependence depicted in Figure~\ref{fig:ctfg2}.  Importantly, the main solve step is completely agnostic to the query time, meaning we can select as many query times as we like after the main solve. The next two sections work through the details of these steps.
-
-\begin{figure}[t]
-     \centering
-     \includegraphics[width=0.95\textwidth]{ctfg2.pdf}
-     \caption{The same factor graph as Figure~\ref{fig:ctfg} with the state at the query time, $\mbf{x}_\tau$, eliminated.}
-     \label{fig:ctfg2}
-\end{figure}
-
-\subsection{Main Solve}
-The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  We would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated during the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
-
-We will start with a generic, continuous-time, linear system model:\footnote{See Section~\ref{sec:ldte} for an equivalent derivation starting from a discrete-time, linear system model.}
-\begin{equation}\label{eq:linsysct}
+We base our kernel prior on a \ac{LTI}\footnote{We could also make this equation time-varying \citep{barfoot_ser24} but leave it time-invariant in the interest of simplicity.} \acf{SDE}:
+\begin{equation}
 \dot{\mbs{x}}(t) = \mbs{A} \mbs{x}(t) + \mbs{v}(t) + \mbs{L} \mbs{w}(t),
 \end{equation}
-where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \delta(t-t^\prime))$ a white-noise process.  For example if we choose the coefficient matrices to be $\mbs{A} = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm$ and $\mbs{L} = \bbm \mbf{0} \\ \mbf{I} \ebm$ and set the inputs to zero, $\mbs{v}(t) = \mbf{0}$, then our state represents position and velocity, $\mbs{x}(t) = \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm$, and our motion model becomes {\em \ac{WNOA}}:
+with
 \begin{equation}
-\bbm \dot{\mbs{p}}(t) \\ \ddot{\mbs{p}}(t) \ebm = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm + \bbm \mbf{0} \\ \mbf{I} \ebm \mbs{w}(t) \quad \Rightarrow \quad \ddot{\mbs{p}}(t) = \mbs{w}(t).
+\mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \, \delta(t-t^\prime)),
 \end{equation}
-For now we will work with~\eqref{eq:linsysct} due to its generality, but our examples will often use the specific case of \ac{WNOA}.
+a (stationary) zero-mean \index{Gaussian process} \ac{GP} with (symmetric, positive-definite) \index{power spectral density matrix} {\em power spectral density matrix}, $\mbs{Q}$.
 
-Based on analogy with discrete-time factor-graph models, we expect that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
+Referring to \citep{barfoot_ser24}, we can show that the solution to this \ac{SDE} is a \ac{GP} with the following kernel function:
 \begin{multline}
-     \phi(\mbf{x}_k, \mbf{x}_{k-1}) = -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ \propto || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
+\mbs{x}(t) \sim \mathcal{GP} \biggl(  \underbrace{\mbs{\Phi}(t,t_0)\pri{\mbf{x}}_0 + \int_{t_0}^t \mbs{\Phi}(t,s) \mbs{v}(s) \, ds}_{\pri{\mbf{x}}(t)},  \\ \underbrace{\mbs{\Phi}(t,t_0) \pri{\mbf{P}}_0 \mbs{\Phi}(t^\prime,t_0)^T + \int_{t_0}^{\min(t,t^\prime)} \mbs{\Phi}(t,s) \mbs{L}\mbs{Q}\mbs{L}^T \mbs{\Phi}(t^\prime,s)^T  \, ds}_{\pri{\mbf{P}}(t,t^\prime)} \biggr),
 \end{multline}
-To fill in the details, we need to (stochastically) integrate the motion model in~\eqref{eq:linsysct} over the time interval, $[t_{k-1}, t_{k}]$.  It can be shown that the solution to this \ac{SDE} is given by
+where $\mbs{\Phi}(t,s)$ is known as the {\em transition function}.  In our case, the system is \ac{LTI} and so the transition function is given by
 \begin{equation}
-p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) = \mathcal{N}\left(\mbf{A}_{k,k-1} \mbf{x}_{k-1} + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1} \right),
+\mbs{\Phi}(t,s) = \exp\left( \mbs{A}(t-s) \right).
+\end{equation}
+Evaluating this kernel function at the measurement times allows us to write our prior as a joint Gaussian density:
+\begin{equation}
+\label{eq:gpprior}
+p(\mbf{x}) = \mathcal{N}(\pri{\mbf{x}}, \pri{\mbf{P}}) = \mathcal{N} \left( \mbf{A} \mbf{v}, \mbf{A} \mbf{Q} \mbf{A}^T \right),
 \end{equation}
 where
-\beqn{}
-\mbf{v}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{v}(s) \, ds,   \\
-\mbf{Q}_{k,k-1} & = &  \int_{t_{k-1}}^{t_{k}} \exp\left( \mbs{A} (t_{k} - s) \right) \mbs{L} \mbs{Q} \mbs{L}^T \exp\left( \mbs{A} (t_{k} - s)\right)^T \, ds,  \quad\;\;\;   \\
-\mbf{A}_{k,k-1} & = &  \exp\left( \mbs{A} \, t_{k,k-1} \right),
-\eeqn
-with $t_{k,k-1} = t_{k} - t_{k-1}$.  We can often simplify these expressions for particular choices of $\mbs{A}$, $\mbs{L}$, and $\mbs{v}(t)$; for example, for \ac{WNOA} we have $\mbf{v}_{k,k-1} = \mbf{0}$ and
+\begin{gather}
+\mbf{v} = \bbm \pri{\mbf{x}}_0 \\ \mbf{v}_{1,0} \\ \vdots \\ \mbf{v}_{K,K-1} \ebm, \quad 
+\mbf{Q} = \diag\left( \pri{\mbf{P}}_0, \mbf{Q}_{1,0}, \mbf{Q}_{2,1}, \ldots, \mbf{Q}_{K,K-1} \right), \\
+\mbf{v}_{k,k-1} = \int_{t_{k-1}}^{t_k} \mbs{\Phi}(t_k,s) \mbs{v}(s) \, ds, \\
+\mbf{Q}_{k,k-1} = \int_{t_{k-1}}^{t_k} \mbs{\Phi}(t_k,s) \mbs{L} \mbs{Q} \mbs{L}^T \mbs{\Phi}(t_k,s)^T \, ds, \nonumber \\
+ \mbf{A} = \bbm \mbf{1} &  &  &  &   & \\
+\mbf{A}_{1,0} & \mbf{1} &  &  &  &  \\
+\mbf{A}_{2,0} & \mbf{A}_{2,1} & \mbf{1} & &  &  \\
+\vdots & \vdots & \vdots & \ddots &  & \\
+\mbf{A}_{K-1,0} & \mbf{A}_{K-1,1} & \mbf{A}_{K-1,2} & \cdots & \mbf{1} &  \\
+\mbf{A}_{K,0} & \mbf{A}_{K,1} & \mbf{A}_{K,2} & \cdots & \mbf{A}_{K,K-1} & \mbf{1}
+\ebm, \nonumber
+\end{gather}
+and we have simplified notation by writing $\mbf{A}_{k,\ell} = \mbs{\Phi}(t_k, t_\ell)$.
+
+Substituting our specific prior into~\eqref{eq:gpgnlin}, the linear system that we need to solve becomes
 \begin{equation}
-\mbf{Q}_{k,k-1} = \bbm \frac{1}{3}  t_{k,k-1}^3 \mbs{Q} & \frac{1}{2} t_{k,k-1}^2 \mbs{Q} \\  \frac{1}{2} t_{k,k-1}^2 \mbs{Q} &  t_{k,k-1} \mbs{Q} \ebm, \;\; \mbf{A}_{k,k-1} = \bbm \mbf{I} &  t_{k,k-1} \mbf{I} \\ \mbf{0} & \mbf{I} \ebm,
+\label{eq:gpgnlinsparse}
+\left( \mbf{A}^{-T} \mbf{Q}^{-1} \mbf{A}^{-1} + \mbf{C}^T \mbf{R}^{-1} \mbf{C} \right) \, \est{\mbf{x}} =  \mbf{A}^{-T} \mbf{Q}^{-1} \mbf{v} + \mbf{C}^T \mbf{R}^{-1}\mbf{y},
 \end{equation}
-This is everything we need to populate the motion-model factors in Figure~\ref{fig:ctfg2}.\footnote{See Figure~\ref{fig:dtfg2} for more details on the exact forms of the factors. Though this figure deals with the discrete-time case, the forms are equivalent for continuous-time.}  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  
+which as yet does not seem to offer any advantage over~\eqref{eq:gpgnlin}.  However, it turns out that $\mbf{A}^{-1}$ has the special form
+\begin{equation}
+\mbf{A}^{-1} = \bbm \mbf{1} &  & &  &  &  \\
+-\mbf{A}_{1,0} & \mbf{1} &  &  &  &  \\
+& -\mbf{A}_{2,1} & \mbf{1} & &  &  \\
+ &  & -\mbf{A}_{3,2} & \ddots &  &  \\
+ &  & & \ddots & \mbf{1} &  \\
+ &  &  &  & -\mbf{A}_{K,K-1} & \mbf{1}
+\ebm.
+\end{equation}
+Since $\mbf{A}^{-1}$ has only the main diagonal and the one below non-zero, and $\mbf{Q}^{-1}$ is block-diagonal, the inverse kernel matrix $\pri{\mbf{P}}^{-1} = (\mbf{A}\mbf{Q}\mbf{A}^T)^{-1} = \mbf{A}^{-T} \mbf{Q}^{-1} \mbf{A}^{-1}$ is exactly block-tridiagonal.  Since $\mbf{C}^T \mbf{R}^{-1} \mbf{C}$ is block-diagonal, it means the left-hand side of~\eqref{eq:gpgnlinsparse} is also block-tridiagonal.  This means that we can solve the linear system in $O(K)$ time instead of $O(K^3)$ for a dense inverse kernel matrix.  This has been made possible by our specific choice of kernel function, built from an \ac{LTI} \ac{SDE}.
 
-\subsection{Querying the Solution}\label{sec:linafterquery}
-% formerly After-Main-Solve Querying
-
-\begin{figure}[t]
-     \centering
-     \includegraphics[width=0.95\textwidth]{gausselim2.pdf}
-     \caption{Elimination of the query state, $\mbf{x}_\tau$, from the factor graph in Figure~\ref{fig:ctfg2}.  The result is a new factor graph with a binary factor between the measurement states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, and a Gaussian conditional density for the query state.}
-     \label{fig:gausselim2}
-\end{figure}
-
-In this section, we discuss querying the trajectory at some time(s) of interest, $\mbf{x}_\tau$, as in Figure~\ref{fig:ctfg2}, where the query state does not have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the Gaussian elimination formula in~\eqref{eq:gausselim} to write
+We can also view~\eqref{eq:gpgnlinsparse} as the solution to the following least-squares optimization problem:
+\begin{equation}
+\est{\mbf{x}} = \mbox{arg}\min_{\mbf{x}} || \mbf{v} - \mbf{A}^{-1}\,\mbf{x} ||^2_{\mbf{Q}} + || \mbf{y} - \mbf{C}\mbf{x}||^2_{\mbf{R}}.
+\end{equation}
+Or, breaking it down by time steps, 
 \begin{multline}
-|| \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbf{x}_\tau - \mbs{\mu}_\tau ||^2_{\mbs{\Sigma}_\tau},
+\est{\mbf{x}} = \mbox{arg}\min_{\mbf{x}} || \pri{\mbf{x}}_0 - \mbf{x}_0 ||^2_{\pri{\mbf{P}}_0} + \sum_{k=1}^K || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} \\ + \sum_{k=0}^K || \mbf{y}_k - \mbf{C}_k \mbf{x}_k||^2_{\mbf{R}_k}.
 \end{multline}
-where $\mbs{\mu}_\tau$ and $\mbs{\Sigma}_\tau$ are the mean and covariance of the Gaussian conditional density for $\mbf{x}_\tau$ and are given in Figure~\ref{fig:gausselim2}, which depicts our elimination graphically.  Critically, the new binary factor between the measurement states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, is identical to the form we would have used had we constructed it directly between these states to begin with; this ensures the presence/absence of the query state does not affect the solution.  It also means that we do not need to know about the query time when carrying out the main solve; we can simply solve for the states at the measurement times, and then query at any time(s) of interest later.
+Each of these terms accounts for exactly one factor in Figure~\ref{fig:dtfg2}.  Therefore, solving at the measurement times is equivalent to our earlier factor-graph formulation for the main solve.
 
-We want the posterior estimate for the query state, $p(\mbf{x}_\tau | \mbf{v}, \mbf{y})$, whereas we have the conditional density, $p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}(\mbs{\mu}_\tau, \mbs{\Sigma}_\tau)$.  We must therefore convolve the conditional density with the posterior for the separator states as follows:
+\section{Querying is $O(1)$}
+
+Next, we will show that querying the trajectory at any time $\tau$ is an $O(1)$ operation.  To do this, we will use the interpolation equations~\eqref{eq:gpinterp}, where we notice that the product $\pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}$ plays a critical role.  To simplify matters, let us assume that we have only a single query time, $t_{k-1} < \tau < t_k$.  Then we can show that
+\begin{multline}
+\pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1} = \Bigl[ \, \mbf{0} \;\;\; \cdots \;\;\;  \mbf{0} \;\;\; \underbrace{\mbf{A}_{\tau,k-1} - \mbf{Q}_{\tau,k-1} \mbf{A}_{k,\tau}^T \mbf{Q}_{k,k-1}^{-1} \mbf{A}_{k,k-1}}_{\mbs{\Lambda}_\tau\; \mbox{\small block column $k-1$}}  \\  \cdots \;\;\;  \underbrace{\mbf{Q}_{\tau,k} \mbf{A}_{k,\tau}^T \mbf{Q}_{k,k-1}^{-1}}_{\mbs{\Psi}_\tau,\;\mbox{\small block column $k$}}  \;\;\; \mbf{0} \;\;\; \cdots \;\;\; \mbf{0}  \, \Bigr],
+\end{multline}
+so that only block-columns $k-1$ and $k$ are non-zero.  This means that we only require the marginal associated with the joint density of $\mbf{x}_{k-1}$ and $\mbf{x}_k$ to compute the query at time $\tau$:
 \beqn{}
-p(\mbf{x}_\tau | \mbf{v}, \mbf{y}) & = & \mathcal{N}\left( \est{\mbf{x}}_\tau, \est{\mbf{P}}_\tau \right) \\ 
-& = &  \int p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) p(\mbf{x}_{k-1}, \mbf{x}_{k} | \mbf{v}, \mbf{y}) \, d\mbf{x}_{k-1} d\mbf{x}_{k}. \quad
+\est{\mbf{x}}_\tau & = & \pri{\mbf{x}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{1} \ebm - \bbm \pri{\mbf{x}}_{k-1} \\  \pri{\mbf{x}}_{k} \ebm \right), \label{eq:meaninterp} \\
+\est{\mbf{P}}_\tau & = & \pri{\mbf{P}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{P}}_{k-1,k-1} & \est{\mbf{P}}_{k-1,k}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k,k} \ebm \right.  \label{eq:covinterp} \\ & & \qquad\qquad\qquad\qquad \quad\left. - \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \right) \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm. \nonumber
 \eeqn
-The marginal for the separator states must be extracted from the main solve (e.g., the \ac{RTS} smoother) and is given by
-\begin{equation}
-p(\mbf{x}_{k-1}, \mbf{x}_{k} | \mbf{v}, \mbf{y}) = \mathcal{N}\left(\bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{k} \ebm, \bbm \est{\mbf{P}}_{k-1} & \est{\mbf{P}}_{k,k-1}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k} \ebm\right).
-\end{equation}
-Carrying out the convolution gives us the marginal posterior for the query state:
-\beqn{fgquery}
-\est{\mbf{x}}_\tau & = & \mbs{\eta}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{k} \ebm,  \\
-\est{\mbf{P}}_\tau & = & \mbs{\Sigma}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \est{\mbf{P}}_{k-1} & \est{\mbf{P}}_{k,k-1}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k} \ebm \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm,
-\eeqn
-where
+
+\alert{Rework below to flow into next chap}
+It turns out this is identical to~\eqref{eq:fgquery}, which requires that we show
 \beqn{}
-\mbs{\eta}_\tau & = & \mbs{\Sigma}_\tau \left(\mbf{Q}_{\tau,k-1}^{-1} \mbf{v}_{\tau,k-1} - \mbf{A}_{k,\tau}^T \mbf{Q}_{k,\tau}^{-1} \mbf{v}_{k,\tau} \right), \\
-\mbs{\Lambda}_\tau & = & \mbs{\Sigma}_\tau \mbf{Q}_{\tau,k-1}^{-1} \mbf{A}_{\tau,k-1}, \\ 
-\mbs{\Psi}_\tau & = & \mbs{\Sigma}_\tau \mbf{A}_{k,\tau}^T \mbf{Q}_{k,\tau}^{-1}.
+\mbs{\eta}_t & = & \pri{\mbf{x}}_\tau - \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \pri{\mbf{x}}_{k-1} \\  \pri{\mbf{x}}_{k} \ebm, \\
+\mbs{\Sigma}_t & = & \pri{\mbf{P}}_\tau - \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm,
 \eeqn
-We can carry out this type of query for as many query times as we like.  The complexity of each query is $O(1)$, since we only need the marginal of the separator states from the main solve. 
+left an exercise for the reader.  
 
-This result is equivalent to the traditional \ac{GP} interpolation result that we showed in the previous chapter. However, we argue that the factor-graph approach is more intuitive and elegant because the sparse structure of the problem is plain to see; the separator for $\mbf{x}_\tau$ is clearly $\{ \mbf{x}_{k-1}, \mbf{x}_k\}$, so that the query will clearly be an $O(1)$ operation. 
+\alert{already added this para to other chapter}
+This means that using the traditional \ac{GP} interpolation equations is exactly equivalent to our factor-graph elimination approach from the previous chapter.  We argue that the factor-graph approach is more intuitive and elegant because the sparse structure of the problem is plain to see; the separator for $\mbf{x}_\tau$ is clearly $\{ \mbf{x}_{k-1}, \mbf{x}_k\}$, so that the query will clearly be an $O(1)$ operation. 
 
-\section{Example}
-
-As a simple example of our continuous-time estimation framework, we consider a system that moves according to a sinusoid,
-\begin{equation}
-p(t) = \sin(t),
-\end{equation}
-and only noisy measurements of this position are available at discrete times.  Our estimator does not know the true motion model, but instead models it as \ac{WNOA} with zero inputs.  The estimator therefore assumes the following system model:
-\beqn{}
-\bbm \dot{p}(t) \\ \ddot{p}(t) \ebm & = & \bbm 0 & 1 \\ 0 & 0 \ebm \bbm p(t) \\ \dot{p}(t) \ebm + \bbm 0 \\ 1 \ebm w(t), \\
-y_k & = & \bbm 1 & 0 \ebm \bbm p(t_k) \\ \dot{p}(t_k) \ebm + n_k.
-\eeqn
-We follow the procedure outlined in the previous sections: (i) solve for the state at the measurement times, then (ii) interpolate at some query times.  Figure~\ref{fig:linear_WNOA_example} shows the results.
-
-\begin{figure}[t]
-     \centering
-     \includegraphics[width=\textwidth]{linear_WNOA_example.pdf}
-     \caption{The ground truth sinusoidal trajectory is shown in green.  Noisy position-only measurements are shown in red.  Our continuous-time solver first computes the solution at the measurement times (blue dots) and then interpolates (both mean and covariance) at several query times between the measurements times (blue line).  We see that the solution is smooth and continuous, as expected, following the ground truth closely.}
-     \label{fig:linear_WNOA_example}
-\end{figure}
-
-\section{Interpolation With Measurements}
-
-\begin{figure}[t]
-     \centering
-     \includegraphics[width=0.90\textwidth]{elim_w_meas.jpeg}
-     \caption{When eliminating an interpolated state with a measurement, we can exactly decompose the residual factor into two factors: a measurement factor $\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})$ and a motion-prior factor $\phi_v(\mbf{x}_{k-1}, \mbf{x}_{k})$.}
-     \label{fig:elim-w-meas}
-\end{figure}
-
-Up to this point, we have only considered the case where our interpolated query states are not associated with any measurements. Owing to our particular choice of continuous-time motion model, we showed that elimination of these query states resulted in a residual factor between its neighbours that represented the same motion model. 
-
-We would also like to consider what happens when we eliminate a state that \emph{does} have an associated measurement. The idea here is that we can incorporate measurements without needing to explicitly include an associated state in the optimization. Practically speaking this is useful in two scenarios:
-\begin{enumerate}
-     \item It can reduce the size of the optimization problem when dealing with measurements from high-rate sensors, such as \ac{lidar}, \ac{radar}, or \ac{imu}.
-     \item It can allow us estimate states that are regularly spaced in time even when measurements are asynchronous.
-\end{enumerate}
-
-As shown in Figure~\ref{fig:elim-w-meas}, when we eliminate a single state with a measurement, we get \emph{two} residual factors: one that recovers the motion model (as in the last section) and one that represents the \emph{effect} of the measurement. 
-To see why this is true, consider that the probability density function of the factor graph on the left of Figure~\ref{fig:elim-w-meas} can be factored into a term that contains only measurement factors and a term that contains only motion-model prior factors,
-\begin{equation}
-     p(\mbf{x}_k, \mbf{x}_{\tau} | \mbf{x}_{k-1}, \mbf{y}, \mbf{v}) \propto p(\mbf{y}| \mbf{x}_{\tau}) p(\mbf{x}_k, \mbf{x}_{\tau}| \mbf{x}_{k-1}, \mbf{v}).
-\end{equation}
-
-Assuming a motion prior of the type discussed in this article, it turns out that the second term can be alternatively factored as
-\begin{equation}
-     p(\mbf{x}_k, \mbf{x}_{\tau} | \mbf{x}_{k-1}, \mbf{v}) = p(\mbf{x}_{\tau}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}) p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1}), 
-\end{equation} 
-
-The residual factor is obtained by marginalizing\footnote{Recall that marginalization is to the probabilistic equivalent of elimination.} the full joint distribution with respect to the interpolated variable:
-\begin{equation}
-     \phi(\mbf{x}_{k-1}, \mbf{x}_{k}) = \underbrace{\int p(\mbf{y}| \mbf{x}_{\tau}) p(\mbf{x}_{\tau}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v})  \, d\mbf{x}_{\tau}}_{\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})} \, \underbrace{p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi_v(\mbf{x}_{k-1}, \mbf{x}_{k})},
-\end{equation}
-where we have moved the last term of the integral since it does not depend on $\mbf{x}_{\tau}$. The second factor in the equation above is exactly the motion prior:
-\begin{equation}
-     p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1}) = \mathcal{N}\left(\mbf{A}_{k,k-1}\mbf{x}_{k-1} + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1} \right),
-\end{equation}
-
-Assuming that the measurement is linear, $p(\mbf{y}| \mbf{x}_{\tau})=\mathcal{N}\left(\mbf{C} \mbf{x}_{\tau}, \mbf{R}\right)$, it is fairly straightforward to show that this measurement factor has the following distribution:
-\begin{equation}
-     \phi_{y}(\mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}\left(\mbf{C} \check{\mbf{x}}_{\tau}, \mbf{C} \mbf{\Sigma}_{\tau}\mbf{C}^T + \mbf{R} \right).
-\end{equation}
-
-The interpretation of this distribution is straightforward: the mean is obtained by applying the measurement model to the bordering states after mapping through the motion model to the measurement time. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
-
-The now-eliminated state $\mbf{x}_{\tau}$ can actually be completely dropped from the optimization,\footnote{This is not true if we are dealing with nonlinear state-estimation problems where it is important to keep a record of $\mbf{x}_{\tau}$ for linearization updates.} leaving a motion prior and a new measurement factor between the non-interpolated states, $\mbf{x}_{k-1}$ and $ \mbf{x}_{k}$.
-
-A similar situation also holds when we eliminate multiple query states with measurements between two non-interpolated states. However, we need to make an additional approximation transform the original measurements into \emph{separate} factors. The interested reader can find a more detailed derivation for multiple factors in Appendix~\ref{chap:interp-during-solve}.
-
-
-
+\alert{Add flow to next section: this represents the classical view of gp regression, but we now take a new perspective using factor graphs.}

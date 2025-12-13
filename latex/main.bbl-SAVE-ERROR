@@ -1,0 +1,2465 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global/global}
+    \entry{absil09}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=ade6801a615275e47c8521ddfef1535a}{%
+           family={Absil},
+           familyi={A\bibinitperiod},
+           given={P\bibnamedelima A},
+           giveni={P\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=557ac8b0d5f2ea79ae1c98d25604636a}{%
+           family={Mahony},
+           familyi={M\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+        {{hash=be08672e3c8f3c7924a7959ed79d990b}{%
+           family={Sepulchre},
+           familyi={S\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Princeton University Press}%
+      }
+      \strng{namehash}{7d5016c0bb2f279c20d073b59f10495a}
+      \strng{fullhash}{e9b75bff3babc029a0419121f2d5dbbd}
+      \strng{fullhashraw}{e9b75bff3babc029a0419121f2d5dbbd}
+      \strng{bibnamehash}{e9b75bff3babc029a0419121f2d5dbbd}
+      \strng{authorbibnamehash}{e9b75bff3babc029a0419121f2d5dbbd}
+      \strng{authornamehash}{7d5016c0bb2f279c20d073b59f10495a}
+      \strng{authorfullhash}{e9b75bff3babc029a0419121f2d5dbbd}
+      \strng{authorfullhashraw}{e9b75bff3babc029a0419121f2d5dbbd}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Optimization on Matrix Manifolds}
+      \field{year}{2009}
+    \endentry
+    \entry{anderson_iros15}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=6c620888ab3e5ba697bc24ece0719d01}{%
+           family={Anderson},
+           familyi={A\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Hamburg, Germany}%
+      }
+      \strng{namehash}{0faddd6fa3e99d9f8c8b5f168f68b515}
+      \strng{fullhash}{0faddd6fa3e99d9f8c8b5f168f68b515}
+      \strng{fullhashraw}{0faddd6fa3e99d9f8c8b5f168f68b515}
+      \strng{bibnamehash}{0faddd6fa3e99d9f8c8b5f168f68b515}
+      \strng{authorbibnamehash}{0faddd6fa3e99d9f8c8b5f168f68b515}
+      \strng{authornamehash}{0faddd6fa3e99d9f8c8b5f168f68b515}
+      \strng{authorfullhash}{0faddd6fa3e99d9f8c8b5f168f68b515}
+      \strng{authorfullhashraw}{0faddd6fa3e99d9f8c8b5f168f68b515}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvfullconf}
+      \field{booktitle}{Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)}
+      \field{month}{28 September - 2 October}
+      \field{title}{Full STEAM Ahead: Exactly Sparse Gaussian Process Regression for Batch Continuous-Time Trajectory Estimation on SE(3)}
+      \field{year}{2015}
+    \endentry
+    \entry{anderson_ar15}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=6c620888ab3e5ba697bc24ece0719d01}{%
+           family={Anderson},
+           familyi={A\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=680d2afa7880170b7e248b058e0e94a7}{%
+           family={Tong},
+           familyi={T\bibinitperiod},
+           given={C\bibnamedelima H},
+           giveni={C\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=f9312b535e826e770b72b92706f47748}{%
+           family={Särkkä},
+           familyi={S\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{69ea1391895b47d968180c0c5e41ba56}
+      \strng{fullhash}{34085aca08d773dcd6700fd7e5d17b34}
+      \strng{fullhashraw}{34085aca08d773dcd6700fd7e5d17b34}
+      \strng{bibnamehash}{34085aca08d773dcd6700fd7e5d17b34}
+      \strng{authorbibnamehash}{34085aca08d773dcd6700fd7e5d17b34}
+      \strng{authornamehash}{69ea1391895b47d968180c0c5e41ba56}
+      \strng{authorfullhash}{34085aca08d773dcd6700fd7e5d17b34}
+      \strng{authorfullhashraw}{34085aca08d773dcd6700fd7e5d17b34}
+      \field{extraname}{1}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{Autonomous Robots, {\em special issue on ``Robotics Science and Systems''}}
+      \field{number}{3}
+      \field{title}{Batch Nonlinear Continuous-Time Trajectory Estimation as Exactly Sparse Gaussian Process Regression}
+      \field{volume}{39}
+      \field{year}{2015}
+      \field{pages}{221\bibrangedash 238}
+      \range{pages}{18}
+      \verb{doi}
+      \verb 10.1007/s10514-015-9455-y
+      \endverb
+      \verb{urlraw}
+      \verb sbib/anderson_ar15.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/anderson_ar15.pdf
+      \endverb
+    \endentry
+    \entry{anderson_icra14}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=6c620888ab3e5ba697bc24ece0719d01}{%
+           family={Anderson},
+           familyi={A\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=5f763fed7abdfeb09d66e84288fce65f}{%
+           family={Dellaert},
+           familyi={D\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Hong Kong, China}%
+      }
+      \strng{namehash}{69ea1391895b47d968180c0c5e41ba56}
+      \strng{fullhash}{00c55f684ba0272a64dc80b40094076b}
+      \strng{fullhashraw}{00c55f684ba0272a64dc80b40094076b}
+      \strng{bibnamehash}{00c55f684ba0272a64dc80b40094076b}
+      \strng{authorbibnamehash}{00c55f684ba0272a64dc80b40094076b}
+      \strng{authornamehash}{69ea1391895b47d968180c0c5e41ba56}
+      \strng{authorfullhash}{00c55f684ba0272a64dc80b40094076b}
+      \strng{authorfullhashraw}{00c55f684ba0272a64dc80b40094076b}
+      \field{extraname}{2}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvfullconf}
+      \field{booktitle}{Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)}
+      \field{month}{31 May - 7 June}
+      \field{title}{A Hierarchical Wavelet Decomposition for Continuous-Time SLAM}
+      \field{year}{2014}
+      \field{pages}{373\bibrangedash 380}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/ICRA.2014.6906884
+      \endverb
+      \verb{urlraw}
+      \verb sbib/anderson_icra14.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/anderson_icra14.pdf
+      \endverb
+    \endentry
+    \entry{anderson_phd16}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=19f920a51ca346e49916b3e19c932842}{%
+           family={Anderson},
+           familyi={A\bibinitperiod},
+           given={S\bibnamedelima W},
+           giveni={S\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \strng{namehash}{19f920a51ca346e49916b3e19c932842}
+      \strng{fullhash}{19f920a51ca346e49916b3e19c932842}
+      \strng{fullhashraw}{19f920a51ca346e49916b3e19c932842}
+      \strng{bibnamehash}{19f920a51ca346e49916b3e19c932842}
+      \strng{authorbibnamehash}{19f920a51ca346e49916b3e19c932842}
+      \strng{authornamehash}{19f920a51ca346e49916b3e19c932842}
+      \strng{authorfullhash}{19f920a51ca346e49916b3e19c932842}
+      \strng{authorfullhashraw}{19f920a51ca346e49916b3e19c932842}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvtheses}
+      \field{howpublished}{Ph.D. Thesis, University of Toronto}
+      \field{title}{Batch Continuous-Time Trajectory Estimation}
+      \field{year}{2016}
+      \verb{urlraw}
+      \verb bib/anderson_phd16.pdf
+      \endverb
+      \verb{url}
+      \verb bib/anderson_phd16.pdf
+      \endverb
+    \endentry
+    \entry{barfoot_ser24}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{dbf18e35687b71442145f180b7395cab}
+      \strng{fullhash}{dbf18e35687b71442145f180b7395cab}
+      \strng{fullhashraw}{dbf18e35687b71442145f180b7395cab}
+      \strng{bibnamehash}{dbf18e35687b71442145f180b7395cab}
+      \strng{authorbibnamehash}{dbf18e35687b71442145f180b7395cab}
+      \strng{authornamehash}{dbf18e35687b71442145f180b7395cab}
+      \strng{authorfullhash}{dbf18e35687b71442145f180b7395cab}
+      \strng{authorfullhashraw}{dbf18e35687b71442145f180b7395cab}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvbooks}
+      \field{edition}{2nd}
+      \field{isbn}{9781009299893}
+      \field{title}{State Estimation for Robotics}
+      \field{year}{2024}
+      \verb{doi}
+      \verb 10.1017/9781009299909
+      \endverb
+      \verb{urlraw}
+      \verb bib/barfoot_ser24.pdf
+      \endverb
+      \verb{url}
+      \verb bib/barfoot_ser24.pdf
+      \endverb
+    \endentry
+    \entry{barfoot_ijrr25}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=2cd820a059084c460ce8a91dd5400ed0}{%
+           family={Holmes},
+           familyi={H\bibinitperiod},
+           given={C},
+           giveni={C\bibinitperiod}}}%
+        {{hash=7399097f99cc61d9ec10d9de8a586edf}{%
+           family={Duembgen},
+           familyi={D\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{396e20f64274a4c72529a6be1a5f3d6d}
+      \strng{fullhash}{96c08482f76f425bb55283e75f1e29e6}
+      \strng{fullhashraw}{96c08482f76f425bb55283e75f1e29e6}
+      \strng{bibnamehash}{96c08482f76f425bb55283e75f1e29e6}
+      \strng{authorbibnamehash}{96c08482f76f425bb55283e75f1e29e6}
+      \strng{authornamehash}{396e20f64274a4c72529a6be1a5f3d6d}
+      \strng{authorfullhash}{96c08482f76f425bb55283e75f1e29e6}
+      \strng{authorfullhashraw}{96c08482f76f425bb55283e75f1e29e6}
+      \field{extraname}{1}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{International Journal of Robotics Research (IJRR)}
+      \field{number}{3}
+      \field{title}{Certifiably Optimal Rotation and Pose Estimation Based on the Cayley Map}
+      \field{volume}{44}
+      \field{year}{2025}
+      \field{pages}{366\bibrangedash 387}
+      \range{pages}{22}
+      \verb{doi}
+      \verb 10.1177/02783649241269337
+      \endverb
+      \verb{urlraw}
+      \verb sbib/barfoot_ijrr25.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/barfoot_ijrr25.pdf
+      \endverb
+    \endentry
+    \entry{barfoot_rss14}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=680d2afa7880170b7e248b058e0e94a7}{%
+           family={Tong},
+           familyi={T\bibinitperiod},
+           given={C\bibnamedelima H},
+           giveni={C\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=f9312b535e826e770b72b92706f47748}{%
+           family={Särkkä},
+           familyi={S\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berkeley, USA}%
+      }
+      \strng{namehash}{396e20f64274a4c72529a6be1a5f3d6d}
+      \strng{fullhash}{edcc78b60e3f95b847626eae2ed52eb0}
+      \strng{fullhashraw}{edcc78b60e3f95b847626eae2ed52eb0}
+      \strng{bibnamehash}{edcc78b60e3f95b847626eae2ed52eb0}
+      \strng{authorbibnamehash}{edcc78b60e3f95b847626eae2ed52eb0}
+      \strng{authornamehash}{396e20f64274a4c72529a6be1a5f3d6d}
+      \strng{authorfullhash}{edcc78b60e3f95b847626eae2ed52eb0}
+      \strng{authorfullhashraw}{edcc78b60e3f95b847626eae2ed52eb0}
+      \field{extraname}{2}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvfullconf}
+      \field{booktitle}{Proceedings of Robotics: Science and Systems (RSS)}
+      \field{month}{12-16 July}
+      \field{title}{Batch Continuous-Time Trajectory Estimation as Exactly Sparse Gaussian Process Regression}
+      \field{year}{2014}
+    \endentry
+    \entry{bonnabel17}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=053b4b9329c7d82cd9a45801fa98a71f}{%
+           family={Barrau},
+           familyi={B\bibinitperiod},
+           given={Axel},
+           giveni={A\bibinitperiod}}}%
+        {{hash=926c6018a4af5dde7af6fa193467deb3}{%
+           family={Bonnabel},
+           familyi={B\bibinitperiod},
+           given={Silvère},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{ff953bba356485a1a461a0611795b6bc}
+      \strng{fullhash}{ff953bba356485a1a461a0611795b6bc}
+      \strng{fullhashraw}{ff953bba356485a1a461a0611795b6bc}
+      \strng{bibnamehash}{ff953bba356485a1a461a0611795b6bc}
+      \strng{authorbibnamehash}{ff953bba356485a1a461a0611795b6bc}
+      \strng{authornamehash}{ff953bba356485a1a461a0611795b6bc}
+      \strng{authorfullhash}{ff953bba356485a1a461a0611795b6bc}
+      \strng{authorfullhashraw}{ff953bba356485a1a461a0611795b6bc}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Automatic Control}
+      \field{number}{4}
+      \field{title}{The Invariant Extended Kalman Filter as a Stable Observer}
+      \field{volume}{62}
+      \field{year}{2017}
+      \field{pages}{1797\bibrangedash 1812}
+      \range{pages}{16}
+    \endentry
+    \entry{blanco10}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=11db05ad16fc6bb0f968c62cc2d1a904}{%
+           family={Blanco},
+           familyi={B\bibinitperiod},
+           given={Jose-Luis},
+           giveni={J\bibinithyphendelim L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Citeseer}%
+      }
+      \strng{namehash}{11db05ad16fc6bb0f968c62cc2d1a904}
+      \strng{fullhash}{11db05ad16fc6bb0f968c62cc2d1a904}
+      \strng{fullhashraw}{11db05ad16fc6bb0f968c62cc2d1a904}
+      \strng{bibnamehash}{11db05ad16fc6bb0f968c62cc2d1a904}
+      \strng{authorbibnamehash}{11db05ad16fc6bb0f968c62cc2d1a904}
+      \strng{authornamehash}{11db05ad16fc6bb0f968c62cc2d1a904}
+      \strng{authorfullhash}{11db05ad16fc6bb0f968c62cc2d1a904}
+      \strng{authorfullhashraw}{11db05ad16fc6bb0f968c62cc2d1a904}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{University of Malaga, Tech. Rep}
+      \field{number}{6}
+      \field{title}{A tutorial on se (3) transformation parameterizations and on-manifold optimization}
+      \field{volume}{3}
+      \field{year}{2010}
+      \field{pages}{1}
+      \range{pages}{1}
+    \endentry
+    \entry{bonnabel08}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=59b817f224393aa579d65cb93d5902d5}{%
+           family={Bonnabel},
+           familyi={B\bibinitperiod},
+           given={Silvere},
+           giveni={S\bibinitperiod}}}%
+        {{hash=49e06b153058ea7520df6d3267f7696d}{%
+           family={Martin},
+           familyi={M\bibinitperiod},
+           given={Philippe},
+           giveni={P\bibinitperiod}}}%
+        {{hash=94a5de927412fc711fd43a6f1f07e47b}{%
+           family={Rouchon},
+           familyi={R\bibinitperiod},
+           given={Pierre},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{b56b2af77cfff02fca258804d6fd20e6}
+      \strng{fullhash}{a05c2e4df52c623d924c96341896f702}
+      \strng{fullhashraw}{a05c2e4df52c623d924c96341896f702}
+      \strng{bibnamehash}{a05c2e4df52c623d924c96341896f702}
+      \strng{authorbibnamehash}{a05c2e4df52c623d924c96341896f702}
+      \strng{authornamehash}{b56b2af77cfff02fca258804d6fd20e6}
+      \strng{authorfullhash}{a05c2e4df52c623d924c96341896f702}
+      \strng{authorfullhashraw}{a05c2e4df52c623d924c96341896f702}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Automatic Control}
+      \field{number}{11}
+      \field{title}{Symmetry-preserving observers}
+      \field{volume}{53}
+      \field{year}{2008}
+      \field{pages}{2514\bibrangedash 2526}
+      \range{pages}{13}
+    \endentry
+    \entry{boumal23}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=1ebc350bb93479783f979fe521a9494b}{%
+           family={Boumal},
+           familyi={B\bibinitperiod},
+           given={Nicolas},
+           giveni={N\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{1ebc350bb93479783f979fe521a9494b}
+      \strng{fullhash}{1ebc350bb93479783f979fe521a9494b}
+      \strng{fullhashraw}{1ebc350bb93479783f979fe521a9494b}
+      \strng{bibnamehash}{1ebc350bb93479783f979fe521a9494b}
+      \strng{authorbibnamehash}{1ebc350bb93479783f979fe521a9494b}
+      \strng{authornamehash}{1ebc350bb93479783f979fe521a9494b}
+      \strng{authorfullhash}{1ebc350bb93479783f979fe521a9494b}
+      \strng{authorfullhashraw}{1ebc350bb93479783f979fe521a9494b}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{An introduction to optimization on smooth manifolds}
+      \field{year}{2023}
+    \endentry
+    \entry{bullo95}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=a1a483632270c2cb67e8a4830eaea9d6}{%
+           family={Bullo},
+           familyi={B\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+        {{hash=3fa6b96b5d3506325be293be5131cdde}{%
+           family={Murray},
+           familyi={M\bibinitperiod},
+           given={R\bibnamedelima M},
+           giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{5ef81349c16be3b611c252d19f4f518c}
+      \strng{fullhash}{5ef81349c16be3b611c252d19f4f518c}
+      \strng{fullhashraw}{5ef81349c16be3b611c252d19f4f518c}
+      \strng{bibnamehash}{5ef81349c16be3b611c252d19f4f518c}
+      \strng{authorbibnamehash}{5ef81349c16be3b611c252d19f4f518c}
+      \strng{authornamehash}{5ef81349c16be3b611c252d19f4f518c}
+      \strng{authorfullhash}{5ef81349c16be3b611c252d19f4f518c}
+      \strng{authorfullhashraw}{5ef81349c16be3b611c252d19f4f518c}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the European Control Conference}
+      \field{title}{Proportional Derivative Control On The {Euclidean} Group}
+      \field{year}{1995}
+      \field{pages}{1091\bibrangedash 1097}
+      \range{pages}{7}
+    \endentry
+    \entry{burnett_tro25}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=6c3c0ed4bf75b81eed698877de84ac22}{%
+           family={Burnett},
+           familyi={B\bibinitperiod},
+           given={K},
+           giveni={K\bibinitperiod}}}%
+        {{hash=014ef9082944f38be583f591785b61f0}{%
+           family={Schoellig},
+           familyi={S\bibinitperiod},
+           given={A\bibnamedelima P},
+           giveni={A\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{96fb7d50f88ce1e49c8abe2a2c280362}
+      \strng{fullhash}{345598009c055f4d770718ba82d811ca}
+      \strng{fullhashraw}{345598009c055f4d770718ba82d811ca}
+      \strng{bibnamehash}{345598009c055f4d770718ba82d811ca}
+      \strng{authorbibnamehash}{345598009c055f4d770718ba82d811ca}
+      \strng{authornamehash}{96fb7d50f88ce1e49c8abe2a2c280362}
+      \strng{authorfullhash}{345598009c055f4d770718ba82d811ca}
+      \strng{authorfullhashraw}{345598009c055f4d770718ba82d811ca}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{IEEE Transactions on Robotics (T-RO)}
+      \field{title}{Continuous-Time Radar-Inertial and Lidar-Inertial Odometry using a Gaussian Process Motion Prior}
+      \field{volume}{41}
+      \field{year}{2025}
+      \field{pages}{1059\bibrangedash 1076}
+      \range{pages}{18}
+      \verb{doi}
+      \verb 10.1109/TRO.2024.3521856
+      \endverb
+      \verb{urlraw}
+      \verb sbib/burnett_tro25.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/burnett_tro25.pdf
+      \endverb
+    \endentry
+    \entry{chirikjian09}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=883feb59e725e2dc2c8724e4e83970b1}{%
+           family={Chirikjian},
+           familyi={C\bibinitperiod},
+           given={G\bibnamedelima S},
+           giveni={G\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York}%
+      }
+      \list{publisher}{1}{%
+        {Birkhauser}%
+      }
+      \strng{namehash}{883feb59e725e2dc2c8724e4e83970b1}
+      \strng{fullhash}{883feb59e725e2dc2c8724e4e83970b1}
+      \strng{fullhashraw}{883feb59e725e2dc2c8724e4e83970b1}
+      \strng{bibnamehash}{883feb59e725e2dc2c8724e4e83970b1}
+      \strng{authorbibnamehash}{883feb59e725e2dc2c8724e4e83970b1}
+      \strng{authornamehash}{883feb59e725e2dc2c8724e4e83970b1}
+      \strng{authorfullhash}{883feb59e725e2dc2c8724e4e83970b1}
+      \strng{authorfullhashraw}{883feb59e725e2dc2c8724e4e83970b1}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Stochastic Models, Information Theory, and {Lie} Groups: Classical Results and Geometric Methods}
+      \field{volume}{1-2}
+      \field{year}{2009}
+    \endentry
+    \entry{chirikjian01}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=883feb59e725e2dc2c8724e4e83970b1}{%
+           family={Chirikjian},
+           familyi={C\bibinitperiod},
+           given={G\bibnamedelima S},
+           giveni={G\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=64e8034ced4a37e06d96aa2d89bc1c08}{%
+           family={Kyatkin},
+           familyi={K\bibinitperiod},
+           given={A\bibnamedelima B},
+           giveni={A\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {CRC Press}%
+      }
+      \strng{namehash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{fullhash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{fullhashraw}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{bibnamehash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{authorbibnamehash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{authornamehash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{authorfullhash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{authorfullhashraw}{66ff91ac0201e3861d2f98f0318cbce4}
+      \field{extraname}{1}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Engineering Applications of Noncommutative Harmonic Analysis: With Emphasis on Rotation and Motion Groups}
+      \field{year}{2001}
+    \endentry
+    \entry{chirikjian16}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=883feb59e725e2dc2c8724e4e83970b1}{%
+           family={Chirikjian},
+           familyi={C\bibinitperiod},
+           given={G\bibnamedelima S},
+           giveni={G\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=64e8034ced4a37e06d96aa2d89bc1c08}{%
+           family={Kyatkin},
+           familyi={K\bibinitperiod},
+           given={A\bibnamedelima B},
+           giveni={A\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Dover Publications}%
+      }
+      \strng{namehash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{fullhash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{fullhashraw}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{bibnamehash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{authorbibnamehash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{authornamehash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{authorfullhash}{66ff91ac0201e3861d2f98f0318cbce4}
+      \strng{authorfullhashraw}{66ff91ac0201e3861d2f98f0318cbce4}
+      \field{extraname}{2}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Harmonic Analysis for Engineers and Applied Scientists: Updated and Expanded Edition}
+      \field{year}{2016}
+    \endentry
+    \entry{deleuterio85}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=c0817ac7eb879b6afda26989ce9eb375}{%
+           family={D'Eleuterio},
+           familyi={D\bibinitperiod},
+           given={G\bibnamedelima M\bibnamedelima T},
+           giveni={G\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Dynacon Enterprises Ltd.}%
+      }
+      \strng{namehash}{c0817ac7eb879b6afda26989ce9eb375}
+      \strng{fullhash}{c0817ac7eb879b6afda26989ce9eb375}
+      \strng{fullhashraw}{c0817ac7eb879b6afda26989ce9eb375}
+      \strng{bibnamehash}{c0817ac7eb879b6afda26989ce9eb375}
+      \strng{authorbibnamehash}{c0817ac7eb879b6afda26989ce9eb375}
+      \strng{authornamehash}{c0817ac7eb879b6afda26989ce9eb375}
+      \strng{authorfullhash}{c0817ac7eb879b6afda26989ce9eb375}
+      \strng{authorfullhashraw}{c0817ac7eb879b6afda26989ce9eb375}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{6}
+      \field{number}{SS-3}
+      \field{title}{Multibody Dynamics for Space Station Manipulators: Recursive Dynamics of Topological Chains}
+      \field{type}{techreport}
+      \field{year}{1985}
+    \endentry
+    \entry{dellaertFactorGraphsRobot2017}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=44074d3cb57c174a8b15ccc9a576ac0d}{%
+           family={Dellaert},
+           familyi={D\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod}}}%
+        {{hash=da701266dff9b3f01fdc8e0d18e5f021}{%
+           family={Kaess},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Now Publishers, Inc.}%
+      }
+      \strng{namehash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{fullhash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{fullhashraw}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{bibnamehash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{authorbibnamehash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{authornamehash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{authorfullhash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{authorfullhashraw}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \field{extraname}{1}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Factor Graphs for Robot Perception}
+      \field{issn}{1935-8253, 1935-8261}
+      \field{journaltitle}{Foundations and Trends{®} in Robotics}
+      \field{langid}{english}
+      \field{month}{8}
+      \field{number}{1-2}
+      \field{title}{Factor {{Graphs}} for {{Robot Perception}}}
+      \field{urlday}{9}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{6}
+      \field{year}{2017}
+      \field{urldateera}{ce}
+      \field{pages}{1\bibrangedash 139}
+      \range{pages}{139}
+      \verb{doi}
+      \verb 10.1561/2300000043
+      \endverb
+      \verb{file}
+      \verb /Users/tdb/Zotero/storage/QLHIQLJ6/Dellaert and Kaess - 2017 - Factor Graphs for Robot Perception.pdf
+      \endverb
+    \endentry
+    \entry{dellaert17}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=44074d3cb57c174a8b15ccc9a576ac0d}{%
+           family={Dellaert},
+           familyi={D\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod}}}%
+        {{hash=da701266dff9b3f01fdc8e0d18e5f021}{%
+           family={Kaess},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Now Publishers, Inc.}%
+      }
+      \strng{namehash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{fullhash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{fullhashraw}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{bibnamehash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{authorbibnamehash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{authornamehash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{authorfullhash}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \strng{authorfullhashraw}{7b6ad450e7cf8eeab89aae7c5c0847e6}
+      \field{extraname}{2}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Foundations and Trends{®} in Robotics}
+      \field{number}{1-2}
+      \field{title}{Factor graphs for robot perception}
+      \field{volume}{6}
+      \field{year}{2017}
+      \field{pages}{1\bibrangedash 139}
+      \range{pages}{139}
+    \endentry
+    \entry{dongSparseGaussianProcesses2018}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=db5ca4c0a459acddb82c55e74668dbd9}{%
+           family={Dong},
+           familyi={D\bibinitperiod},
+           given={Jing},
+           giveni={J\bibinitperiod}}}%
+        {{hash=d2542804e3d08e07e8d23166d956d8fe}{%
+           family={Mukadam},
+           familyi={M\bibinitperiod},
+           given={Mustafa},
+           giveni={M\bibinitperiod}}}%
+        {{hash=565fb033a5950d810063dd9e73baba64}{%
+           family={Boots},
+           familyi={B\bibinitperiod},
+           given={Byron},
+           giveni={B\bibinitperiod}}}%
+        {{hash=44074d3cb57c174a8b15ccc9a576ac0d}{%
+           family={Dellaert},
+           familyi={D\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{8f01502e3210f5c204890bb2fc01c624}
+      \strng{fullhash}{42595f1ec7c0bffc31a09d366dc57ba6}
+      \strng{fullhashraw}{42595f1ec7c0bffc31a09d366dc57ba6}
+      \strng{bibnamehash}{42595f1ec7c0bffc31a09d366dc57ba6}
+      \strng{authorbibnamehash}{42595f1ec7c0bffc31a09d366dc57ba6}
+      \strng{authornamehash}{8f01502e3210f5c204890bb2fc01c624}
+      \strng{authorfullhash}{42595f1ec7c0bffc31a09d366dc57ba6}
+      \strng{authorfullhashraw}{42595f1ec7c0bffc31a09d366dc57ba6}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Continuous-time trajectories are useful for reasoning about robot motion in a wide range of tasks. Sparse Gaussian processes (GPs) can be used as a non-parametric representation for trajectory distributions that enables fast trajectory optimization by sparse GP regression. However, most previous approaches that utilize sparse GPs for trajectory optimization are limited by the fact that the robot state is represented in vector space. In this paper, we first extend previous works to consider the state on general matrix Lie groups by applying a constant-velocity prior and defining locally linear GPs. Next, we discuss how sparse GPs on Lie groups provide a unified continuous-time framework for trajectory optimization for solving a number of robotics problems including state estimation and motion planning. Finally, we demonstrate and evaluate our approach on several different estimation and motion planning tasks with both synthetic and real-world experiments.}
+      \field{booktitle}{2018 {{IEEE International Conference}} on {{Robotics}} and {{Automation}} ({{ICRA}})}
+      \field{issn}{2577-087X}
+      \field{month}{5}
+      \field{shorttitle}{Sparse {{Gaussian Processes}} on {{Matrix Lie Groups}}}
+      \field{title}{Sparse {{Gaussian Processes}} on {{Matrix Lie Groups}}: {{A Unified Framework}} for {{Optimizing Continuous-Time Trajectories}}}
+      \field{urlday}{25}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \field{pages}{6497\bibrangedash 6504}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/ICRA.2018.8461077
+      \endverb
+      \verb{file}
+      \verb /Users/tdb/Zotero/storage/UKHD8FMR/Dong et al. - 2018 - Sparse Gaussian Processes on Matrix Lie Groups A Unified Framework for Optimizing Continuous-Time T.pdf
+      \endverb
+      \keyw{Estimation,Gaussian processes,Planning,Simultaneous localization and mapping,Sparse matrices,Trajectory}
+    \endentry
+    \entry{duembgen_ral23}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=7399097f99cc61d9ec10d9de8a586edf}{%
+           family={Duembgen},
+           familyi={D\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+        {{hash=2cd820a059084c460ce8a91dd5400ed0}{%
+           family={Holmes},
+           familyi={H\bibinitperiod},
+           given={C},
+           giveni={C\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{accb474deb9057d13c966f2821f82468}
+      \strng{fullhash}{987a5f11a764b83f028a93b6ce5ffdb5}
+      \strng{fullhashraw}{987a5f11a764b83f028a93b6ce5ffdb5}
+      \strng{bibnamehash}{987a5f11a764b83f028a93b6ce5ffdb5}
+      \strng{authorbibnamehash}{987a5f11a764b83f028a93b6ce5ffdb5}
+      \strng{authornamehash}{accb474deb9057d13c966f2821f82468}
+      \strng{authorfullhash}{987a5f11a764b83f028a93b6ce5ffdb5}
+      \strng{authorfullhashraw}{987a5f11a764b83f028a93b6ce5ffdb5}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{IEEE Robotics and Automation Letters (RAL)}
+      \field{number}{2}
+      \field{title}{Safe and Smooth: Certified Continuous-Time Range-Only Localization}
+      \field{volume}{8}
+      \field{year}{2023}
+      \field{pages}{1117\bibrangedash 1124}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/LRA.2022.3233232
+      \endverb
+      \verb{urlraw}
+      \verb sbib/duembgen_ral23.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/duembgen_ral23.pdf
+      \endverb
+    \endentry
+    \entry{forster15}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=a6b6e778fcd0ba37d9fef8a433471203}{%
+           family={Forster},
+           familyi={F\bibinitperiod},
+           given={Christian},
+           giveni={C\bibinitperiod}}}%
+        {{hash=09ed5bfe663f495a0cb6828e722b7919}{%
+           family={Carlone},
+           familyi={C\bibinitperiod},
+           given={Luca},
+           giveni={L\bibinitperiod}}}%
+        {{hash=44074d3cb57c174a8b15ccc9a576ac0d}{%
+           family={Dellaert},
+           familyi={D\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod}}}%
+        {{hash=dac21ab4ede215439fcc6b051be53a11}{%
+           family={Scaramuzza},
+           familyi={S\bibinitperiod},
+           given={Davide},
+           giveni={D\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Georgia Institute of Technology}%
+      }
+      \strng{namehash}{c160fa34da31c9b364cb29944b477266}
+      \strng{fullhash}{df880edafe55d50cae3cadb735b5bd7e}
+      \strng{fullhashraw}{df880edafe55d50cae3cadb735b5bd7e}
+      \strng{bibnamehash}{df880edafe55d50cae3cadb735b5bd7e}
+      \strng{authorbibnamehash}{df880edafe55d50cae3cadb735b5bd7e}
+      \strng{authornamehash}{c160fa34da31c9b364cb29944b477266}
+      \strng{authorfullhash}{df880edafe55d50cae3cadb735b5bd7e}
+      \strng{authorfullhashraw}{df880edafe55d50cae3cadb735b5bd7e}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of {Robotics: Science and Systems}}
+      \field{title}{IMU preintegration on manifold for efficient visual-inertial maximum-a-posteriori estimation}
+      \field{year}{2015}
+      \field{pages}{6\bibrangedash 15}
+      \range{pages}{10}
+    \endentry
+    \entry{gallierDifferentialGeometryLie2020}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=4cf59b50463b475dc0aac665915d2ac1}{%
+           family={Gallier},
+           familyi={G\bibinitperiod},
+           given={Jean},
+           giveni={J\bibinitperiod}}}%
+        {{hash=4f9f7e5b33ffffd404245128ceae3f71}{%
+           family={Quaintance},
+           familyi={Q\bibinitperiod},
+           given={Jocelyn},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cham}%
+      }
+      \list{publisher}{1}{%
+        {Springer International Publishing}%
+      }
+      \strng{namehash}{2317603b46507b5b02cc1538e36d09f8}
+      \strng{fullhash}{2317603b46507b5b02cc1538e36d09f8}
+      \strng{fullhashraw}{2317603b46507b5b02cc1538e36d09f8}
+      \strng{bibnamehash}{2317603b46507b5b02cc1538e36d09f8}
+      \strng{authorbibnamehash}{2317603b46507b5b02cc1538e36d09f8}
+      \strng{authornamehash}{2317603b46507b5b02cc1538e36d09f8}
+      \strng{authorfullhash}{2317603b46507b5b02cc1538e36d09f8}
+      \strng{authorfullhashraw}{2317603b46507b5b02cc1538e36d09f8}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{isbn}{978-3-030-46039-6 978-3-030-46040-2}
+      \field{langid}{english}
+      \field{series}{Geometry and {{Computing}}}
+      \field{shorttitle}{Differential {{Geometry}} and {{Lie Groups}}}
+      \field{title}{Differential {{Geometry}} and {{Lie Groups}}: {{A Computational Perspective}}}
+      \field{urlday}{26}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{volume}{12}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-030-46040-2
+      \endverb
+      \keyw{adjoint representation,Connections on real manifolds,differential geometry for computer vision,Differential geometry for computing,differential geometry for geometry processing,differential geometry for machine learning,differential geometry for robotics,differential geometry textbook,grassmannian manifold,homogeneous spaces,lie algebras for computing,lie brackets,linear lie groups,Lorentz groups,matrix exponential,matrix lie groups,Riemannian manifold,Riemannian manifold curvature,stiefel manifold,Theory of manifold optimization techniques}
+    \endentry
+    \entry{johnson_arxiv24}{unpublished}{}{}
+      \name{author}{4}{}{%
+        {{hash=879f6babb07d569a131799f5d6952aeb}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=7fe769270bd3e3205044eb104bbcf165}{%
+           family={Mangelson},
+           familyi={M\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=8e6555f05eca6379563599c5fa07320a}{%
+           family={Beard},
+           familyi={B\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{58be6ba310949c075bdb6c6bebe79aae}
+      \strng{fullhash}{33ebf2a45e5a889251c6af4da04f42c7}
+      \strng{fullhashraw}{33ebf2a45e5a889251c6af4da04f42c7}
+      \strng{bibnamehash}{33ebf2a45e5a889251c6af4da04f42c7}
+      \strng{authorbibnamehash}{33ebf2a45e5a889251c6af4da04f42c7}
+      \strng{authornamehash}{58be6ba310949c075bdb6c6bebe79aae}
+      \strng{authorfullhash}{33ebf2a45e5a889251c6af4da04f42c7}
+      \strng{authorfullhashraw}{33ebf2a45e5a889251c6af4da04f42c7}
+      \field{extraname}{1}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvarxiv}
+      \field{title}{Continuous-time Trajectory Estimation: A Comparative Study Between Gaussian Process and Spline-based Approaches}
+      \field{year}{2024}
+    \endentry
+    \entry{johnsonContinuousTimeTrajectoryEstimation2023}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=be0ddf554ff332f461d5829ea7d86dc0}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Jacob\bibnamedelima C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=61873d411fb16951d8458759fb9310f9}{%
+           family={Mangelson},
+           familyi={M\bibinitperiod},
+           given={Joshua\bibnamedelima G.},
+           giveni={J\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=31202dc567c14cdad27077b94672f7ea}{%
+           family={Beard},
+           familyi={B\bibinitperiod},
+           given={Randal\bibnamedelima W.},
+           giveni={R\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \strng{namehash}{97e8f749baf9f5ce59c001adebb6d561}
+      \strng{fullhash}{b1fbf2fee07ee6da049963dd9b59c7c1}
+      \strng{fullhashraw}{b1fbf2fee07ee6da049963dd9b59c7c1}
+      \strng{bibnamehash}{b1fbf2fee07ee6da049963dd9b59c7c1}
+      \strng{authorbibnamehash}{b1fbf2fee07ee6da049963dd9b59c7c1}
+      \strng{authornamehash}{97e8f749baf9f5ce59c001adebb6d561}
+      \strng{authorfullhash}{b1fbf2fee07ee6da049963dd9b59c7c1}
+      \strng{authorfullhashraw}{b1fbf2fee07ee6da049963dd9b59c7c1}
+      \field{extraname}{2}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Continuous-time estimation using splines on Lie groups has been gaining traction in the literature due to the ability to incorporate high-frequency sensor data without introducing new optimization parameters. However, evaluating time derivatives and Jacobians of Lie group splines is computationally expensive, limiting their use mainly to offline applications. Motivated by the trajectory planning literature, we develop a new estimation technique that leverages the differential flatness property of many dynamic systems to define the spline in the system's flat output space, which is often Euclidean. Doing so has the added benefit of providing a simple and effective way to include system inputs in the estimation process. We show an example of flatness-based estimation for the unicycle dynamic model. We then show that this new method can achieve similar performance as Lie group spline estimation with significantly less computation time, and validate its use in hardware using a differential-drive robot.}
+      \field{issn}{2377-3766}
+      \field{journaltitle}{IEEE Robotics and Automation Letters}
+      \field{month}{1}
+      \field{number}{1}
+      \field{title}{Continuous-{{Time Trajectory Estimation}} for {{Differentially Flat Systems}}}
+      \field{urlday}{27}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{8}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \field{pages}{145\bibrangedash 151}
+      \range{pages}{7}
+      \verb{doi}
+      \verb 10.1109/LRA.2022.3224364
+      \endverb
+      \keyw{Computational modeling,Dynamics,Estimation,Hardware,localization,Robot sensing systems,Sensor fusion,Trajectory,Trajectory planning}
+    \endentry
+    \entry{kaess08}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=f48bb6bf17af636c8ad89dc27d8f1204}{%
+           family={Kaess},
+           familyi={K\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=fc0081d4c905f3a9b6de2ca82a0a6124}{%
+           family={Ranganathan},
+           familyi={R\bibinitperiod},
+           given={A},
+           giveni={A\bibinitperiod}}}%
+        {{hash=bbe6e0d071eb2ec493f1f30e6ac73f20}{%
+           family={Dellaert},
+           familyi={D\bibinitperiod},
+           given={R},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{24ae66f639066c5d1c31ae5e426e63b6}
+      \strng{fullhash}{dcbce755d0681bb69f4ac902315c8560}
+      \strng{fullhashraw}{dcbce755d0681bb69f4ac902315c8560}
+      \strng{bibnamehash}{dcbce755d0681bb69f4ac902315c8560}
+      \strng{authorbibnamehash}{dcbce755d0681bb69f4ac902315c8560}
+      \strng{authornamehash}{24ae66f639066c5d1c31ae5e426e63b6}
+      \strng{authorfullhash}{dcbce755d0681bb69f4ac902315c8560}
+      \strng{authorfullhashraw}{dcbce755d0681bb69f4ac902315c8560}
+      \field{extraname}{1}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE TRO}
+      \field{number}{6}
+      \field{title}{{iSAM}: Incremental Smoothing and Mapping}
+      \field{volume}{24}
+      \field{year}{2008}
+      \field{pages}{1365\bibrangedash 1378}
+      \range{pages}{14}
+    \endentry
+    \entry{kaessISAM2IncrementalSmoothing2012}{article}{}{}
+      \name{author}{6}{}{%
+        {{hash=da701266dff9b3f01fdc8e0d18e5f021}{%
+           family={Kaess},
+           familyi={K\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+        {{hash=481bde394efc2e16cb09bb38e8c4642d}{%
+           family={Johannsson},
+           familyi={J\bibinitperiod},
+           given={Hordur},
+           giveni={H\bibinitperiod}}}%
+        {{hash=4819fbc11d2fdee2d331548ffc860919}{%
+           family={Roberts},
+           familyi={R\bibinitperiod},
+           given={Richard},
+           giveni={R\bibinitperiod}}}%
+        {{hash=f5e5324ba5a0c6326bc964b97fa52724}{%
+           family={Ila},
+           familyi={I\bibinitperiod},
+           given={Viorela},
+           giveni={V\bibinitperiod}}}%
+        {{hash=6c960232ba2aefe8f363bbf79b4c03b7}{%
+           family={Leonard},
+           familyi={L\bibinitperiod},
+           given={John\bibnamedelima J},
+           giveni={J\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=44074d3cb57c174a8b15ccc9a576ac0d}{%
+           family={Dellaert},
+           familyi={D\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {SAGE Publications Ltd STM}%
+      }
+      \strng{namehash}{3fbcb4af6b78c36ee3493ecc22663649}
+      \strng{fullhash}{898146e759470137311d84eab1b7fc00}
+      \strng{fullhashraw}{898146e759470137311d84eab1b7fc00}
+      \strng{bibnamehash}{898146e759470137311d84eab1b7fc00}
+      \strng{authorbibnamehash}{898146e759470137311d84eab1b7fc00}
+      \strng{authornamehash}{3fbcb4af6b78c36ee3493ecc22663649}
+      \strng{authorfullhash}{898146e759470137311d84eab1b7fc00}
+      \strng{authorfullhashraw}{898146e759470137311d84eab1b7fc00}
+      \field{extraname}{2}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{We present a novel data structure, the Bayes tree, that provides an algorithmic foundation enabling a better understanding of existing graphical model inference algorithms and their connection to sparse matrix factorization methods. Similar to a clique tree, a Bayes tree encodes a factored probability density, but unlike the clique tree it is directed and maps more naturally to the square root information matrix of the simultaneous localization and mapping (SLAM) problem. In this paper, we highlight three insights provided by our new data structure. First, the Bayes tree provides a better understanding of the matrix factorization in terms of probability densities. Second, we show how the fairly abstract updates to a matrix factorization translate to a simple editing of the Bayes tree and its conditional densities. Third, we apply the Bayes tree to obtain a completely novel algorithm for sparse nonlinear incremental optimization, named iSAM2, which achieves improvements in efficiency through incremental variable re-ordering and fluid relinearization, eliminating the need for periodic batch steps. We analyze various properties of iSAM2 in detail, and show on a range of real and simulated datasets that our algorithm compares favorably with other recent mapping algorithms in both quality and efficiency.}
+      \field{issn}{0278-3649}
+      \field{journaltitle}{The International Journal of Robotics Research}
+      \field{langid}{english}
+      \field{month}{2}
+      \field{number}{2}
+      \field{shorttitle}{{{iSAM2}}}
+      \field{title}{{{iSAM2}}: {{Incremental}} Smoothing and Mapping Using the {{Bayes}} Tree}
+      \field{urlday}{25}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{31}
+      \field{year}{2012}
+      \field{urldateera}{ce}
+      \field{pages}{216\bibrangedash 235}
+      \range{pages}{20}
+      \verb{doi}
+      \verb 10.1177/0278364911430419
+      \endverb
+      \verb{file}
+      \verb /Users/tdb/Zotero/storage/PZK2EXGQ/Kaess et al. - 2012 - iSAM2 Incremental smoothing and mapping using the Bayes tree.pdf
+      \endverb
+    \endentry
+    \entry{legentilContinuousLatentState2023}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=431a23e06709180d9c4d76c2b255ce53}{%
+           family={Le\bibnamedelima Gentil},
+           familyi={L\bibinitperiod\bibinitdelim G\bibinitperiod},
+           given={Cedric},
+           giveni={C\bibinitperiod}}}%
+        {{hash=cd55ff0165f6d6ab1aad3c4036b07705}{%
+           family={{Vidal-Calleja}},
+           familyi={V\bibinitperiod},
+           given={Teresa},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {SAGE Publications Ltd STM}%
+      }
+      \strng{namehash}{429868a8e49b4fd7b83d8980ae733f8f}
+      \strng{fullhash}{429868a8e49b4fd7b83d8980ae733f8f}
+      \strng{fullhashraw}{429868a8e49b4fd7b83d8980ae733f8f}
+      \strng{bibnamehash}{429868a8e49b4fd7b83d8980ae733f8f}
+      \strng{authorbibnamehash}{429868a8e49b4fd7b83d8980ae733f8f}
+      \strng{authornamehash}{429868a8e49b4fd7b83d8980ae733f8f}
+      \strng{authorfullhash}{429868a8e49b4fd7b83d8980ae733f8f}
+      \strng{authorfullhashraw}{429868a8e49b4fd7b83d8980ae733f8f}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Traditionally, the pose and velocity prediction of a system at time t2 given inertial measurements from a 6-DoF IMU depends on the knowledge of the system's state at time t1. It involves a series of integration and double integration that can be computationally expensive if performed regularly, in particular in the context of inertial-aided optimisation-based state estimation. The concept of preintegration consists of creating pseudo-measurements that are independent of the system's initial conditions (pose and velocity at t1) in order to predict the system's state at t2. These pseudo-measurements, so-called preintegrated measurements, were originally computed numerically using the integration rectangle rule. This article presents a novel method to perform continuous preintegration using Gaussian processes (GPs) to model the system's dynamics focusing on high accuracy. It represents the preintegrated measurement's derivatives in a continuous latent state that is learnt/optimised according to asynchronous IMU gyroscope and accelerometer measurements. The GP models allow for analytical integration and double integration of the latent state to generate accurate preintegrated measurements called unified Gaussian preintegrated measurements (UGPMs). We show through extensive quantitative experiments that the proposed UGPMs outperform the standard preintegration method by an order of magnitude. Additionally, we demonstrate that the UGPMs can be integrated into off-the-shelf multi-modal estimation frameworks with ease based on lidar-inertial, RGBD-inertial, and visual-inertial real-world experiments.}
+      \field{issn}{0278-3649}
+      \field{journaltitle}{The International Journal of Robotics Research}
+      \field{langid}{english}
+      \field{month}{9}
+      \field{number}{10}
+      \field{title}{Continuous Latent State Preintegration for Inertial-Aided Systems}
+      \field{urlday}{25}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{42}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \field{pages}{874\bibrangedash 900}
+      \range{pages}{27}
+      \verb{doi}
+      \verb 10.1177/02783649231199537
+      \endverb
+      \verb{file}
+      \verb /Users/tdb/Zotero/storage/FZINDG58/Le Gentil and Vidal-Calleja - 2023 - Continuous latent state preintegration for inertial-aided systems.pdf
+      \endverb
+    \endentry
+    \entry{legentilGaussianProcessPreintegration2020}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=431a23e06709180d9c4d76c2b255ce53}{%
+           family={Le\bibnamedelima Gentil},
+           familyi={L\bibinitperiod\bibinitdelim G\bibinitperiod},
+           given={Cedric},
+           giveni={C\bibinitperiod}}}%
+        {{hash=cd55ff0165f6d6ab1aad3c4036b07705}{%
+           family={{Vidal-Calleja}},
+           familyi={V\bibinitperiod},
+           given={Teresa},
+           giveni={T\bibinitperiod}}}%
+        {{hash=be05ee0c7b8683ac6213b2f7d5ed0253}{%
+           family={Huang},
+           familyi={H\bibinitperiod},
+           given={Shoudong},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{a343cc78b375a3f9d7690d36cbe8bab9}
+      \strng{fullhash}{b001dc1511fec08d58377adee4e6727b}
+      \strng{fullhashraw}{b001dc1511fec08d58377adee4e6727b}
+      \strng{bibnamehash}{b001dc1511fec08d58377adee4e6727b}
+      \strng{authorbibnamehash}{b001dc1511fec08d58377adee4e6727b}
+      \strng{authornamehash}{a343cc78b375a3f9d7690d36cbe8bab9}
+      \strng{authorfullhash}{b001dc1511fec08d58377adee4e6727b}
+      \strng{authorfullhashraw}{b001dc1511fec08d58377adee4e6727b}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this letter, we present Gaussian Process Preintegration, a preintegration theory based on continuous representations of inertial measurements. A novel use of linear operators on Gaussian Process kernels is employed to generate the proposed Gaussian Preintegrated Measurements (GPMs). This formulation allows the analytical integration of inertial signals on any time interval. Consequently, GPMs are especially suited for asynchronous inertial-aided estimation frameworks. Unlike discrete preintegration approaches, the proposed method does not rely on any explicit motion-model and does not suffer from numerical integration noise. Additionally, we provide the analytical derivation of the Jacobians involved in the first-order expansion for postintegration bias and inter-sensor time-shift correction. We benchmarked the proposed method against existing preintegration methods on simulated data. Our experiments show that GPMs produce the most accurate results and their computation time allows close-to-real-time operations. We validated the suitability of GPMs for inertial-aided estimation by integrating them into a lidar-inertial localisation and mapping framework.}
+      \field{issn}{2377-3766}
+      \field{journaltitle}{IEEE Robotics and Automation Letters}
+      \field{month}{4}
+      \field{number}{2}
+      \field{title}{Gaussian {{Process Preintegration}} for {{Inertial-Aided State Estimation}}}
+      \field{urlday}{25}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{5}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \field{pages}{2108\bibrangedash 2114}
+      \range{pages}{7}
+      \verb{doi}
+      \verb 10.1109/LRA.2020.2970940
+      \endverb
+      \verb{file}
+      \verb /Users/tdb/Zotero/storage/Y9SW2HSD/Le Gentil et al. - 2020 - Gaussian Process Preintegration for Inertial-Aided State Estimation.pdf
+      \endverb
+      \keyw{Acceleration,autonomous vehicle navigation,Gaussian processes,Gyroscopes,Kernel,localization,Sensor fusion,Sensors,SLAM,State estimation}
+    \endentry
+    \entry{lilge_rob25}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=94f64260633cedc653c097db7c665ab4}{%
+           family={Lilge},
+           familyi={L\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{aefe308fc92b04924848df91491d2876}
+      \strng{fullhash}{aefe308fc92b04924848df91491d2876}
+      \strng{fullhashraw}{aefe308fc92b04924848df91491d2876}
+      \strng{bibnamehash}{aefe308fc92b04924848df91491d2876}
+      \strng{authorbibnamehash}{aefe308fc92b04924848df91491d2876}
+      \strng{authornamehash}{aefe308fc92b04924848df91491d2876}
+      \strng{authorfullhash}{aefe308fc92b04924848df91491d2876}
+      \strng{authorfullhashraw}{aefe308fc92b04924848df91491d2876}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{Robotica, to appear}
+      \field{title}{Incorporating Control Inputs in Continuous-Time Gaussian Process State Estimation for Robotics}
+      \field{year}{2025}
+    \endentry
+    \entry{lilge_ijrr22}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=94f64260633cedc653c097db7c665ab4}{%
+           family={Lilge},
+           familyi={L\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=5cae39ae1941eb7dcc885b4beffc2cbd}{%
+           family={Burgner-Kahrs},
+           familyi={B\bibinithyphendelim K\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{354c7b811a775b33a514b810790893fe}
+      \strng{fullhash}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{fullhashraw}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{bibnamehash}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{authorbibnamehash}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{authornamehash}{354c7b811a775b33a514b810790893fe}
+      \strng{authorfullhash}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{authorfullhashraw}{a1777f5f958b425f9a7f92d0feb0613a}
+      \field{extraname}{1}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{International Journal of Robotics Research (IJRR)}
+      \field{title}{Continuum Robot State Estimation Using Gaussian Process Regression on SE(3)}
+      \field{year}{2022}
+    \endentry
+    \entry{lilge_tro25}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=94f64260633cedc653c097db7c665ab4}{%
+           family={Lilge},
+           familyi={L\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=5cae39ae1941eb7dcc885b4beffc2cbd}{%
+           family={Burgner-Kahrs},
+           familyi={B\bibinithyphendelim K\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{354c7b811a775b33a514b810790893fe}
+      \strng{fullhash}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{fullhashraw}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{bibnamehash}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{authorbibnamehash}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{authornamehash}{354c7b811a775b33a514b810790893fe}
+      \strng{authorfullhash}{a1777f5f958b425f9a7f92d0feb0613a}
+      \strng{authorfullhashraw}{a1777f5f958b425f9a7f92d0feb0613a}
+      \field{extraname}{2}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{IEEE Transactions on Robotics (T-RO)}
+      \field{number}{905-925}
+      \field{title}{State Estimation for Continuum Multi-Robot Systems on SE(3)}
+      \field{volume}{41}
+      \field{year}{2025}
+      \verb{doi}
+      \verb 10.1109/TRO.2024.3521859
+      \endverb
+      \verb{urlraw}
+      \verb sbib/lilge_tro25.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/lilge_tro25.pdf
+      \endverb
+    \endentry
+    \entry{long12}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=2f1974c5e16df857e2790efc1ca1fb4b}{%
+           family={Long},
+           familyi={L\bibinitperiod},
+           given={A\bibnamedelima W},
+           giveni={A\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=5299c54fec8f24e07ae6a8277534305d}{%
+           family={Wolfe},
+           familyi={W\bibinitperiod},
+           given={K\bibnamedelima C},
+           giveni={K\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=3be180038ca96b12ce5524ccce05b516}{%
+           family={Mashner},
+           familyi={M\bibinitperiod},
+           given={M\bibnamedelima J},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=883feb59e725e2dc2c8724e4e83970b1}{%
+           family={Chirikjian},
+           familyi={C\bibinitperiod},
+           given={G\bibnamedelima S},
+           giveni={G\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{76c765cbae08316e00af9a66665f597b}
+      \strng{fullhash}{15b6ec3327bb099d1c3d97941ee1d25d}
+      \strng{fullhashraw}{15b6ec3327bb099d1c3d97941ee1d25d}
+      \strng{bibnamehash}{15b6ec3327bb099d1c3d97941ee1d25d}
+      \strng{authorbibnamehash}{15b6ec3327bb099d1c3d97941ee1d25d}
+      \strng{authornamehash}{76c765cbae08316e00af9a66665f597b}
+      \strng{authorfullhash}{15b6ec3327bb099d1c3d97941ee1d25d}
+      \strng{authorfullhashraw}{15b6ec3327bb099d1c3d97941ee1d25d}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of {Robotics: Science and Systems}}
+      \field{title}{The Banana Distribution is {Gaussian}: A Localization Study with Exponential Coordinates}
+      \field{year}{2012}
+    \endentry
+    \entry{lynch17}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=ab9086b1452a1a9813fc6765151b4f61}{%
+           family={Lynch},
+           familyi={L\bibinitperiod},
+           given={Kevin\bibnamedelima M},
+           giveni={K\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=66f19f2d439b6eb60c024ab622b0389f}{%
+           family={Park},
+           familyi={P\bibinitperiod},
+           given={Frank\bibnamedelima C},
+           giveni={F\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{8d01efb70f6cec86f711e78e22f97a48}
+      \strng{fullhash}{8d01efb70f6cec86f711e78e22f97a48}
+      \strng{fullhashraw}{8d01efb70f6cec86f711e78e22f97a48}
+      \strng{bibnamehash}{8d01efb70f6cec86f711e78e22f97a48}
+      \strng{authorbibnamehash}{8d01efb70f6cec86f711e78e22f97a48}
+      \strng{authornamehash}{8d01efb70f6cec86f711e78e22f97a48}
+      \strng{authorfullhash}{8d01efb70f6cec86f711e78e22f97a48}
+      \strng{authorfullhashraw}{8d01efb70f6cec86f711e78e22f97a48}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Modern robotics}
+      \field{year}{2017}
+    \endentry
+    \entry{mahony21}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=523f1624940e07366b63a96872ddb4be}{%
+           family={Mahony},
+           familyi={M\bibinitperiod},
+           given={Robert},
+           giveni={R\bibinitperiod}}}%
+        {{hash=c714822b3f0b920bdfd89a26bc132308}{%
+           family={Trumpf},
+           familyi={T\bibinitperiod},
+           given={Jochen},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{ebde2ef91c02220fa229b2168311b60f}
+      \strng{fullhash}{ebde2ef91c02220fa229b2168311b60f}
+      \strng{fullhashraw}{ebde2ef91c02220fa229b2168311b60f}
+      \strng{bibnamehash}{ebde2ef91c02220fa229b2168311b60f}
+      \strng{authorbibnamehash}{ebde2ef91c02220fa229b2168311b60f}
+      \strng{authornamehash}{ebde2ef91c02220fa229b2168311b60f}
+      \strng{authorfullhash}{ebde2ef91c02220fa229b2168311b60f}
+      \strng{authorfullhashraw}{ebde2ef91c02220fa229b2168311b60f}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IFAC-PapersOnLine}
+      \field{number}{9}
+      \field{title}{Equivariant filter design for kinematic systems on lie groups}
+      \field{volume}{54}
+      \field{year}{2021}
+      \field{pages}{253\bibrangedash 260}
+      \range{pages}{8}
+    \endentry
+    \entry{mukadamContinuoustimeGaussianProcess2018}{article}{}{}
+      \name{author}{5}{}{%
+        {{hash=d2542804e3d08e07e8d23166d956d8fe}{%
+           family={Mukadam},
+           familyi={M\bibinitperiod},
+           given={Mustafa},
+           giveni={M\bibinitperiod}}}%
+        {{hash=db5ca4c0a459acddb82c55e74668dbd9}{%
+           family={Dong},
+           familyi={D\bibinitperiod},
+           given={Jing},
+           giveni={J\bibinitperiod}}}%
+        {{hash=a9babb4986761bfaa228cdd1ba83963c}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={Xinyan},
+           giveni={X\bibinitperiod}}}%
+        {{hash=44074d3cb57c174a8b15ccc9a576ac0d}{%
+           family={Dellaert},
+           familyi={D\bibinitperiod},
+           given={Frank},
+           giveni={F\bibinitperiod}}}%
+        {{hash=565fb033a5950d810063dd9e73baba64}{%
+           family={Boots},
+           familyi={B\bibinitperiod},
+           given={Byron},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {SAGE Publications Ltd STM}%
+      }
+      \strng{namehash}{c40e806602728c385a97216feacd7b0f}
+      \strng{fullhash}{dcc86f79b0da5908b480a64dae85e969}
+      \strng{fullhashraw}{dcc86f79b0da5908b480a64dae85e969}
+      \strng{bibnamehash}{dcc86f79b0da5908b480a64dae85e969}
+      \strng{authorbibnamehash}{dcc86f79b0da5908b480a64dae85e969}
+      \strng{authornamehash}{c40e806602728c385a97216feacd7b0f}
+      \strng{authorfullhash}{dcc86f79b0da5908b480a64dae85e969}
+      \strng{authorfullhashraw}{dcc86f79b0da5908b480a64dae85e969}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We introduce a novel formulation of motion planning, for continuous-time trajectories, as probabilistic inference. We first show how smooth continuous-time trajectories can be represented by a small number of states using sparse Gaussian process (GP) models. We next develop an efficient gradient-based optimization algorithm that exploits this sparsity and GP interpolation. We call this algorithm the Gaussian Process Motion Planner (GPMP). We then detail how motion planning problems can be formulated as probabilistic inference on a factor graph. This forms the basis for GPMP2, a very efficient algorithm that combines GP representations of trajectories with fast, structure-exploiting inference via numerical optimization. Finally, we extend GPMP2 to an incremental algorithm, iGPMP2, that can efficiently replan when conditions change. We benchmark our algorithms against several sampling-based and trajectory optimization-based motion planning algorithms on planning problems in multiple environments. Our evaluation reveals that GPMP2 is several times faster than previous algorithms while retaining robustness. We also benchmark iGPMP2 on replanning problems, and show that it can find successful solutions in a fraction of the time required by GPMP2 to replan from scratch.}
+      \field{issn}{0278-3649}
+      \field{journaltitle}{The International Journal of Robotics Research}
+      \field{langid}{english}
+      \field{month}{9}
+      \field{number}{11}
+      \field{title}{Continuous-Time {{Gaussian}} Process Motion Planning via Probabilistic Inference}
+      \field{urlday}{25}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{37}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \field{pages}{1319\bibrangedash 1340}
+      \range{pages}{22}
+      \verb{doi}
+      \verb 10.1177/0278364918790369
+      \endverb
+      \verb{file}
+      \verb /Users/tdb/Zotero/storage/WZC8SN79/Mukadam et al. - 2018 - Continuous-time Gaussian process motion planning via probabilistic inference.pdf
+      \endverb
+    \endentry
+    \entry{murray94}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=3fa6b96b5d3506325be293be5131cdde}{%
+           family={Murray},
+           familyi={M\bibinitperiod},
+           given={R\bibnamedelima M},
+           giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=ae6f64f7b429f6425fbe070323390f1b}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Z},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=a60a8a7177e86773d75092e92974a59d}{%
+           family={Sastry},
+           familyi={S\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {CRC Press}%
+      }
+      \strng{namehash}{e17eb6b446b1e7cdea230ed0a10eb2b7}
+      \strng{fullhash}{75e71e59ad859b640cc15804c2577e22}
+      \strng{fullhashraw}{75e71e59ad859b640cc15804c2577e22}
+      \strng{bibnamehash}{75e71e59ad859b640cc15804c2577e22}
+      \strng{authorbibnamehash}{75e71e59ad859b640cc15804c2577e22}
+      \strng{authornamehash}{e17eb6b446b1e7cdea230ed0a10eb2b7}
+      \strng{authorfullhash}{75e71e59ad859b640cc15804c2577e22}
+      \strng{authorfullhashraw}{75e71e59ad859b640cc15804c2577e22}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{A Mathematical Introduction to Robotic Manipulation}
+      \field{year}{1994}
+    \endentry
+    \entry{nguyen_tro25}{unpublished}{}{}
+      \name{author}{8}{}{%
+        {{hash=10b9d48f2e3a49cbb432ca22b44242c7}{%
+           family={Nguyen},
+           familyi={N\bibinitperiod},
+           given={T\bibnamedelima M},
+           giveni={T\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=68bd613c80ef7cb7b4d7d333770ab71c}{%
+           family={Cao},
+           familyi={C\bibinitperiod},
+           given={Z},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=1a48ecf9984adc4526895c8abf1d2b80}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={K},
+           giveni={K\bibinitperiod}}}%
+        {{hash=fe1078aa006b93d45f82ade2b04c7ec9}{%
+           family={Talbot},
+           familyi={T\bibinitperiod},
+           given={W},
+           giveni={W\bibinitperiod}}}%
+        {{hash=2c14d3bb8a0cb499283b7c0c1be4daf4}{%
+           family={Jin},
+           familyi={J\bibinitperiod},
+           given={T},
+           giveni={T\bibinitperiod}}}%
+        {{hash=6461dd114b47ad7a86d7d9d9794d1089}{%
+           family={Yuan},
+           familyi={Y\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=16fca6bd7353f9351bd6878733481389}{%
+           family={Xie},
+           familyi={X\bibinitperiod},
+           given={L},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{c7116f55f6949b006f248af1c95dfe1c}
+      \strng{fullhash}{11378367e036aa82af5ec419b36ea0d7}
+      \strng{fullhashraw}{11378367e036aa82af5ec419b36ea0d7}
+      \strng{bibnamehash}{11378367e036aa82af5ec419b36ea0d7}
+      \strng{authorbibnamehash}{11378367e036aa82af5ec419b36ea0d7}
+      \strng{authornamehash}{c7116f55f6949b006f248af1c95dfe1c}
+      \strng{authorfullhash}{11378367e036aa82af5ec419b36ea0d7}
+      \strng{authorfullhashraw}{11378367e036aa82af5ec419b36ea0d7}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvarxiv}
+      \field{title}{A Third-Order Gaussian Process Trajectory Representation Framework with Closed-Form Kinematics for Continuous-Time Motion Estimation}
+      \field{year}{2025}
+    \endentry
+    \entry{park95}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=e6babd1a6340e123148e50491e8e831a}{%
+           family={Park},
+           familyi={P\bibinitperiod},
+           given={F\bibnamedelima C},
+           giveni={F\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=d1f7e88bf30765fae33550d6c40eb2d0}{%
+           family={Bobrow},
+           familyi={B\bibinitperiod},
+           given={J\bibnamedelima E},
+           giveni={J\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=8510a0f2bffbc5108fa0be5674738d4e}{%
+           family={Ploen},
+           familyi={P\bibinitperiod},
+           given={S\bibnamedelima R},
+           giveni={S\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{5afa3035b750091a6d5948a6bdb8ca9f}
+      \strng{fullhash}{a57a0525bce146608358f03138710558}
+      \strng{fullhashraw}{a57a0525bce146608358f03138710558}
+      \strng{bibnamehash}{a57a0525bce146608358f03138710558}
+      \strng{authorbibnamehash}{a57a0525bce146608358f03138710558}
+      \strng{authornamehash}{5afa3035b750091a6d5948a6bdb8ca9f}
+      \strng{authorfullhash}{a57a0525bce146608358f03138710558}
+      \strng{authorfullhashraw}{a57a0525bce146608358f03138710558}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Robotics Research}
+      \field{title}{A {Lie} Group Formulation of Robot Dynamics}
+      \field{volume}{14}
+      \field{year}{1995}
+      \field{pages}{609\bibrangedash 618}
+      \range{pages}{10}
+    \endentry
+    \entry{rasmussen06}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=482e938bd278409c1df5b869731c286d}{%
+           family={Rasmussen},
+           familyi={R\bibinitperiod},
+           given={C\bibnamedelima E},
+           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=03fe732f745576c10e0c06a73741997b}{%
+           family={Williams},
+           familyi={W\bibinitperiod},
+           given={C\bibnamedelima K\bibnamedelima I},
+           giveni={C\bibinitperiod\bibinitdelim K\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cambridge, MA}%
+      }
+      \list{publisher}{1}{%
+        {MIT Press}%
+      }
+      \strng{namehash}{ed49b693d5d79e8f1375cc72fe366e60}
+      \strng{fullhash}{ed49b693d5d79e8f1375cc72fe366e60}
+      \strng{fullhashraw}{ed49b693d5d79e8f1375cc72fe366e60}
+      \strng{bibnamehash}{ed49b693d5d79e8f1375cc72fe366e60}
+      \strng{authorbibnamehash}{ed49b693d5d79e8f1375cc72fe366e60}
+      \strng{authornamehash}{ed49b693d5d79e8f1375cc72fe366e60}
+      \strng{authorfullhash}{ed49b693d5d79e8f1375cc72fe366e60}
+      \strng{authorfullhashraw}{ed49b693d5d79e8f1375cc72fe366e60}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{G}aussian Processes for Machine Learning}
+      \field{year}{2006}
+    \endentry
+    \entry{sarkka06}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{hash=f9312b535e826e770b72b92706f47748}{%
+           family={Särkkä},
+           familyi={S\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Helsinki University of Technology}%
+      }
+      \strng{namehash}{f9312b535e826e770b72b92706f47748}
+      \strng{fullhash}{f9312b535e826e770b72b92706f47748}
+      \strng{fullhashraw}{f9312b535e826e770b72b92706f47748}
+      \strng{bibnamehash}{f9312b535e826e770b72b92706f47748}
+      \strng{authorbibnamehash}{f9312b535e826e770b72b92706f47748}
+      \strng{authornamehash}{f9312b535e826e770b72b92706f47748}
+      \strng{authorfullhash}{f9312b535e826e770b72b92706f47748}
+      \strng{authorfullhashraw}{f9312b535e826e770b72b92706f47748}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Recursive Bayesian Inference on Stochastic Differential Equations}
+      \field{type}{phdthesis}
+      \field{year}{2006}
+    \endentry
+    \entry{sastry99}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=a60a8a7177e86773d75092e92974a59d}{%
+           family={Sastry},
+           familyi={S\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{a60a8a7177e86773d75092e92974a59d}
+      \strng{fullhash}{a60a8a7177e86773d75092e92974a59d}
+      \strng{fullhashraw}{a60a8a7177e86773d75092e92974a59d}
+      \strng{bibnamehash}{a60a8a7177e86773d75092e92974a59d}
+      \strng{authorbibnamehash}{a60a8a7177e86773d75092e92974a59d}
+      \strng{authornamehash}{a60a8a7177e86773d75092e92974a59d}
+      \strng{authorfullhash}{a60a8a7177e86773d75092e92974a59d}
+      \strng{authorfullhashraw}{a60a8a7177e86773d75092e92974a59d}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Nonlinear Systems: Analysis, Stability, and Control}
+      \field{year}{1999}
+    \endentry
+    \entry{sola18}{unpublished}{}{}
+      \name{author}{3}{}{%
+        {{hash=ba02665563025448adc502d83e4d4cec}{%
+           family={Solà\bibnamedelima Ortega},
+           familyi={S\bibinitperiod\bibinitdelim O\bibinitperiod},
+           given={Joan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=2f08297cd236409a6254bc4dbe06bf7b}{%
+           family={Deray},
+           familyi={D\bibinitperiod},
+           given={Jérémie},
+           giveni={J\bibinitperiod}}}%
+        {{hash=e0ea9238d4756bd5d0e5037560da0941}{%
+           family={Atchuthan},
+           familyi={A\bibinitperiod},
+           given={Dinseh},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{4f741900137dcb9282609a3faedad40b}
+      \strng{fullhash}{1f1afae72efb3fd279e863c5feceb785}
+      \strng{fullhashraw}{1f1afae72efb3fd279e863c5feceb785}
+      \strng{bibnamehash}{1f1afae72efb3fd279e863c5feceb785}
+      \strng{authorbibnamehash}{1f1afae72efb3fd279e863c5feceb785}
+      \strng{authornamehash}{4f741900137dcb9282609a3faedad40b}
+      \strng{authorfullhash}{1f1afae72efb3fd279e863c5feceb785}
+      \strng{authorfullhashraw}{1f1afae72efb3fd279e863c5feceb785}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{A micro Lie theory for state estimation in robotics}
+      \field{year}{2018}
+    \endentry
+    \entry{stillwell08}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=4a152c159e38e6e5755aa5ba3a82f6aa}{%
+           family={Stillwell},
+           familyi={S\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{4a152c159e38e6e5755aa5ba3a82f6aa}
+      \strng{fullhash}{4a152c159e38e6e5755aa5ba3a82f6aa}
+      \strng{fullhashraw}{4a152c159e38e6e5755aa5ba3a82f6aa}
+      \strng{bibnamehash}{4a152c159e38e6e5755aa5ba3a82f6aa}
+      \strng{authorbibnamehash}{4a152c159e38e6e5755aa5ba3a82f6aa}
+      \strng{authornamehash}{4a152c159e38e6e5755aa5ba3a82f6aa}
+      \strng{authorfullhash}{4a152c159e38e6e5755aa5ba3a82f6aa}
+      \strng{authorfullhashraw}{4a152c159e38e6e5755aa5ba3a82f6aa}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Naive {Lie} Theory}
+      \field{year}{2008}
+    \endentry
+    \entry{talbot_tro25}{article}{}{}
+      \name{author}{8}{}{%
+        {{hash=fe1078aa006b93d45f82ade2b04c7ec9}{%
+           family={Talbot},
+           familyi={T\bibinitperiod},
+           given={W},
+           giveni={W\bibinitperiod}}}%
+        {{hash=d16954026b4a723e8e35c3a2d40d26cf}{%
+           family={Nubert},
+           familyi={N\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=c72f9ed8d8e06b482a16644685378ce7}{%
+           family={Tuna},
+           familyi={T\bibinitperiod},
+           given={T},
+           giveni={T\bibinitperiod}}}%
+        {{hash=9a00746510201b68230ce6c22fa3a79b}{%
+           family={{Cadena Lerma}},
+           familyi={C\bibinitperiod},
+           given={C},
+           giveni={C\bibinitperiod}}}%
+        {{hash=7399097f99cc61d9ec10d9de8a586edf}{%
+           family={Duembgen},
+           familyi={D\bibinitperiod},
+           given={F},
+           giveni={F\bibinitperiod}}}%
+        {{hash=3cc207572d056c87e2d569cc8551ceab}{%
+           family={{Tordesillas Torres}},
+           familyi={T\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=dffd2bfd1cadaf14acf0ade7f55514de}{%
+           family={Hutter},
+           familyi={H\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{c851486eec34122095af167aa59ab2fd}
+      \strng{fullhash}{715098e3a5b88b3929887bc4e09c8984}
+      \strng{fullhashraw}{715098e3a5b88b3929887bc4e09c8984}
+      \strng{bibnamehash}{715098e3a5b88b3929887bc4e09c8984}
+      \strng{authorbibnamehash}{715098e3a5b88b3929887bc4e09c8984}
+      \strng{authornamehash}{c851486eec34122095af167aa59ab2fd}
+      \strng{authorfullhash}{715098e3a5b88b3929887bc4e09c8984}
+      \strng{authorfullhashraw}{715098e3a5b88b3929887bc4e09c8984}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{IEEE Transactions on Robotics (T-RO), to appear}
+      \field{title}{Continuous-Time State Estimation Methods in Robotics: A Survey}
+      \field{year}{2025}
+    \endentry
+    \entry{tang_ral19}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=231cae506d86eea2efd5a4a86a800ccf}{%
+           family={Tang},
+           familyi={T\bibinitperiod},
+           given={T\bibnamedelima Y},
+           giveni={T\bibinitperiod\bibinitdelim Y\bibinitperiod}}}%
+        {{hash=814d4cf5ec0b7bd0afb2f12ab12fec76}{%
+           family={Yoon},
+           familyi={Y\bibinitperiod},
+           given={D\bibnamedelima J},
+           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{49b8be027cfd4b3aaea35d9a54206594}
+      \strng{fullhash}{a68a37ca7a040d6f94673cbff6f856ea}
+      \strng{fullhashraw}{a68a37ca7a040d6f94673cbff6f856ea}
+      \strng{bibnamehash}{a68a37ca7a040d6f94673cbff6f856ea}
+      \strng{authorbibnamehash}{a68a37ca7a040d6f94673cbff6f856ea}
+      \strng{authornamehash}{49b8be027cfd4b3aaea35d9a54206594}
+      \strng{authorfullhash}{a68a37ca7a040d6f94673cbff6f856ea}
+      \strng{authorfullhashraw}{a68a37ca7a040d6f94673cbff6f856ea}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{IEEE Robotics and Automation Letters}
+      \field{number}{2}
+      \field{title}{A White-Noise-On-Jerk Motion Prior for Continuous-Time Trajectory Estimation on SE(3)}
+      \field{volume}{4}
+      \field{year}{2019}
+      \field{pages}{594\bibrangedash 601}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/LRA.2019.2891492
+      \endverb
+      \verb{urlraw}
+      \verb sbib/tang_ral19.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/tang_ral19.pdf
+      \endverb
+    \endentry
+    \entry{teetaert_icra24}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=0b9bf03615d93b2def4b93bb4caa3f24}{%
+           family={Teetaert},
+           familyi={T\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=94f64260633cedc653c097db7c665ab4}{%
+           family={Lilge},
+           familyi={L\bibinitperiod},
+           given={S},
+           giveni={S\bibinitperiod}}}%
+        {{hash=5cae39ae1941eb7dcc885b4beffc2cbd}{%
+           family={Burgner-Kahrs},
+           familyi={B\bibinithyphendelim K\bibinitperiod},
+           given={J},
+           giveni={J\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{c8665e6ac9b1476baa1c41c98dab0d31}
+      \strng{fullhash}{338fdb05ff0d8f4544da5095a40cd82b}
+      \strng{fullhashraw}{338fdb05ff0d8f4544da5095a40cd82b}
+      \strng{bibnamehash}{338fdb05ff0d8f4544da5095a40cd82b}
+      \strng{authorbibnamehash}{338fdb05ff0d8f4544da5095a40cd82b}
+      \strng{authornamehash}{c8665e6ac9b1476baa1c41c98dab0d31}
+      \strng{authorfullhash}{338fdb05ff0d8f4544da5095a40cd82b}
+      \strng{authorfullhashraw}{338fdb05ff0d8f4544da5095a40cd82b}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvabsconf}
+      \field{booktitle}{Proceedings of the {\em 40th Anniversary of the IEEE International Conference on Robotics and Automation (ICRA40)}}
+      \field{title}{Space-Time Continuum: Continuous Shape and Time State Estimation for Flexible Robots}
+      \field{year}{2024}
+    \endentry
+    \entry{tong_ijrr13b}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=680d2afa7880170b7e248b058e0e94a7}{%
+           family={Tong},
+           familyi={T\bibinitperiod},
+           given={C\bibnamedelima H},
+           giveni={C\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=e310a123bd6ac757dd08bcfc711aede1}{%
+           family={Furgale},
+           familyi={F\bibinitperiod},
+           given={P\bibnamedelima T},
+           giveni={P\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{10a8f1369ec4d54a285240955ae653e9}
+      \strng{fullhash}{ea08da5d4253f809457e207084914174}
+      \strng{fullhashraw}{ea08da5d4253f809457e207084914174}
+      \strng{bibnamehash}{ea08da5d4253f809457e207084914174}
+      \strng{authorbibnamehash}{ea08da5d4253f809457e207084914174}
+      \strng{authornamehash}{10a8f1369ec4d54a285240955ae653e9}
+      \strng{authorfullhash}{ea08da5d4253f809457e207084914174}
+      \strng{authorfullhashraw}{ea08da5d4253f809457e207084914174}
+      \field{extraname}{1}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{International Journal of Robotics Research}
+      \field{number}{5}
+      \field{title}{Gaussian Process Gauss-Newton for Non-Parametric Simultaneous Localization and Mapping}
+      \field{volume}{32}
+      \field{year}{2013}
+      \field{pages}{507\bibrangedash 525}
+      \range{pages}{19}
+      \verb{doi}
+      \verb 10.1177/0278364913478672
+      \endverb
+    \endentry
+    \entry{tong_crv12}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=d2a53124efd645b13da69b8bb95f5ff9}{%
+           family={Tong},
+           familyi={T\bibinitperiod},
+           given={Chi\bibnamedelima Hay},
+           giveni={C\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=c18cd2066dfb1a9d3bb0e87f637b4f45}{%
+           family={Furgale},
+           familyi={F\bibinitperiod},
+           given={Paul\bibnamedelima T},
+           giveni={P\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=b2c352c24cb7305c1e2d9b232a6fc453}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={Timothy\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Toronto, Canada}%
+      }
+      \strng{namehash}{039bf9fc4958fd31f3c93d5d37031697}
+      \strng{fullhash}{f6b9bcbb956a4b0aaeb02ab32dc63f59}
+      \strng{fullhashraw}{f6b9bcbb956a4b0aaeb02ab32dc63f59}
+      \strng{bibnamehash}{f6b9bcbb956a4b0aaeb02ab32dc63f59}
+      \strng{authorbibnamehash}{f6b9bcbb956a4b0aaeb02ab32dc63f59}
+      \strng{authornamehash}{039bf9fc4958fd31f3c93d5d37031697}
+      \strng{authorfullhash}{f6b9bcbb956a4b0aaeb02ab32dc63f59}
+      \strng{authorfullhashraw}{f6b9bcbb956a4b0aaeb02ab32dc63f59}
+      \field{extraname}{2}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvfullconf}
+      \field{booktitle}{Proceedings of the 9th Conference on Computer and Robot Vision (CRV)}
+      \field{month}{28-30 May}
+      \field{title}{Gaussian Process Gauss-Newton: Non-Parametric State Estimation}
+      \field{year}{2012}
+      \field{pages}{206\bibrangedash 213}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/CRV.2012.35
+      \endverb
+      \verb{urlraw}
+      \verb sbib/tong_crv12.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/tong_crv12.pdf
+      \endverb
+    \endentry
+    \entry{wang06}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=61ad10c626e1d641e0b1d7b5f48d3233}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Y},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=883feb59e725e2dc2c8724e4e83970b1}{%
+           family={Chirikjian},
+           familyi={C\bibinitperiod},
+           given={G\bibnamedelima S},
+           giveni={G\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{fullhash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{fullhashraw}{c28ea5fae618f32310a42b28d034966a}
+      \strng{bibnamehash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{authorbibnamehash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{authornamehash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{authorfullhash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{authorfullhashraw}{c28ea5fae618f32310a42b28d034966a}
+      \field{extraname}{1}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{{IEEE} Transactions on Robotics}
+      \field{number}{4}
+      \field{title}{Error Propagation on the {Euclidean} Group With Applications to Manipulator Kinematics}
+      \field{volume}{22}
+      \field{year}{2006}
+      \field{pages}{591\bibrangedash 602}
+      \range{pages}{12}
+    \endentry
+    \entry{wang08}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=61ad10c626e1d641e0b1d7b5f48d3233}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Y},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=883feb59e725e2dc2c8724e4e83970b1}{%
+           family={Chirikjian},
+           familyi={C\bibinitperiod},
+           given={G\bibnamedelima S},
+           giveni={G\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{fullhash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{fullhashraw}{c28ea5fae618f32310a42b28d034966a}
+      \strng{bibnamehash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{authorbibnamehash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{authornamehash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{authorfullhash}{c28ea5fae618f32310a42b28d034966a}
+      \strng{authorfullhashraw}{c28ea5fae618f32310a42b28d034966a}
+      \field{extraname}{2}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Robotics Research}
+      \field{number}{11}
+      \field{title}{Nonparametric Second-order Theory of Error Propagation on Motion Groups}
+      \field{volume}{27}
+      \field{year}{2008}
+      \field{pages}{1258\bibrangedash 1273}
+      \range{pages}{16}
+    \endentry
+    \entry{wolfe11}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=856f8c4f0e656026c634c0c87f86123b}{%
+           family={Wolfe},
+           familyi={W\bibinitperiod},
+           given={K},
+           giveni={K\bibinitperiod}}}%
+        {{hash=8fb50c751708b5b55d4512007ca2f3e3}{%
+           family={Mashner},
+           familyi={M\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+        {{hash=25a379bfa29d0ab6aef84608a62e9367}{%
+           family={Chirikjian},
+           familyi={C\bibinitperiod},
+           given={G},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{5a8de2ed6f85fadef2993afe3a4378e9}
+      \strng{fullhash}{9551e9b521ac58f93229b60579527d52}
+      \strng{fullhashraw}{9551e9b521ac58f93229b60579527d52}
+      \strng{bibnamehash}{9551e9b521ac58f93229b60579527d52}
+      \strng{authorbibnamehash}{9551e9b521ac58f93229b60579527d52}
+      \strng{authornamehash}{5a8de2ed6f85fadef2993afe3a4378e9}
+      \strng{authorfullhash}{9551e9b521ac58f93229b60579527d52}
+      \strng{authorfullhashraw}{9551e9b521ac58f93229b60579527d52}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Algebraic Statistics}
+      \field{number}{1}
+      \field{title}{{Bayesian} Fusion on {Lie} Groups}
+      \field{volume}{2}
+      \field{year}{2011}
+      \field{pages}{75\bibrangedash 97}
+      \range{pages}{23}
+    \endentry
+    \entry{wong_ral20}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=809c629fcabe517303a25c15ccb47f6c}{%
+           family={Wong},
+           familyi={W\bibinitperiod},
+           given={J\bibnamedelima N},
+           giveni={J\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=814d4cf5ec0b7bd0afb2f12ab12fec76}{%
+           family={Yoon},
+           familyi={Y\bibinitperiod},
+           given={D\bibnamedelima J},
+           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=014ef9082944f38be583f591785b61f0}{%
+           family={Schoellig},
+           familyi={S\bibinitperiod},
+           given={A\bibnamedelima P},
+           giveni={A\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=dbf18e35687b71442145f180b7395cab}{%
+           family={Barfoot},
+           familyi={B\bibinitperiod},
+           given={T\bibnamedelima D},
+           giveni={T\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{1971875c556e81177c2280c4bc2b20db}
+      \strng{fullhash}{6f800d94bb392fc1d540986e8e3a4ccf}
+      \strng{fullhashraw}{6f800d94bb392fc1d540986e8e3a4ccf}
+      \strng{bibnamehash}{6f800d94bb392fc1d540986e8e3a4ccf}
+      \strng{authorbibnamehash}{6f800d94bb392fc1d540986e8e3a4ccf}
+      \strng{authornamehash}{1971875c556e81177c2280c4bc2b20db}
+      \strng{authorfullhash}{6f800d94bb392fc1d540986e8e3a4ccf}
+      \strng{authorfullhashraw}{6f800d94bb392fc1d540986e8e3a4ccf}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{webcvjournal}
+      \field{journaltitle}{IEEE Robotics and Automation Letters (RAL)}
+      \field{month}{4}
+      \field{number}{2}
+      \field{title}{A Data-Driven Motion Prior for Continuous-Time Trajectory Estimation on SE(3)}
+      \field{volume}{5}
+      \field{year}{2020}
+      \field{pages}{1429\bibrangedash 1436}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/LRA.2020.2969153
+      \endverb
+      \verb{urlraw}
+      \verb sbib/wong_ral20.pdf
+      \endverb
+      \verb{url}
+      \verb sbib/wong_ral20.pdf
+      \endverb
+    \endentry
+    \entry{yanIncrementalSparseGP2015}{misc}{}{}
+      \name{author}{3}{}{%
+        {{hash=a9babb4986761bfaa228cdd1ba83963c}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={Xinyan},
+           giveni={X\bibinitperiod}}}%
+        {{hash=af67693dabb60e26b90427a83bbe560b}{%
+           family={Indelman},
+           familyi={I\bibinitperiod},
+           given={Vadim},
+           giveni={V\bibinitperiod}}}%
+        {{hash=565fb033a5950d810063dd9e73baba64}{%
+           family={Boots},
+           familyi={B\bibinitperiod},
+           given={Byron},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {arXiv}%
+      }
+      \strng{namehash}{2c976f44db30b1760d48152752493c70}
+      \strng{fullhash}{2ae65e65386b2597272c097d2c593e46}
+      \strng{fullhashraw}{2ae65e65386b2597272c097d2c593e46}
+      \strng{bibnamehash}{2ae65e65386b2597272c097d2c593e46}
+      \strng{authorbibnamehash}{2ae65e65386b2597272c097d2c593e46}
+      \strng{authornamehash}{2c976f44db30b1760d48152752493c70}
+      \strng{authorfullhash}{2ae65e65386b2597272c097d2c593e46}
+      \strng{authorfullhashraw}{2ae65e65386b2597272c097d2c593e46}
+      \field{extraname}{1}
+      \field{sortinit}{Y}
+      \field{sortinithash}{fd67ad5a9ef0f7456bdd9aab10fe1495}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Recent work on simultaneous trajectory estimation and mapping (STEAM) for mobile robots has found success by representing the trajectory as a Gaussian process. Gaussian processes can represent a continuous-time trajectory, elegantly handle asynchronous and sparse measurements, and allow the robot to query the trajectory to recover its estimated position at any time of interest. A major drawback of this approach is that STEAM is formulated as a batch estimation problem. In this paper we provide the critical extensions necessary to transform the existing batch algorithm into an extremely efficient incremental algorithm. In particular, we are able to vastly speed up the solution time through efficient variable reordering and incremental sparse updates, which we believe will greatly increase the practicality of Gaussian process methods for robot mapping and localization. Finally, we demonstrate the approach and its advantages on both synthetic and real datasets.}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arXiv}
+      \field{month}{4}
+      \field{number}{arXiv:1504.02696}
+      \field{title}{Incremental {{Sparse GP Regression}} for {{Continuous-time Trajectory Estimation}} \& {{Mapping}}}
+      \field{urlday}{25}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{year}{2015}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1504.02696
+      \endverb
+      \verb{eprint}
+      \verb 1504.02696
+      \endverb
+      \verb{file}
+      \verb /Users/tdb/Zotero/storage/5LTCIJSN/Yan et al. - 2015 - Incremental Sparse GP Regression for Continuous-time Trajectory Estimation & Mapping.pdf;/Users/tdb/Zotero/storage/VLNJC5L9/1504.html
+      \endverb
+      \keyw{Computer Science - Robotics}
+    \endentry
+    \entry{yanIncrementalSparseGP2017}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=a9babb4986761bfaa228cdd1ba83963c}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={Xinyan},
+           giveni={X\bibinitperiod}}}%
+        {{hash=af67693dabb60e26b90427a83bbe560b}{%
+           family={Indelman},
+           familyi={I\bibinitperiod},
+           given={Vadim},
+           giveni={V\bibinitperiod}}}%
+        {{hash=565fb033a5950d810063dd9e73baba64}{%
+           family={Boots},
+           familyi={B\bibinitperiod},
+           given={Byron},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{2c976f44db30b1760d48152752493c70}
+      \strng{fullhash}{2ae65e65386b2597272c097d2c593e46}
+      \strng{fullhashraw}{2ae65e65386b2597272c097d2c593e46}
+      \strng{bibnamehash}{2ae65e65386b2597272c097d2c593e46}
+      \strng{authorbibnamehash}{2ae65e65386b2597272c097d2c593e46}
+      \strng{authornamehash}{2c976f44db30b1760d48152752493c70}
+      \strng{authorfullhash}{2ae65e65386b2597272c097d2c593e46}
+      \strng{authorfullhashraw}{2ae65e65386b2597272c097d2c593e46}
+      \field{extraname}{2}
+      \field{sortinit}{Y}
+      \field{sortinithash}{fd67ad5a9ef0f7456bdd9aab10fe1495}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Recent work on simultaneous trajectory estimation and mapping (STEAM) for mobile robots has used Gaussian processes (GPs) to efficiently represent the robot's trajectory through its environment. GPs have several advantages over discrete-time trajectory representations: they can represent a continuous-time trajectory, elegantly handle asynchronous and sparse measurements, and allow the robot to query the trajectory to recover its estimated position at any time of interest. A major drawback of the GP approach to STEAM is that it is formulated as a batch trajectory estimation problem. In this paper we provide the critical extensions necessary to transform the existing GP-based batch algorithm for STEAM into an extremely efficient incremental algorithm. In particular, we are able to vastly speed up the solution time through efficient variable reordering and incremental sparse updates, which we believe will greatly increase the practicality of Gaussian process methods for robot mapping and localization. Finally, we demonstrate the approach and its advantages on both synthetic and real datasets.}
+      \field{issn}{0921-8890}
+      \field{journaltitle}{Robotics and Autonomous Systems}
+      \field{month}{1}
+      \field{title}{Incremental Sparse {{GP}} Regression for Continuous-Time Trajectory Estimation and Mapping}
+      \field{urlday}{25}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{volume}{87}
+      \field{year}{2017}
+      \field{urldateera}{ce}
+      \field{pages}{120\bibrangedash 132}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1016/j.robot.2016.10.004
+      \endverb
+      \verb{file}
+      \verb /Users/tdb/Zotero/storage/L2FN48SU/S0921889016300434.html
+      \endverb
+      \keyw{Continuous time,Gaussian process regression,Localization,SLAM,State estimation}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
