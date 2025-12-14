@@ -6,7 +6,7 @@ In this article, we consider the problem of estimating a continuous-time traject
 
 Specifically, we will discuss using continuous-time estimation based on \ac{GP} regression.  This topic is not itself new and therefore this article should be considered mostly of tutorial value.  Its contributions beyond the existing literature are:
 \begin{itemize}
-\item {\em We provide new insights on the connections between continuous-time \ac{GP} regression and factor graphs.}  In particular, we show that querying the trajectory at any time of interest can be accomplished by an application of the factor-graph elimination algorithm.  This leads to a novel way to do covariance interpolation and a new interpretation of interpolating states with measurements.
+\item {\em We provide new insights on the connections between continuous-time \ac{GP} regression and factor graphs.}  In particular, we show that querying the trajectory at any time of interest can be accomplished by an application of the factor-graph elimination algorithm.  This leads to a novel way to do covariance interpolation and new insights into interpolating measurement states.
 
 \item {\em We implement \ac{GP}-based continuous-time estimation in the popular \ac{GTSAM} framework and apply it on three tutorial examples.}  This allows us to demonstrate the use of continuous-time estimation in a practical setting, including how to handle high-rate and asynchronous measurements.
 

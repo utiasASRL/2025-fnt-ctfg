@@ -8,8 +8,6 @@ In this chapter, we show how \ac{GP} regression -- a popular method for function
 
 \section{Brief Derivation of GP Regression}
 
-\alert{flow could be improved here}
-
 We begin by considering systems with a continuous-time \ac{GP} prior and a discrete-time, linear measurement model:
 \beqn{}
 \mbf{x}(t) & \sim & \mathcal{GP}( \pri{\mbf{x}}(t), \pri{\mbf{P}}(t,t^\prime) ), \qquad t_0 < t,t^\prime, \\
@@ -153,5 +151,3 @@ so that only block-columns $k-1$ and $k$ are non-zero.  This means that we only 
 \est{\mbf{x}}_\tau & = & \pri{\mbf{x}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{1} \ebm - \bbm \pri{\mbf{x}}_{k-1} \\  \pri{\mbf{x}}_{k} \ebm \right), \label{eq:meaninterp} \\
 \est{\mbf{P}}_\tau & = & \pri{\mbf{P}}_\tau + \bbm \mbs{\Lambda}_\tau & \mbs{\Psi}_\tau \ebm \left( \bbm \est{\mbf{P}}_{k-1,k-1} & \est{\mbf{P}}_{k-1,k}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k,k} \ebm \right.  \label{eq:covinterp} \\ & & \qquad\qquad\qquad\qquad \quad\left. - \bbm \pri{\mbf{P}}_{k-1,k-1} & \pri{\mbf{P}}_{k,k-1}^T \\ \pri{\mbf{P}}_{k,k-1} & \pri{\mbf{P}}_{k,k} \ebm \right) \bbm \mbs{\Lambda}_\tau^T \\ \mbs{\Psi}_\tau^T \ebm. \nonumber
 \eeqn
-
-\alert{Add flow to next section: this represents the classical view of gp regression, but we now take a new perspective using factor graphs.}
