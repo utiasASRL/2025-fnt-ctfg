@@ -4,7 +4,7 @@
 
 As noted above, the previous chapter presents \ac{GP}-based continuous-time estimation from the perspective of classical \ac{GP} regression. In this chapter, we will consider this problem through the lens of \emph{factor graphs} -- a common paradigm in modern state estimation for robotics~\citep{dellaert17}. Crucially, this framework will allow us to build key insights into the inner workings of continuous-time estimation. 
 
-We first provide a brief introduction to factor graphs in the next section. This section can be safely skipped by readers that are already familiar with this concept. For readers that are new to factor graphs, we recommend reading this section as well as the additional background in the Appendix before continuing to the rest of this chapter. The rest of the chapter will reframe \ac{GP}-based continuous-time estimation using factor graphs and present insights that result from this reframing.
+We first provide a brief introduction to factor graphs in the next section. This section can be safely skipped by readers that are already familiar with this concept. For readers that are new to factor graphs, we recommend reading this section as well as the additional background in Appendix \ref{app:add-fg-bg} before continuing to the rest of this chapter. The rest of the chapter will reframe \ac{GP}-based continuous-time estimation using factor graphs and present insights that result from this reframing.
 
 \section{A Brief Introduction to Factor Graphs}
 \label{sec:brief-fg}
@@ -167,7 +167,8 @@ We follow the procedure outlined in the previous sections: (i) solve for the sta
      \label{fig:linear_WNOA_example}
 \end{figure}
 
-\section{Interpolating Measurement States}
+\section{Interpolating States Associated with Measurement}
+\label{sec:interpolation_with_measurements}
 
 \begin{figure}[t]
      \centering
