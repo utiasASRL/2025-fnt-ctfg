@@ -31,7 +31,7 @@ There are four main advantages to continuous-time estimation over its discrete-t
 
 \item {\em We can query the trajectory at any time of interest, $\tau$, not just at the measurement times, $t_k$.}  This is useful for applications where we might use one sensor to estimate the trajectory but another to build a map, for example.  It is also useful in control where we might want to query the trajectory at a high rate to compute control inputs. 
 
-\item {\em The continuous-time representation can impose smoothness on the estimated trajectory.}  Often the object to which are sensors are attached is moving smoothly through the world because it is governed by physics, and we can use this knowledge to regularize the solution through the choice of motion prior.
+\item {\em The continuous-time representation can impose smoothness on the estimated trajectory.}  Often the object to which our sensors are attached is moving smoothly through the world because it is governed by physics, and we can use this knowledge to regularize the solution through the choice of motion prior.
 
 \item {\em The continuous-time representation can be used to overcome observability issues.}  For sweeping-while-moving sensors such as rolling-shutter cameras or spinning lidars, the trajectory is often under-constrained by the measurements alone since each pixel or point is acquired from a unique pose.  Our motion prior serves to regularize the solution and can be physically motivated, such as a constant-velocity prior or a constant-acceleration prior.
 \end{itemize}

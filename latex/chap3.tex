@@ -1,5 +1,5 @@
 %!TEX root =  main.tex
-\chapter{The Factor Graph Point of View}
+\chapter{Factor Graph Point of View}
 \label{chap:fg-ctls}
 
 As noted above, the previous chapter presents \ac{GP}-based continuous-time estimation from the perspective of classical \ac{GP} regression. In this chapter, we will consider this problem through the lens of \emph{factor graphs} -- a common paradigm in modern state estimation for robotics~\citep{dellaert17}. Crucially, this framework will allow us to build key insights into the inner workings of continuous-time estimation. 
@@ -76,7 +76,7 @@ Recall our generic, continuous-time, linear system model from Section~\ref{sec:g
 \begin{equation}\label{eq:linsysct}
 \dot{\mbs{x}}(t) = \mbs{A} \mbs{x}(t) + \mbs{v}(t) + \mbs{L} \mbs{w}(t),
 \end{equation}
-where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \delta(t-t^\prime))$ a white-noise process.  More concretely, choosing the coefficient matrices to be $\mbs{A} = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm$ and $\mbs{L} = \bbm \mbf{0} \\ \mbf{I} \ebm$ and set the inputs to zero, $\mbs{v}(t) = \mbf{0}$, our state represents position and velocity, $\mbs{x}(t) = \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm$, and our motion model becomes {\em \ac{WNOA}}:
+where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \delta(t-t^\prime))$ a white-noise process.  More concretely, choosing the coefficient matrices to be $\mbs{A} = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm$ and $\mbs{L} = \bbm \mbf{0} \\ \mbf{I} \ebm$ and setting the inputs to zero, $\mbs{v}(t) = \mbf{0}$, our state represents position and velocity, $\mbs{x}(t) = \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm$, and our motion model becomes {\em \ac{WNOA}}:
 \begin{equation}
 \bbm \dot{\mbs{p}}(t) \\ \ddot{\mbs{p}}(t) \ebm = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm + \bbm \mbf{0} \\ \mbf{I} \ebm \mbs{w}(t) \quad \Rightarrow \quad \ddot{\mbs{p}}(t) = \mbs{w}(t).
 \end{equation}
@@ -100,7 +100,7 @@ with $t_{k,k-1} = t_{k} - t_{k-1}$.  We can often simplify these expressions for
 \begin{equation}
 \mbf{Q}_{k,k-1} = \bbm \frac{1}{3}  t_{k,k-1}^3 \mbs{Q} & \frac{1}{2} t_{k,k-1}^2 \mbs{Q} \\  \frac{1}{2} t_{k,k-1}^2 \mbs{Q} &  t_{k,k-1} \mbs{Q} \ebm, \;\; \mbf{A}_{k,k-1} = \bbm \mbf{I} &  t_{k,k-1} \mbf{I} \\ \mbf{0} & \mbf{I} \ebm,
 \end{equation}
-This is everything we need to populate the motion-model factors in Figure~\ref{fig:ctfg2}.\footnote{See Figure~\ref{fig:dtfg2} for more details on the exact forms of the factors. Though this figure deals with the discrete-time case, the forms are equivalent for continuous-time.}  From here, we can use the \ac{RTS} smoother or any other solver to solve for the states at the measurement times.  
+This is everything we need to populate the motion-model factors in Figure~\ref{fig:ctfg2}.\footnote{See Figure~\ref{fig:dtfg2} for more details on the exact forms of the factors. Though this figure deals with the discrete-time case, the forms are equivalent for continuous-time.}  From here, we can use the \ac{RTS} smoother or any other solver (e.g., a factor graph solver) to solve for the states at the measurement times.  
 
 \subsection{Querying the Solution}\label{sec:linafterquery}
 % formerly After-Main-Solve Querying
@@ -190,7 +190,6 @@ To see why this is true, consider that the probability density function of the f
 \begin{equation}
      p(\mbf{x}_k, \mbf{x}_{\tau} | \mbf{x}_{k-1}, \mbf{y}, \mbf{v}) \propto p(\mbf{y}| \mbf{x}_{\tau}) p(\mbf{x}_k, \mbf{x}_{\tau}| \mbf{x}_{k-1}, \mbf{v}).
 \end{equation}
-
 Assuming a motion prior of the type discussed in this article, it turns out that the second term can be refactored as
 \begin{equation}
      p(\mbf{x}_k, \mbf{x}_{\tau} | \mbf{x}_{k-1}, \mbf{v}) = p(\mbf{x}_{\tau}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}) p(\mbf{x}_k|\mbf{x}_{k-1}, \mbf{v}_{k,k-1}), 
@@ -209,12 +208,11 @@ Assuming that the measurement is linear, $p(\mbf{y}| \mbf{x}_{\tau})=\mathcal{N}
 \begin{equation}
      \phi_{y}(\mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}\left(\mbf{C} \check{\mbf{x}}_{\tau}, \mbf{C} \mbf{\Sigma}_{\tau}\mbf{C}^T + \mbf{R} \right).
 \end{equation}
-
 The interpretation of this distribution is intuitive: the mean is obtained by applying the measurement model to the bordering states after mapping through the motion model to the measurement time via interpolation. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
 
 The now-eliminated state $\mbf{x}_{\tau}$ can actually be dropped from the optimization,\footnote{We cannot completely forget about this state if we are dealing with a linearization of a nonlinear state-estimation problems. In this case, it is important to keep a record of $\mbf{x}_{\tau}$ to update the linearization point at each iteration.} leaving a motion prior and a new measurement factor between the non-interpolated states, $\mbf{x}_{k-1}$ and $ \mbf{x}_{k}$. In effect, we have removed $\mbf{x}_{\tau}$ from the optimization problem, but maintained the effect of its measurement.
 
-A similar situation also holds when we eliminate multiple query states with measurements between two non-interpolated states. However, we need to make an additional approximation transform the original measurements into \emph{separate} factors. The interested reader can find a more detailed derivation for the case of multiple factors in Appendix~\ref{chap:interp-during-solve}.
+A similar situation also holds when we eliminate multiple query states with measurements between two non-interpolated states. However, we need to make an additional approximation to transform the original measurements into \emph{separate} factors. The interested reader can find a more detailed derivation for the case of multiple factors in Appendix~\ref{chap:interp-during-solve}.
 
 
 
