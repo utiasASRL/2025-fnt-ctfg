@@ -19,9 +19,9 @@ Typically in state estimation, we are interested in computing a posterior densit
 \begin{equation}
 p(\mbf{x} | \mbf{v}, \mbf{y}),
 \end{equation}
-where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ldots, t_K$, $\mbf{v} = (\mbf{v}_{1,0}, \ldots, \mbf{v}_{K,K-1})$ is a set of inputs/commands, and $\mbf{y} = (\mbf{y}_0, \ldots, \mbf{y}_K)$ is a set of measurements.  In most practical scenarios, we can factor this posterior density into a product of factors, each of which depends on only a subset of the variables in the problem.  For example, we might have
+where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ldots, t_K$, $\mbf{v} = (\pri{\mbf{x}}_0, \mbf{v}_{1,0}, \ldots, \mbf{v}_{K,K-1})$ is a set of inputs/commands, and $\mbf{y} = (\mbf{y}_0, \ldots, \mbf{y}_K)$ is a set of measurements.  In most practical scenarios, we can factor this posterior density into a product of factors, each of which depends on only a subset of the variables in the problem.  For example, we might have
 \begin{equation}
-p(\mbf{x} | \mbf{v}, \mbf{y}) \propto \underbrace{p(\mbf{x}_0)}_{\phi(\mbf{x}_0)} \prod_{k=1}^K \underbrace{p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi(\mbf{x}_{k-1},\mbf{x}_k)} \prod_{k=0}^K \underbrace{p(\mbf{y}_k | \mbf{x}_k)}_{\varphi(\mbf{x}_k)}.
+p(\mbf{x} | \mbf{v}, \mbf{y}) \propto \underbrace{p(\mbf{x}_0| \pri{\mbf{x}}_0)}_{\phi(\mbf{x}_0)} \prod_{k=1}^K \underbrace{p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi(\mbf{x}_{k-1},\mbf{x}_k)} \prod_{k=0}^K \underbrace{p(\mbf{y}_k | \mbf{x}_k)}_{\varphi(\mbf{x}_k)}.
 \end{equation}
 where each $\phi(\cdot)$ and $\varphi(\cdot)$, is a {\em factor} of the posterior density corresponding to motion priors and measurements, respectively.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
 
@@ -34,9 +34,9 @@ This is a common approach in estimation, referred to as {\em \ac{MAP}} estimatio
 We can visually understand the factors by assembling them into a {\em factor graph}, which is a bipartite graph with two types of nodes: variable nodes and factor nodes.  The variable nodes represent the variables in the problem, such as $\mbf{x}_0, \ldots, \mbf{x}_K$, and the factor nodes represent the factors, such as $\phi(\mbf{x}_0)$, $\phi(\mbf{x}_{k-1},\mbf{x}_k)$, and $\varphi(\mbf{x}_k)$.  The edges connect variable nodes to factor nodes, indicating which variables are involved in each factor.  This graphical representation allows us to see the dependencies between variables and factors in a very intuitive way.  Figure~\ref{fig:dtfg1} shows a simple factor graph for a classic discrete-time estimation problem.
 
 \begin{figure}[t]
-     \includegraphics[width=\textwidth]{elim.pdf}
+     \includegraphics[width=\textwidth]{elim2.pdf}
      \centering
-     \caption{Example of the elimination algorithm.  The left shows the factor graph before elimination, the middle shows the product factor formed by multiplying all factors involving $\mbf{x}$, and the right shows the result of eliminating $\mbf{x}$ from the factor graph, resulting in a new factor on the separator variables and a conditional density for $\mbf{x}$.\alert{This figure was copied from the supplementary. It should just serve as a refresher for readers so that we can refer to elimination in the next section. I think we can just change the $s$ variables and caption to avoid the concept of separators.}}
+     \caption{Simple example of the elimination algorithm.  The left shows the factor graph before elimination and the right shows the result of eliminating $\mbf{x}$ from the factor graph, resulting in a new factor and a conditional density for $\mbf{x}$.}
      \label{fig:elim_main_body}
 \end{figure}
 
@@ -172,7 +172,7 @@ We follow the procedure outlined in the previous sections: (i) solve for the sta
 
 \begin{figure}[t]
      \centering
-     \includegraphics[width=0.90\textwidth]{elim_w_meas.jpeg}
+     \includegraphics[width=0.90\textwidth]{elim3.pdf}
      \caption{When eliminating an interpolated state with a measurement, we can exactly decompose the residual factor into two factors: a measurement factor $\phi_y(\mbf{x}_{k-1}, \mbf{x}_{k})$ and a motion-prior factor $\phi_v(\mbf{x}_{k-1}, \mbf{x}_{k})$.}
      \label{fig:elim-w-meas}
 \end{figure}

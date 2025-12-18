@@ -13,9 +13,14 @@ We begin by considering systems with a continuous-time \ac{GP} prior and a discr
 \mbf{x}(t) & \sim & \mathcal{GP}( \pri{\mbf{x}}(t), \pri{\mbf{P}}(t,t^\prime) ), \qquad t_0 < t,t^\prime, \\
 \mbf{y}_k & = & \mbf{C}_k\mbf{x}(t_k) + \mbf{n}_k, \qquad t_0 < t_1 < \cdots < t_K,
 \eeqn 
-where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. Initially, $\mbf{x}(0) = \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$; it captures our prior belief about the likelihood of all possible trajectories that the state could take. 
+where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. Initially, $\mbf{x}(0) = \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$; it captures our prior belief about the likelihood of all possible trajectories that the state could take. Figure~\ref{fig:gpprior} illustrates this conceptually.
 
-\alert{Suggestion: consider a didactic diagram here showing a mean trajectory, 3-sigma bound, sample trajectory and measurement/query points. }
+\begin{figure}[h]
+    \centering
+     \includegraphics[width=0.8\textwidth]{gpprior.pdf}
+     \caption{In \ac{GP} regression, we begin with some prior over trajectories, including mean and covariance functions.  After incorporating measurements, we obtain a posterior distribution over trajectories that can be queried at any time.}
+     \label{fig:gpprior}
+\end{figure}
 
 We consider that we want to query the state at a number of times ($\tau_0 < \tau_1< \ldots < \tau_J$) that may or may not be different from the measurement times ($t_0 < t_1 < \ldots < t_K$). 
 The joint density between the state (at the query times) and the measurements (at the measurement times) is written as

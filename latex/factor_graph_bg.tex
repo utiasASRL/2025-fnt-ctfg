@@ -31,7 +31,7 @@ The key to this last factorization is that $\phi(\mbf{s})$ has no dependence on 
 \begin{figure}[t]
      \includegraphics[width=\textwidth]{elim.pdf}
      \centering
-     \caption{Example of the elimination algorithm.  The left shows the factor graph before elimination, the middle shows the product factor formed by multiplying all factors involving $\mbf{x}$, and the right shows the result of eliminating $\mbf{x}$ from the factor graph, resulting in a new factor on the separator variables and a conditional density for $\mbf{x}$.}
+     \caption{Example of the elimination algorithm.  The left shows the factor graph before elimination and the right shows the result of eliminating $\mbf{x}$ from the factor graph, resulting in a new factor on the separator variables and a conditional density for $\mbf{x}$.}
      \label{fig:elim}
 \end{figure}
 
@@ -170,14 +170,14 @@ and $\mbf{K}_0 = \pri{\mbf{P}}_{0} \mbf{C}_0^T \left( \mbf{C}_0 \pri{\mbf{P}}_{0
 \end{equation}
 and can be calculated during the backward pass.  The computational complexity of the \ac{RTS} smoother is $O(K)$, in other words, linear in the length of the trajecotry.
 
-The forward pass is the \acf{KF}, which we now understand from a factor-graph perspective.  The $p(\mbf{x}_k | \mbf{v}_{0:k}, \mbf{y}_{0:k}) = \mathcal{N}\left(\est{\mbf{x}}_{k,f}, \est{\mbf{P}}_{k,f} \right)$ quantities can be referred to as {\em filtered} (accounting only for up-to-the-present measurements) while the $p(\mbf{x}_k | \mbf{v}_{0:K}, \mbf{y}_{0:K}) = \mathcal{N}\left( \est{\mbf{x}}_k, \est{\mbf{P}}_k \right)$ quantities are {\em smoothed} (accounting for all measurements: past, present, and future); see Figure~\ref{fig:filtersmoother}.
-
-\begin{figure}[t]
+\begin{figure}[ht]
      \centering
      \includegraphics[width=0.95\textwidth]{filtersmoother.pdf}
      \caption{Contrasting filtering vs. smoothing.  We are primarily interested in smoothing in this article.}
      \label{fig:filtersmoother}
 \end{figure}
+
+The forward pass is the \acf{KF}, which we now understand from a factor-graph perspective.  The $p(\mbf{x}_k | \mbf{v}_{0:k}, \mbf{y}_{0:k}) = \mathcal{N}\left(\est{\mbf{x}}_{k,f}, \est{\mbf{P}}_{k,f} \right)$ quantities can be referred to as {\em filtered} (accounting only for up-to-the-present measurements) while the $p(\mbf{x}_k | \mbf{v}_{0:K}, \mbf{y}_{0:K}) = \mathcal{N}\left( \est{\mbf{x}}_k, \est{\mbf{P}}_k \right)$ quantities are {\em smoothed} (accounting for all measurements: past, present, and future); see Figure~\ref{fig:filtersmoother}.
 
 It turns out that this discrete-time estimation setup is completely compatible with extending our results to continuous time, we just need to fill in the details of~\eqref{eq:linsys} in the right way.  This is the subject of Chapter~\ref{chap:fg-ctls}.
 

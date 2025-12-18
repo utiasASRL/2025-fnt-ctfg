@@ -76,18 +76,16 @@ where $\mbs{\gamma}(t)$ is a stacking of $\mbs{\xi}(t)$ and an appropriate numbe
 
 \begin{figure}[t]
      \centering
-     \includegraphics[width=\textwidth]{lgfg.pdf}
-     \caption{General form of a motion prior defined over a Lie group trajectory.  Between each pair of measurement times, we use a linear motion model in the Lie algebra.  The variables for which we are actually optimizing live in the Lie group.}
-     \label{fig:lgfg}
+     \includegraphics[width=0.70\textwidth]{localgp.pdf}
+     \caption{To make use of \acp{GP} on a Lie group, we define local variables in the Lie algebra around each measurement time and apply linear \ac{GP} models to these local variables.}
+     \label{fig:localgp}
 \end{figure}
-
-\alert{(Tim): Add figure of the "stitched" trajectory}
 
 To stitch several of these models together, for example one per measurement time, we can redefine $\mbs{\xi}(t)$ to be
 \begin{equation}\label{eq:local-lie-var}
 \mbs{\xi}_k(t) = \mbox{Log} \left(\Tsmall_k^{-1} \Tsmall(t)\right),
 \end{equation}
-where $\Tsmall_k$ is the Lie group element at the $k$th measurement time.  Then, from one measurement time to the next, we can write
+where $\Tsmall_k$ is the Lie group element at the $k$th measurement time.  Figure~\ref{fig:localgp} depicts this idea.  Then, from one measurement time to the next, we can write
 \begin{multline}
 p\left(\mbs{\gamma}_{k-1}(t_k) | \mbs{\gamma}_{k-1}(t_{k-1}), \mbf{v}_{k,k-1}\right) \\ = \mathcal{N}\left( \mbf{A}_{k,k-1} \mbs{\gamma}_{k-1}(t_{k-1}) + \mbf{v}_{k,k-1}, \mbf{Q}_{k,k-1}\right),
 \end{multline}
@@ -108,6 +106,13 @@ Substituting \eqref{eq:gamma-tk-tkm1} into \eqref{eq:lgmp}, the negative log-lik
 \left|\left| \bbm \mbox{Log} \left(\Tsmall_{k-1}^{-1} \Tsmall_k\right) - t_{k,k-1} \mbs{\varpi}_{k-1} \\ \Jbig\left(\mbox{Log} \left(\Tsmall_{k-1}^{-1} \Tsmall_k\right)\right)^{-1} \mbs{\varpi}_k - \mbs{\varpi}_{k-1} \ebm \right|\right|_{\mbf{Q}_{k,k-1}}^2.
 \end{equation}
 The top row is comparing the change in $\Tsmall(t)$ to the generalized velocity times the time difference, while the bottom row is essentially comparing the generalized velocity at the two times.  Figure~\ref{fig:lgfg} shows the general form of a motion prior defined over a Lie-group trajectory.
+
+\begin{figure}[t]
+     \centering
+     \includegraphics[width=\textwidth]{lgfg.pdf}
+     \caption{General form of a motion prior defined over a Lie group trajectory.  Between each pair of measurement times, we use a linear motion model in the Lie algebra.  The variables for which we are actually optimizing live in the Lie group.}
+     \label{fig:lgfg}
+\end{figure}
 
 \section{Main Solve}
 
@@ -186,7 +191,7 @@ In this case, we constrained the lateral velocities to be zero during the soluti
 \begin{figure}[p]
      \centering
      \includegraphics[width=\textwidth]{se3_trajectory_example.png}
-     \caption{Example of $SE(3)$ state estimation with a \ac{WNOA} motion prior.  The red frames are noisy pose measurements.  The dark blue frame and ellipsoids are the main solve.  The light blue frames and ellipsoids are the interpolated states.  The green frames are the ground truth.}
+     \caption{Example of $SE(3)$ state estimation with a \ac{WNOA} motion prior.  The red frames are noisy pose measurements.  The dark blue frames and covariance ellipsoids are computed in the main solve.  The light blue frames and covariance ellipsoids are the interpolated states.  The green frames are the ground truth.}
      \label{fig:se3_trajectory_example}
 \end{figure}
 
