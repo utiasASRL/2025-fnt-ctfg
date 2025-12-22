@@ -23,7 +23,7 @@ where $\mbf{x} = (\mbf{x}_0, \ldots, \mbf{x}_K)$ is the state at times $t_0, \ld
 \begin{equation}
 p(\mbf{x} | \mbf{v}, \mbf{y}) \propto \underbrace{p(\mbf{x}_0| \pri{\mbf{x}}_0)}_{\phi(\mbf{x}_0)} \prod_{k=1}^K \underbrace{p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1})}_{\phi(\mbf{x}_{k-1},\mbf{x}_k)} \prod_{k=0}^K \underbrace{p(\mbf{y}_k | \mbf{x}_k)}_{\varphi(\mbf{x}_k)}.
 \end{equation}
-where each $\phi(\cdot)$ and $\varphi(\cdot)$, is a {\em factor} of the posterior density corresponding to motion priors and measurements, respectively.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
+where each $\phi(\cdot)$ and $\varphi(\cdot)$ is a {\em factor} of the posterior density corresponding to motion priors and measurements, respectively.  The factors can be {\em unary} (involving one variable), {\em binary} (involving two variables), or higher-order (involving more than two variables).
 
 The normalization constant associated with this factorization is typically expensive to compute so we often satisfy ourselves with finding the $\mbf{x}$ that maximizes the posterior density, or equivalently the $\mbf{x}$ that minimizes the negative log-likelihood cost:
 \begin{equation}\label{eq:cost}
@@ -41,7 +41,7 @@ We can visually understand the factors by assembling them into a {\em factor gra
 \end{figure}
 
 Aside from the benefits to intuition, factor graphs also lay the groundwork for efficient computation via the \emph{elimination algorithm}. The key idea behind this algorithm is shown in Figure~\ref{fig:elim_main_body}: we eliminate one variable at a time, and update the remaining factors in the graph accordingly. This update includes generating new factors between neighbouring, non-eliminated variables and identifying \emph{conditional dependencies} of the eliminated variables (indicated by arrows in the factor graph).
-Once all variables have been eliminated, we are left with a \emph{Bayes net} structure that allows for efficient recovery of the optimal posterior density.
+Once all variables have been eliminated, we are left with a structure -- the so-called \emph{Bayes net} --  that allows for efficient recovery of the optimal posterior density.
 
 In the Appendix, we provide additional details about factor graphs, including the elimination algorithm (Section~\ref{sec:elim-algo}), show standard manipulations of factor graphs (Section~\ref{sec:fgelimfus}), and apply the factor graph approach to linear, discrete-time estimation (Section~\ref{sec:ldte}). We encourage readers that are not familiar with factor graphs to first read this appendix before proceeding to the next chapter.
 
@@ -55,12 +55,12 @@ In the Appendix, we provide additional details about factor graphs, including th
 
 We have already shown that \ac{GP}-based, continuous-time state-estimation problems can be solved exactly by applying a combination of standard discrete-time estimation tools and \ac{GP} interpolation equations~\citep{barfoot_rss14}. In the rest of this chapter, we will show that this insight follows naturally when continuous-time estimation is cast into the factor graph framework.
 
-Consider the factor graph of a simple continuous-time estimation problem shown in Figure~\ref{fig:ctfg}. We have introduced a single query state, $\mbf{x}_{\tau}$, at arbitrary time, $\tau$, to the otherwise standard discrete-time factor graph. As one might expect, we can break the problem down into two main steps:\footnote{Note that this idea is identical to \ac{GP} regression that we present in the Appendix (Section~\ref{sec:gp-regression})}
+Consider the factor graph of a simple continuous-time estimation problem shown in Figure~\ref{fig:ctfg}. We have introduced a single query state, $\mbf{x}_{\tau}$, at arbitrary time, $\tau$, to the otherwise standard discrete-time factor graph. As one might expect from the previous chapter, we can break the problem down into two main steps:
 \begin{enumerate}
     \item {\em main solve}: solve for the states at the measurement times
     \item {\em interpolation}: solve for the states at the query time
 \end{enumerate}
-The key to this decomposition is to use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}. The remaining factor graph then corresponds to a linear discrete-time factor graph, which we can readily solve with standard tools (see Appendix~\ref{app:add-fg-bg}, for an overview). Once we have found the solution at the measurement times, it follows that the distribution of the interpolated state, $\mbf{x}_{\tau}$, can be determined by the conditional dependence depicted by the arrows in Figure~\ref{fig:ctfg2}.  Importantly, the main solve step is completely agnostic to the query time, meaning we can select as many query times as we like after the main solve. The next two sections work through the details of these steps.
+The key to this decomposition is to use the elimination algorithm to remove the query state from the factor graph, resulting in the situation in Figure~\ref{fig:ctfg2}. The remaining factor graph then corresponds to a linear discrete-time factor graph, which we can readily solve with standard tools. Once we have found the solution at the measurement times, it follows that the distribution of the interpolated state, $\mbf{x}_{\tau}$, can be determined by the conditional dependence depicted by the arrows in Figure~\ref{fig:ctfg2}.  Importantly, the main solve step is completely agnostic to the query time, meaning we can select as many query times as we like after the main solve. The next two sections work through the details of these steps.
 
 \begin{figure}[t]
      \centering
@@ -70,7 +70,7 @@ The key to this decomposition is to use the elimination algorithm to remove the 
 \end{figure}
 
 \subsection{Main Solve}
-The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  We would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated during the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
+The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  We would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated as a variable in the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
 
 Recall our generic, continuous-time, linear system model from Section~\ref{sec:gp-regression}:
 \begin{equation}\label{eq:linsysct}
@@ -82,7 +82,7 @@ where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \m
 \end{equation}
 For now, we will work with~\eqref{eq:linsysct} due to its generality, but our examples will often use the specific case of \ac{WNOA}.
 
-Based on analogy with discrete-time factor-graph models,\footnote{See Appendix~\ref{app:add-fg-bg}.} we expect that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
+Based on analogy with discrete-time case,\footnote{See Appendix~\ref{app:add-fg-bg}.} we expect that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
 \begin{multline}
      \phi(\mbf{x}_k, \mbf{x}_{k-1}) = -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ \propto || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
 \end{multline}
@@ -179,7 +179,7 @@ We follow the procedure outlined in the previous sections: (i) solve for the sta
 
 Up to this point, we have only considered the case where our interpolated query states are not associated with any measurements. Owing to our particular choice of continuous-time motion model, we showed that elimination of these query states resulted in a new motion factor corresponding to the same motion model. 
 
-We would also like to consider what happens when we eliminate a state that \emph{does} have an associated measurement with the ultimate goal of incorporating measurements without needing to explicitly include an associated state in the optimization. Practically speaking this is useful in two scenarios:
+We would also like to consider what happens when we eliminate a state that \emph{does} have an associated measurement with the ultimate goal of incorporating measurements without needing to explicitly include an associated state in the optimization. Practically speaking, this is useful in two scenarios:
 \begin{enumerate}
      \item It can reduce the size of the optimization problem when dealing with measurements from high-rate sensors, such as \ac{lidar}, \ac{radar}, or \ac{imu}.
      \item It can allow us to regularly space our optimization states in time even when measurements are asynchronous. This regular spacing can be conducive to more accurate approximation of the posterior density.

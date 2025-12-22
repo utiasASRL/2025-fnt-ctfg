@@ -2,8 +2,7 @@
 
 \chapter{Robotics Examples in GTSAM}
 
-This chapter discusses our open-source implementation of the continuous-time estimation framework as an addition to GTSAM.
-
+% This chapter discusses our open-source implementation of the continuous-time estimation framework as an addition to GTSAM.
 GTSAM is a widely used C++ library that leverages factor graphs to efficiently solve large-scale optimization problems in robotics and computer vision. One of the key contributions of our work is the introduction of Gaussian-process-based continuous-time (GP-CT) estimation into the existing GTSAM library. In this chapter, we will outline the essential functions that can be used to perform GP-CT estimation using our modified library and will provide some explanation of their implementation.
 
 \section{GTSAM Primer}
@@ -27,7 +26,7 @@ In addition, we provide functionality to compute the mean and covariance of cont
 
 \section{Implementation Details}
 \label{sec:imp}
-In the following, we present implementation details to support the use of \ac{GTSAM} Gaussian process–based continuous-time estimation capabilities. We illustrate these concepts through a simple example showcasing the Gaussian Process Motion Prior Factor, along with both during-solve and after-solve interpolation functionalities.
+In the following, we present implementation details to support the use of \ac{GTSAM} Gaussian process–based continuous-time estimation capabilities. We illustrate these concepts through a simple example showcasing the Gaussian Process Motion Prior Factor, along with both measurement-state and after-solve interpolation functionalities.
 
 \subsection{Gaussian Process Motion Prior Factor}
 
@@ -79,7 +78,7 @@ The core element of this implementation is new interpolation factor \texttt{WNOA
 This `wrapper' factor automatically maps the errors and Jacobians to the bordering states via the \ac{WNOA} interpolation equations and the chain rule.
 The resulting factor is defined only with respect to non-interpolated variables.
 
-Mathematically, our wrapper factor implements the conversion from a measurement factor defined on an interpolated state, $p(\mbf{y}_n|\mbf{x}_{\tau_n})$, to the factor given in Equation~\eqref{eqn:interp-factor}, but with two key generalizations. First, the development shown in Chapter~\ref{chap:interp-during-solve} applies to variables defined in a vector space, but our implementation can be used with variables defined on Lie groups, using the development shown in Chapter~\ref{chapLieGroups} for continuous-time systems on Lie groups. Second, Appendix~\ref{chap:interp-during-solve} is demonstrated for unary factors on the interpolated variables, but our wrapper factor implementation can be applied to any kind of \ac{GTSAM} factor. As we show below, our framework can be applied to factors defined on any number of interpolated and non-interpolated variables.
+Mathematically, our wrapper factor implements the conversion from a measurement factor defined on an interpolated state, $p(\mbf{y}_n|\mbf{x}_{\tau_n})$, to the factor given in Equation~\eqref{eqn:interp-factor}, but with two key generalizations. First, the development shown in Appendix~\ref{chap:interp-during-solve} applies to variables defined in a vector space, but our implementation can be used with variables defined on Lie groups, using the development shown in Chapter~\ref{chapLieGroups} for continuous-time systems on Lie groups. Second, Appendix~\ref{chap:interp-during-solve} is demonstrated for unary factors on the interpolated variables, but our wrapper factor implementation can be applied to any kind of \ac{GTSAM} factor. As we show below, our framework can be applied to factors defined on any number of interpolated and non-interpolated variables.
 
 \newpage
 
@@ -225,7 +224,7 @@ To leverage these overridden methods, we also provide a custom Levenberg–Marqu
 Listing~\ref{lst:interp_wnoa} shows an example usage of this functionality.
 
 We can achieve additional computational speed-up by omitting the computation of the $\mbf{C} \mbf{\Sigma}_{\tau} \mbf{C}^T$ term in the measurement covariance computation of our wrapper factors in  \eqref{eq:wrapped_meas}, since the computation of $\mbf{\Sigma}_{\tau}$ ends up being costly.
-We are discussing the implications of omitting this terms with respect to accuracy and computational speed later throughout this section.
+We discuss the implications of omitting this terms with respect to accuracy and computational speed later throughout this section.
 
 Lastly, we note that it may be feasible to approximate the Lie group Jacobians as identity when the relative pose change between consecutive boundary states is small.
 This approximation can further reduce computational cost during derivative evaluation, while typically sacrificing only minimal accuracy and preserving overall convergence behavior.
@@ -427,7 +426,7 @@ For the interpolation experiments, we consider two variants of the noise model f
 The first variant, referred to as the simplified noise model, omits the term $\mathbf{C}\boldsymbol{\Sigma}_\tau\mathbf{C}^\top$ accounting for interpolation uncertainty.
 The second variant, referred to as the full noise model, includes this term.
 
-All estimation problems are solved using our custom \texttt{WNOAFactorGraph}, reyling on \texttt{WNOAInterpFactor} factors, and the associated \\ \texttt{WNOALevenbergMarquardtOptimizer}.
+All estimation problems are solved using our custom \texttt{WNOAFactorGraph}, reyling on \texttt{WNOAInterpFactor} factors, and the associated \texttt{WNOALevenbergMarquardtOptimizer}.
 
 \begin{figure}[b!]
 	\centering
