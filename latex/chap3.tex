@@ -70,7 +70,7 @@ The key to this decomposition is to use the elimination algorithm to remove the 
 \end{figure}
 
 \subsection{Main Solve}
-The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  We would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated as a variable in the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.
+The first step in our strategy is to solve for the states at the measurement times in Figure~\ref{fig:ctfg2}.  We would like our solution to obey an important property:  whether we solve the factor-graph problem in Figure~\ref{fig:ctfg} ($\mbf{x}_\tau$ estimated as a variable in the main solve) or the one in Figure~\ref{fig:ctfg2} ($\mbf{x}_\tau$ computed afterwards), the solutions should agree.  This comes down to choosing the details of the motion model appropriately.  We will set up this motion model in this section, and show the desired property holds in the next section.
 
 Recall our generic, continuous-time, linear system model from Section~\ref{sec:gp-regression}:
 \begin{equation}\label{eq:linsysct}
