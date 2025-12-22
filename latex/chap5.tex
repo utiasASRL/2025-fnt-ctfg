@@ -185,7 +185,7 @@ borderStates, interpStates, Q_se3, covarianceMap);
 // resultsAll and covarianceMap, respectively.
 \end{lstlisting}
 
-Both of these phenomena are demonstrated in top two rows of Figure~\ref{fig:simple-se2-interp}. The figure provides a study of interpolation on a simple $SE(2)$ example. The ground truth poses follow a constant velocity arc trajectory and no-noise unary measurements were generated at 60 equidistant poses along the trajectory. The figure shows a comparison of the solutions obtained by solving the full factor graph (green) versus interpolating all but three states at the beginning, middle and end. 
+Both of these phenomena are demonstrated in top two rows of Figure~\ref{fig:simple-se2-interp}. The figure provides a study of interpolation on a simple $SE(2)$ example. The ground-truth poses follow a constant velocity arc trajectory and no-noise unary measurements were generated at 60 equidistant poses along the trajectory. The figure shows a comparison of the solutions obtained by solving the full factor graph (green) versus interpolating all but three states at the beginning, middle and end. 
 
 The final row of the figure demonstrates an alternative method for finding the covariances at the interpolated states. In this method, we still find the means via Appendix~\ref{chap:interp-during-solve}, but compute their associated covariances from Laplace's approximation of the original graph about the interpolated means. As seen in Listing~\ref{lst:cov-alt}, this can be accomplished quite easily using existing \ac{GTSAM} functions. We emphasize that this method yields greater consistency because the interpolated factor graph is already overconfident when passed into \texttt{updateInterpValues}; by itself, after-main-solve querying is not overconfident.
 
@@ -357,13 +357,13 @@ It can be seen that the results in both cases are identical, which is expected f
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=\textwidth]{a2_figs/litw_fig1_setup_gt.pdf}
-	\caption{Dataset setup and ground truth trajectory. The left image shows the setup of the robot and the plastic cylinders that serve as the landmark in a room with 10 camera Vicon system used to obtain the ground truth positions and orientations of the robot throughout the dataset. The plot on the right shows the full trajectory of the robot throughout the dataset. The start and end positions are marked with a green and red star, respectively.}
+	\caption{Dataset setup and ground-truth trajectory. The left image shows the setup of the robot and the plastic cylinders that serve as the landmark in a room with 10 camera Vicon system used to obtain the ground-truth positions and orientations of the robot throughout the dataset. The plot on the right shows the full trajectory of the robot throughout the dataset. The start and end positions are marked with a green and red star, respectively.}
 	\label{fig:litw-setup}
 \end{figure}
 
 The second dataset that we introduce here is geared towards estimation problems on $SE(2)$ such as either localization or \ac{SLAM}. The setup consists of a wheeled robot exploring a flat space amongst a forest of fixed plastic tubes that can be used as landmarks. The robot is equipped with a laser rangefinder (Hokuyo URG-04LX sensor) scans with 681 range measurements over a 240 degree horizontal field of view centered on straight ahead. The robot also has wheel encoders that measure linear and angular speeds. 
 
-Sensor data has been sanitized to facilitate the study of back-end estimation routines. In particular, biases have been removed and rangefinder measurements have been converted to bearing-range measurements to landmarks, with known data association. The ground truth position and orientation of the rangefinder origin on the robot and landmark locations are tracked via a Vicon motion-capture system. All data in the dataset has been synchronized at 10 Hz (approximately). Images of the setup and ground truth trajectory for the dataset are shown in Figure~\ref{fig:litw-setup}.
+Sensor data has been sanitized to facilitate the study of back-end estimation routines. In particular, biases have been removed and rangefinder measurements have been converted to bearing-range measurements to landmarks, with known data association. The ground-truth position and orientation of the rangefinder origin on the robot and landmark locations are tracked via a Vicon motion-capture system. All data in the dataset has been synchronized at 10 Hz (approximately). Images of the setup and ground-truth trajectory for the dataset are shown in Figure~\ref{fig:litw-setup}.
 
 
 \subsubsection{Qualitative Estimation Results}
@@ -373,7 +373,7 @@ Figure~\ref{fig:litw-gtsam-solve} shows a segment of the trajectory that has bee
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.75\textwidth]{a2_figs/litw_fig2_solve.png}
-	\caption{\ac{GTSAM} localization solution of a segment (timestep 1000 to timestep 6000) of the Lost in the Woods dataset using both bearing-range and wheel odometry measurements. The ground truth trajectory is shown in green, while the optimal trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue for the estimated values.}
+	\caption{\ac{GTSAM} localization solution of a segment (timestep 1000 to timestep 6000) of the Lost in the Woods dataset using both bearing-range and wheel odometry measurements. The ground-truth trajectory is shown in green, while the optimal trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue for the estimated values.}
 	\label{fig:litw-gtsam-solve}
 \end{figure}
 
@@ -383,7 +383,7 @@ We now turn our attention to the application of the methods described herein to 
 	\centering
 	\includegraphics[width=0.75\textwidth]{a2_figs/litw_fig3_full.png}
 	\includegraphics[width=0.75\textwidth]{a2_figs/litw_fig3_interp.png}
-	\caption{\ac{GTSAM} localization solution of a segment (100 seconds to 250 seconds) of the Lost in the Woods dataset with bearing-range measurements limited to 1 m and \ac{WNOA} motion model factors between adjacent states (no odometry). The ground truth trajectory is shown in green, while the estimated trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue. In regions with few measurements, estimate uncertainty increases since it mainly relies on the \ac{WNOA} motion prior. In the top plot, states at every measurement time are directly included in the main solve at 10 Hz. In the bottom plot, the main solve only optimizes every $30$th state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. Non-interpolated states are represented with larger, darker frames and darker ellipsoids with borders. The interpolated solution matches the non-interpolated solution well.}
+	\caption{\ac{GTSAM} localization solution of a segment (100 seconds to 250 seconds) of the Lost in the Woods dataset with bearing-range measurements limited to 1 m and \ac{WNOA} motion model factors between adjacent states (no odometry). The ground-truth trajectory is shown in green, while the estimated trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue. In regions with few measurements, estimate uncertainty increases since it mainly relies on the \ac{WNOA} motion prior. In the top plot, states at every measurement time are directly included in the main solve at 10 Hz. In the bottom plot, the main solve only optimizes every $30$th state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. Non-interpolated states are represented with larger, darker frames and darker ellipsoids with borders. The interpolated solution matches the non-interpolated solution well.}
 	\label{fig:litw-loc-wnoa}
 \end{figure}
 

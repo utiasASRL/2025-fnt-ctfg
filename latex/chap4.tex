@@ -184,7 +184,7 @@ Putting the mean and covariance together, our estimate of the state at the query
 
 \section{Example}
 
-Figures~\ref{fig:se3_trajectory_example} shows a simple example of estimating a trajectory in $SE(3)$ using a \ac{WNOA} motion prior.  The red frames are noisy pose measurements, the dark blue frame and ellipsoids are the main solve, the light blue frames and ellipsoids are the interpolated states, and the green frames are the ground truth.  The generalized velocities associated with this trajectory are shown in Figure~\ref{fig:se3_velocity_example}, where the velocity is estimated at each measurement time and shown as blue dots including covariance.  The interpolated velocities and covariances are shown as the blue solid line, while the green line is the ground truth velocity.
+Figures~\ref{fig:se3_trajectory_example} shows a simple example of estimating a trajectory in $SE(3)$ using a \ac{WNOA} motion prior.  The red frames are noisy pose measurements, the dark blue frame and ellipsoids are the main solve, the light blue frames and ellipsoids are the interpolated states, and the green frames are the ground truth.  The generalized velocities associated with this trajectory are shown in Figure~\ref{fig:se3_velocity_example}, where the velocity is estimated at each measurement time and shown as blue dots including covariance.  The interpolated velocities and covariances are shown as the blue solid line, while the green line is the ground-truth velocity.
 
 In this case, we constrained the lateral velocities to be zero during the solution to produce a very smooth motion representative of a robot moving along a path.  We see that the estimated trajectory is very close to the ground truth, and the estimated velocities are also very close to the ground truth except near the ends of the trajectory where there are fewer measurements.  
 
@@ -198,6 +198,6 @@ In this case, we constrained the lateral velocities to be zero during the soluti
 \begin{figure}[p]
      \centering
      \includegraphics[width=\textwidth]{se3_velocity_example.pdf}
-     \caption{Generalized velocities associated with Figure~\ref{fig:se3_trajectory_example}.  The velocity is estimated at each measurement time and shown as blue dots including covariance. The interpolated velocities and covariances are shown as the blue solid line.  The green line is the ground truth velocity.}
+     \caption{Generalized velocities associated with Figure~\ref{fig:se3_trajectory_example}.  The velocity is estimated at each measurement time and shown as blue dots including covariance. The interpolated velocities and covariances are shown as the blue solid line.  The green line is the ground-truth velocity.}
      \label{fig:se3_velocity_example}
 \end{figure}
