@@ -10,7 +10,7 @@
    xml:space="preserve"
    inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
    sodipodi:docname="litw_fig1_setup_gt.svg"
-   inkscape:export-filename="litw_fig1_setup_gt.png"
+   inkscape:export-filename="litw_fig1_setup_gt.pdf"
    inkscape:export-xdpi="600"
    inkscape:export-ydpi="600"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -83,7 +83,7 @@
          id="tspan14723"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:sans-serif;stroke-width:0.264583"
          x="110.07652"
-         y="107.63449">Ground Truth Trajectory</tspan></text><text
+         y="107.63449">Ground-Truth Trajectory</tspan></text><text
        xml:space="preserve"
        style="font-size:4.93889px;line-height:1.25;font-family:times;-inkscape-font-specification:times;text-align:center;text-anchor:middle;stroke-width:0.264583"
        x="-52.319366"
