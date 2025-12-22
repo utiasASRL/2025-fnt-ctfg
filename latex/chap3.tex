@@ -43,7 +43,7 @@ We can visually understand the factors by assembling them into a {\em factor gra
 Aside from the benefits to intuition, factor graphs also lay the groundwork for efficient computation via the \emph{elimination algorithm}. The key idea behind this algorithm is shown in Figure~\ref{fig:elim_main_body}: we eliminate one variable at a time, and update the remaining factors in the graph accordingly. This update includes generating new factors between neighbouring, non-eliminated variables and identifying \emph{conditional dependencies} of the eliminated variables (indicated by arrows in the factor graph).
 Once all variables have been eliminated, we are left with a structure -- the so-called \emph{Bayes net} --  that allows for efficient recovery of the optimal posterior density.
 
-In the Appendix, we provide additional details about factor graphs, including the elimination algorithm (Section~\ref{sec:elim-algo}), show standard manipulations of factor graphs (Section~\ref{sec:fgelimfus}), and apply the factor graph approach to linear, discrete-time estimation (Section~\ref{sec:ldte}). We encourage readers that are not familiar with factor graphs to first read this appendix before proceeding to the next chapter.
+In the Appendix, we provide additional details about factor graphs, including the elimination algorithm (Section~\ref{sec:elim-algo}), show standard manipulations of factor graphs (Section~\ref{sec:fgelimfus}), and apply the factor graph approach to linear, discrete-time estimation (Section~\ref{sec:ldte}). We encourage readers that are not familiar with factor graphs to first read this appendix before proceeding to the next section.
 
 \section{Factor Graphs for Linear Continuous-Time Estimation}% Formerly "Main Solve"
 \begin{figure}[t]
@@ -78,11 +78,11 @@ Recall our generic, continuous-time, linear system model from Section~\ref{sec:g
 \end{equation}
 where $\mbs{x}(t)$ is the state, $\mbs{v}(t)$ the input, and $\mbs{w}(t) \sim \mathcal{GP}(\mbf{0}, \mbs{Q} \delta(t-t^\prime))$ a white-noise process.  More concretely, choosing the coefficient matrices to be $\mbs{A} = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm$ and $\mbs{L} = \bbm \mbf{0} \\ \mbf{I} \ebm$ and setting the inputs to zero, $\mbs{v}(t) = \mbf{0}$, our state represents position and velocity, $\mbs{x}(t) = \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm$, and our motion model becomes {\em \ac{WNOA}}:
 \begin{equation}
-\bbm \dot{\mbs{p}}(t) \\ \ddot{\mbs{p}}(t) \ebm = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm + \bbm \mbf{0} \\ \mbf{I} \ebm \mbs{w}(t) \quad \Rightarrow \quad \ddot{\mbs{p}}(t) = \mbs{w}(t).
+\bbm \dot{\mbs{p}}(t) \\ \ddot{\mbs{p}}(t) \ebm = \bbm \mbf{0} & \mbf{I} \\ \mbf{0} & \mbf{0} \ebm \bbm \mbs{p}(t) \\ \dot{\mbs{p}}(t) \ebm + \bbm \mbf{0} \\ \mbf{I} \ebm \mbs{w}(t) \quad \Leftrightarrow \quad \ddot{\mbs{p}}(t) = \mbs{w}(t).
 \end{equation}
 For now, we will work with~\eqref{eq:linsysct} due to its generality, but our examples will often use the specific case of \ac{WNOA}.
 
-Based on analogy with discrete-time case,\footnote{See Appendix~\ref{app:add-fg-bg}.} we expect that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
+By analogy with discrete-time case,\footnote{See Appendix~\ref{app:add-fg-bg}.} we expect that our motion-prior factor between $\mbf{x}_{k-1}$ and $\mbf{x}_k$ should be of the form
 \begin{multline}
      \phi(\mbf{x}_k, \mbf{x}_{k-1}) = -\log p(\mbf{x}_k | \mbf{x}_{k-1}, \mbf{v}_{k,k-1}) \\ \propto || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}}.
 \end{multline}
@@ -119,10 +119,10 @@ In this section, we discuss querying the trajectory at some time(s) of interest,
 where $\mbs{\mu}_\tau$ and $\mbs{\Sigma}_\tau$ are the mean and covariance of the Gaussian conditional density for $\mbf{x}_\tau$ and are given in Figure~\ref{fig:gausselim2}, which depicts our elimination graphically.  Critically, the new binary factor between the measurement states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, is identical to the form we would have used had we constructed it directly between these states to begin with; this ensures the presence/absence of the query state does not affect the solution.  It also means that we do not need to know about the query time when carrying out the main solve; we can simply solve for the states at the measurement times, and then query at any time(s) of interest later.
 
 We want the posterior estimate for the query state, $p(\mbf{x}_\tau | \mbf{v}, \mbf{y})$, whereas we have the conditional density, $p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}(\mbs{\mu}_\tau, \mbs{\Sigma}_\tau)$.  We must therefore convolve the conditional density with the posterior for the separator states as follows:
-\beqn{}
-p(\mbf{x}_\tau | \mbf{v}, \mbf{y}) & = & \mathcal{N}\left( \est{\mbf{x}}_\tau, \est{\mbf{P}}_\tau \right) \\ 
-& = &  \int p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) p(\mbf{x}_{k-1}, \mbf{x}_{k} | \mbf{v}, \mbf{y}) \, d\mbf{x}_{k-1} d\mbf{x}_{k}. \quad
-\eeqn
+\begin{eqnarray}
+p(\mbf{x}_\tau | \mbf{v}, \mbf{y}) & = & \mathcal{N}\left( \est{\mbf{x}}_\tau, \est{\mbf{P}}_\tau \right) \nonumber \\ 
+& = &  \int p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) p(\mbf{x}_{k-1}, \mbf{x}_{k} | \mbf{v}, \mbf{y}) \, d\mbf{x}_{k-1} d\mbf{x}_{k}. \qquad
+\end{eqnarray}
 The marginal for the measurement states must be extracted from the main solve and is given by
 \begin{equation}
 p(\mbf{x}_{k-1}, \mbf{x}_{k} | \mbf{v}, \mbf{y}) = \mathcal{N}\left(\bbm \est{\mbf{x}}_{k-1} \\ \est{\mbf{x}}_{k} \ebm, \bbm \est{\mbf{P}}_{k-1} & \est{\mbf{P}}_{k,k-1}^T \\ \est{\mbf{P}}_{k,k-1} & \est{\mbf{P}}_{k} \ebm\right).
@@ -181,8 +181,8 @@ Up to this point, we have only considered the case where our interpolated query 
 
 We would also like to consider what happens when we eliminate a state that \emph{does} have an associated measurement with the ultimate goal of incorporating measurements without needing to explicitly include an associated state in the optimization. Practically speaking, this is useful in two scenarios:
 \begin{enumerate}
-     \item It can reduce the size of the optimization problem when dealing with measurements from high-rate sensors, such as \ac{lidar}, \ac{radar}, or \ac{imu}.
-     \item It can allow us to regularly space our optimization states in time even when measurements are asynchronous. This regular spacing can be conducive to more accurate approximation of the posterior density.
+     \item It can reduce the size of the optimization problem when dealing with measurements from high-rate sensors, such as \ac{lidar}, \ac{radar}, or an \ac{imu}.
+     \item It can allow us to regularly space our optimization states in time even when measurements are asynchronous. This regular spacing can be conducive to more accurate approximation of the posterior density \citep{zhang_tro24}
 \end{enumerate}
 
 As shown in Figure~\ref{fig:elim-w-meas}, when we eliminate a single state with a measurement, we get \emph{two} residual factors: one that recovers the motion model (as in the last section) and one that represents the \emph{effect} of the measurement. 
@@ -210,7 +210,7 @@ Assuming that the measurement is linear, $p(\mbf{y}| \mbf{x}_{\tau})=\mathcal{N}
 \end{equation}
 The interpretation of this distribution is intuitive: the mean is obtained by applying the measurement model to the bordering states after mapping through the motion model to the measurement time via interpolation. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 
 
-The now-eliminated state $\mbf{x}_{\tau}$ can actually be dropped from the optimization,\footnote{We cannot completely forget about this state if we are dealing with a linearization of a nonlinear state-estimation problems. In this case, it is important to keep a record of $\mbf{x}_{\tau}$ to update the linearization point at each iteration.} leaving a motion prior and a new measurement factor between the non-interpolated states, $\mbf{x}_{k-1}$ and $ \mbf{x}_{k}$. In effect, we have removed $\mbf{x}_{\tau}$ from the optimization problem, but maintained the effect of its measurement.
+The now-eliminated state $\mbf{x}_{\tau}$ can actually be dropped from the optimization,\footnote{We cannot completely forget about this state if we are dealing with a linearization of a nonlinear state-estimation problem. In this case, it is important to keep a record of $\mbf{x}_{\tau}$ to update the linearization point at each iteration.} leaving a motion prior and a new measurement factor between the non-interpolated states, $\mbf{x}_{k-1}$ and $ \mbf{x}_{k}$. In effect, we have removed $\mbf{x}_{\tau}$ from the optimization problem, but maintained the effect of its measurement.
 
 A similar situation also holds when we eliminate multiple query states with measurements between two non-interpolated states. However, we need to make an additional approximation to transform the original measurements into \emph{separate} factors. The interested reader can find a more detailed derivation for the case of multiple factors in Appendix~\ref{chap:interp-during-solve}.
 

@@ -70,7 +70,7 @@ The state at the measurement times is $\mbf{x} = \mbf{B} \mbs{\theta}$ and so we
 \end{equation}
 where $\mbf{K} = \mbf{B}\mbf{B}^T$ can now be interpreted as a prior or regularizer term on the state $\mbf{x}$.\footnote{Note that the $\mbf{K}^{-1}\mbf{x} $ term in~\eqref{eq:nonparametric_system} corresponds exactly to the regularization term on $\mbs{\theta}$ in~\eqref{eq:least-sqr-intro}.}
 
-The leap from parametric to {\em nonparametric} comes from the observation that we do not actually need the individual basis functions, only their inner products in order to construct $\mbf{K}$. As such, we can instead select a {\em kernel function} $\mbf{K}(t_k, t_\ell)$ that defines the inner product between two points in time, and we can write the now {\em kernel matrix} as
+The leap from parametric to {\em nonparametric} comes from the observation that we do not actually need the individual basis functions, only their inner products in order to construct $\mbf{K}$. As such, we can instead select a {\em kernel function} $\mbf{K}(t_k, t_\ell)$ that defines the inner product between two points in time, and we can write the {\em kernel matrix} as
 \begin{equation}
 \mbf{K} = \bbm \mbf{K}(t_k, t_\ell)\ebm,
 \end{equation}
@@ -110,7 +110,7 @@ Additional related works and applications of the \ac{GP} approach are listed by 
 The rest of the article is structured in the following way:
 
 \begin{itemize}
-\item Chapter 2: We review the details of \ac{GP}-regression for continuous-time linear state estimation, highlighting key mathematical derivations and practical results. Though this chapter sets the stage for the next chapter, it can be safely skipped by readers that already have a good understanding of this topic.
+\item Chapter 2: We review the details of \ac{GP} regression for continuous-time linear state estimation, highlighting key mathematical derivations and practical results. Though this chapter sets the stage for the next chapter, it can be safely skipped by readers that already have a good understanding of this topic.
 \item Chapter 3: We present a novel reframing of \ac{GP} continuous-time estimation from the perspective of the {\em factor graph} paradigm. This framing translates several key concepts from continuous-time estimation into the {\em lingua franca} of state-estimation and represents our core theoretical contribution. We also motivate continuous-time estimation with practical strengths throughout the chapter.
 \item Chapter 3:  We extend \ac{GP} state estimation to the case of factor graphs on Lie groups.  A novel covariance interpolation method is introduced that is simpler than the one in \citet{anderson_phd16} and more efficient than the one in \citet{barfoot_ser24}.
 \item Chapter 4:  We elaborate on our main technical contribution: the integration of \ac{GP}-based continuous-time techniques into \ac{GTSAM}, a popular library for robotic state estimation. We provide detailed examples of application of these techniques on three state-estimation datasets of our own creation and demonstrate the practical advantages of the continuous-time approach.

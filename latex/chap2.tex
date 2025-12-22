@@ -2,7 +2,7 @@
 
 \chapter{Gaussian-Process Regression}\label{sec:gp-regression}
 
-An inherent limitation of classical discrete-time optimization problems in robotics is that each state of interest must be  represented \emph{explicitly} as a variable. This can lead to complications when downstream robotics tasks, such as motion planning or control, require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\citep{mukadamContinuoustimeGaussianProcess2018}. Similar failings occur when performing estimation of \emph{smooth shapes} (\eg, for continuum robotics~\citet{lilge_tro25}). These issues can be readily handled by {\em continuous-time} estimation, which processes measurements at given times to estimate a trajectory that can be queried at \emph{any} time by a downstream process. 
+An inherent limitation of classical discrete-time optimization problems in robotics is that each state of interest must be  represented \emph{explicitly} as a variable. This can lead to complications when downstream robotics tasks, such as motion planning or control, require trajectory and uncertainty information at \emph{arbitrary} times that cannot be known prior to solving the estimation problem~\citep{mukadamContinuoustimeGaussianProcess2018}. Similar failings occur when performing estimation of \emph{smooth shapes} (\eg, for continuum robotics~\citep{lilge_tro25}). These issues can be readily handled by {\em continuous-time} estimation, which processes measurements at given times to estimate a trajectory that can be queried at \emph{any} time by a downstream process. 
 
 In this chapter, we show how \ac{GP} regression -- a popular method for function approximation that fits with the Bayesian estimation paradigm \citep{rasmussen06} -- can be used to carry out {\em continuous-time} estimation. Here, we primarily follow \citet{barfoot_ser24} to provide a background on \ac{GP} regression and set the stage for the factor graph interpretation that will be the subject of the next chapter. Readers who are already familiar with the details of \ac{GP} regression can safely skip this chapter.
 
@@ -13,7 +13,7 @@ We begin by considering systems with a continuous-time \ac{GP} prior and a discr
 \mbf{x}(t) & \sim & \mathcal{GP}( \pri{\mbf{x}}(t), \pri{\mbf{P}}(t,t^\prime) ), \qquad t_0 < t,t^\prime, \\
 \mbf{y}_k & = & \mbf{C}_k\mbf{x}(t_k) + \mbf{n}_k, \qquad t_0 < t_1 < \cdots < t_K,
 \eeqn 
-where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. Initially, $\mbf{x}(0) = \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$; it captures our prior belief about the likelihood of all possible trajectories that the state could take. Figure~\ref{fig:gpprior} illustrates this conceptually.
+where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. Initially, $\mbf{x}(0) \sim \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$; it captures our prior belief about the likelihood of all possible trajectories that the state could take. Figure~\ref{fig:gpprior} illustrates this conceptually.
 
 \begin{figure}[h]
     \centering
@@ -89,7 +89,7 @@ with
 \end{equation}
 a (stationary) zero-mean \index{Gaussian process} \ac{GP} with (symmetric, positive-definite) \index{power spectral density matrix} {\em power spectral density matrix}, $\mbs{Q}$.
 
-Referring to \citep{barfoot_ser24}, we can show that the solution to this \ac{SDE} is a \ac{GP} with the following kernel function:
+Referring to \citet{barfoot_ser24}, we can show that the solution to this \ac{SDE} is a \ac{GP} with the following kernel function:
 \begin{multline}
 \mbs{x}(t) \sim \mathcal{GP} \biggl(  \underbrace{\mbs{\Phi}(t,t_0)\pri{\mbf{x}}_0 + \int_{t_0}^t \mbs{\Phi}(t,s) \mbs{v}(s) \, ds}_{\pri{\mbf{x}}(t)},  \\ \underbrace{\mbs{\Phi}(t,t_0) \pri{\mbf{P}}_0 \mbs{\Phi}(t^\prime,t_0)^T + \int_{t_0}^{\min(t,t^\prime)} \mbs{\Phi}(t,s) \mbs{L}\mbs{Q}\mbs{L}^T \mbs{\Phi}(t^\prime,s)^T  \, ds}_{\pri{\mbf{P}}(t,t^\prime)} \biggr),
 \end{multline}
