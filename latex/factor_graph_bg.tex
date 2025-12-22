@@ -1,7 +1,7 @@
 %!TEX root =  main.tex
 \chapter{Additional Factor Graph Background}\label{app:add-fg-bg}
 
-In Section~\ref{sec:brief-fg}, we introduced the basic concept of a factor graph. In this appendix, provide additional details about how a factor graph can be used to efficiently solve state estimation problems. Following this, we will work through the specific example of classic discrete-time filtering/smoothing. Although this section can be safely skipped by readers that are already familiar with factor graphs, it sets the stage for Chapter~\ref{chap:fg-ctls}, which shows that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction to factor graphs, we refer the reader to~\cite{dellaertFactorGraphsRobot2017}.
+In Section~\ref{sec:brief-fg}, we introduced the basic concept of a factor graph. In this appendix, provide additional details about how a factor graph can be used to efficiently solve state estimation problems. Following this, we will work through the specific example of classic discrete-time filtering/smoothing. Although this section can be safely skipped by readers that are already familiar with factor graphs, it sets the stage for Chapter~\ref{chap:fg-ctls}, which shows that continuous-time estimation is completely compatible with this common discrete-time setup, under specific conditions.  For a more thorough introduction to factor graphs, we refer the reader to~\citet{dellaertFactorGraphsRobot2017}.
 
 \section{The Elimination Algorithm}\label{sec:elim-algo}
 
@@ -26,7 +26,7 @@ where $\mbf{s}_1$ and $\mbf{s}_2$ are two other variables that share factors wit
 \begin{equation}
 \psi(\mbf{x}, \mbf{s}) = p(\mbf{x} | \mbf{s}) \, \phi(\mbf{s}).
 \end{equation}
-The key to this last factorization is that $\phi(\mbf{s})$ has no dependence on $\mbf{x}$; it is the factor that would result if $\mbf{x}$ were {\em marginalized} from factor graph. After all variables have been eliminated, we are left with a graph with only directed arrows called the Bayes net.
+The key to this last factorization is that $\phi(\mbf{s})$ has no dependence on $\mbf{x}$; it is the factor that would result if $\mbf{x}$ were {\em marginalized} from the factor graph. After all variables have been eliminated, we are left with a graph with only directed arrows called the Bayes net.
 
 \begin{figure}[t]
      \includegraphics[width=\textwidth]{elim.pdf}
@@ -76,7 +76,7 @@ For example, consider the situation on the left of Figure~\ref{fig:gausselim}; w
 
 Another operation that we will perform frequently with Gaussian factors is fusion.  By this we mean lumping together multiple factors into a single one as depicted in Figure~\ref{fig:gaussfusion} for unary factors.  In fact, it is a well-known result that we can fuse an arbitrary number of Gaussians in this way, allowing us to declutter our factor graph.
 
-We are now prepared to discuss classic discrete-time estimation from a factor-graph perspective.
+We are now prepared to discuss classic discrete-time estimation from a factor-graph perspective, which serves as a larger example of the elimination and fusion operations we have just introduced.
 
 \section{Linear Discrete-Time Estimation}
 \label{sec:ldte}
@@ -106,7 +106,7 @@ where $k \in 0 \ldots K$ is the discrete-time index, $\mbf{x}_k$ is the state, $
 
 An important point to make when looking at Figure~\ref{fig:dtfg2} is that the factor graph has a lot of structure in the form of sparsity.  Not all nodes are connected to all other nodes; rather, each node is connected only to its temporal neighbours.  This sparsity arises because $\mbf{x}$ is a {\em Markovian} state for~\eqref{eq:linsys}.  In other words, it captures everything we need to know to predict the next state of the system.  
 
-Our state-estimation problem is now to use the initial-state knowledge, $\pri{\mbf{x}}_0$, the inputs, $\mbf{v}_{k,k-1}$, and the measurements, $\mbf{y}_k$, to work out the likelihood of $\mbf{x}$ taking on all possible values.   This can be done exactly for this linear-Gaussian system; later for nonlinear systems we will require some approximations.  We will show that by using a combination of the Gaussian elimination and fusion operations from Section~\ref{sec:fgelimfus}, we can recover the classic \ac{RTS} smoother, the forward pass of which is the famous \ac{KF}.
+Our state-estimation problem is now to use the initial-state knowledge, $\pri{\mbf{x}}_0$, the inputs, $\mbf{v}_{k,k-1}$, and the measurements, $\mbf{y}_k$, to work out the likelihood of $\mbf{x}$ taking on all possible values.   This can be done exactly for this linear-Gaussian system; for nonlinear systems we will require some approximations.  We will show that by using a combination of the Gaussian elimination and fusion operations from Section~\ref{sec:fgelimfus}, we can recover the classic \ac{RTS} smoother, the forward pass of which is the \ac{KF}.
 
 Looking to Figure~\ref{fig:dtfg2}, our estimation game plan will be to first fuse the two unary factors on $\mbf{x}_0$, then eliminate $\mbf{x}_0$, then repeat this process with $\mbf{x}_1$ and so on until we arrive at $\mbf{x}_K$.  The result of this forward pass will be a Bayes net.  After this we will carry out a backward pass to work out the posterior densities for $\mbf{x}_K$ all the way back to $\mbf{x}_0$.
 
