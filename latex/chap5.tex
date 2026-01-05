@@ -1,4 +1,4 @@
-%!TEX root =  FnTarticle.tex
+%!TEX root =  main.tex
 
 \chapter{Robotics Examples in GTSAM}
 
@@ -37,7 +37,7 @@ To enforce this relationship in a factor graph setting, we must first define a \
 We have implemented such a factor in \ac{GTSAM} for the \ac{WNOA} motion prior, leaving alternative motion models (e.g., \ac{WNOV}, \ac{WNOJ}) as future work. 
  
 Recall that the state variable for the \ac{WNOA} prior consists of a both a pose and a velocity variable, where the velocity lives in the Lie algebra of the pose variable.
-As seen in Listing~\ref{lst:wnoa}, we have defined a custom C\texttt{++} struct, \texttt{StateData}, to keep track of the pose, velocity, and timestamp associated with a particular state.\footnote{This struct has specific member functions that facilitate sorting states by time and comparing different states in a well-defined way. This allows efficient sorting for sets and maps, which are essential to some of the underlying operations in our implementation.}
+As seen in Listing~\ref{lst:wnoa}, we have defined a custom C\texttt{++} struct, \texttt{StateData}, to keep track of the variable keys (pose and velocity) and timestamp associated with a particular state.\footnote{This class has specific member functions that facilitate sorting states by time and comparing different states in a well-defined way. This allows efficient sorting for sets and maps, which are essential to some of the underlying operations in our implementation.}
 
 Our implementation of the \ac{WNOA} requires two such state structures as well as the power spectral density matrix of the \ac{WNOA} prior. Alternatively, it can be defined directly on the \ac{GTSAM} keys as long as the time difference between the states is provided.
 
@@ -68,17 +68,18 @@ Note that in this example, our factor is templated on a 2D point and an $SE(3)$ 
 
 \subsection{Interpolating States with Measurements}\label{sec:during-query-implem}
 
-As mentioned in the preceding chapters, one key reason for using continuous-time estimation is that it can allow the practitioner to reduce the number of variables in a given optimization problem.
-We can treat a subset of the variables as interpolated states and use the methodology outlined in Section \ref{sec:interpolation_with_measurements} and Appendix \ref{chap:interp-during-solve} to eliminate them from the optimization, while still accounting for the effect of factors that are defined on these states.
-The independence approximation introduced in that chapter allows us to continue to treat each factor defined on these states separately (rather than lumping them together).
-Effectively, each factor defined on an interpolated state can be mapped to a new factor on the bordering states, removing the need to actually solve for the interpolated states.
+We can treat a subset of the variables as interpolated states and use the methodology outlined in Section \ref{sec:interpolation_with_measurements} and Appendix \ref{app:interp-during-solve} to eliminate them from the optimization, while still accounting for the effect of factors that are defined on these states.
+As mentioned in the preceding chapters, this allows the practitioner to reduce the number of variables in a given optimization problem, a key reason for using continuous-time estimation.
+
+The independence approximation introduced in Appendix~\ref{app:interp-during-solve} allows us to continue to treat each factor defined on these states separately (rather than lumping them together).
+Effectively, each factor defined on an interpolated state, $\mbf{x}_{\tau}$, can be mapped to a new factor on the bordering states, removing the need to actually solve for the interpolated states.
 
 Our implementation allows a user to convert any \ac{GTSAM} factor graph into an equivalent graph where all the interpolated states have been removed from the optimization.
-The core element of this implementation is new interpolation factor \texttt{WNOAInterpFactor} that can be wrapped around any \ac{GTSAM} factor that is defined on one or more interpolated variables.
+The core element of this implementation is new interpolation factor \texttt{WNOAInterpFactor} that can be wrapped around any \ac{GTSAM} factor defined on one or more interpolated variables.
 This `wrapper' factor automatically maps the errors and Jacobians to the bordering states via the \ac{WNOA} interpolation equations and the chain rule.
 The resulting factor is defined only with respect to non-interpolated variables.
 
-Mathematically, our wrapper factor implements the conversion from a measurement factor defined on an interpolated state, $p(\mbf{y}_n|\mbf{x}_{\tau_n})$, to the factor given in~\eqref{eqn:interp-factor}, but with two key generalizations. First, the development shown in Appendix~\ref{chap:interp-during-solve} applies to variables defined in a vector space, but our implementation can be used with variables defined on Lie groups, using the development shown in Chapter~\ref{chapLieGroups} for continuous-time systems on Lie groups. Second, Appendix~\ref{chap:interp-during-solve} is demonstrated for unary factors on the interpolated variables, but our wrapper factor implementation can be applied to any kind of \ac{GTSAM} factor. As we show below, our framework can be applied to factors defined on any number of interpolated and non-interpolated variables.
+Mathematically, our wrapper factor implements the conversion from a measurement factor defined on an interpolated state, $p(\mbf{y}_n|\mbf{x}_{\tau_n})$, to the factor given in~\eqref{eqn:interp-factor}, but with two key generalizations. First, the development shown in Appendix~\ref{app:interp-during-solve} applies to variables defined in a vector space, but our implementation can be used with variables defined on Lie groups, using the development shown in Chapter~\ref{chapLieGroups} for continuous-time systems on Lie groups. Second, Appendix~\ref{app:interp-during-solve} is demonstrated for unary factors on the interpolated variables, but our wrapper factor implementation can be applied to any kind of \ac{GTSAM} factor. As we show below, our framework can be applied to factors defined on any number of interpolated and non-interpolated variables.
 
 \newpage
 
@@ -87,11 +88,12 @@ Mathematically, our wrapper factor implements the conversion from a measurement 
   StateData state0(p0, v0, t0); // Defined similarly for all other states.
   // Assume all the poses are in SE(3).
   
-  // Suppose we have a binary factor between p1 and p3.
+  // Suppose we have a binary factor between p1 and p3. 
+  // Assume relPose_13 is the relative pose measurement between p1 and p3
   const auto binaryNoiseModel = 
     noiseModel::Diagonal::Sigmas(Vector6::Ones());
   const auto binaryFactor = std::make_shared<BetweenFactor<Pose3>>(
-      p1, p3, t3-t1, binaryNoiseModel);
+      p1, p3, relPose_13, binaryNoiseModel);
   
   // Suppose we also have a prior (unary factor) on p1.
   const auto p1PriorValue = Pose3();  // origin
@@ -162,7 +164,7 @@ To recover the means and covariances for the interpolated states, we use after-m
 As seen in Listing~\ref{lst:optimize}, this can be easily done using \texttt{updateInterpValues}.
 This function follows the procedure outlined in Section~\ref{sec:lie-after-query} to compute the interpolated means and covariances.
 
-We must caution the reader regarding the covariances generated by the interpolated graph in two regards. First, as noted in Appendix~\ref{chap:interp-during-solve}, the independence assumption treats correlated states as if they are not correlated, leading to overconfident estimates. The degree of this overconfidence depends on how correlated the interpolated states are as well as the number of interpolated factors. Second, covariances that are interpolated using the after-main-solve can sometimes exhibit a `bubbling' effect, especially when estimated states are particularly far apart in time or the power spectral density matrix has large eigenvalues.
+We must caution the reader regarding the covariances generated by the interpolated graph in two regards. First, as noted in Appendix~\ref{app:interp-during-solve}, the independence assumption treats correlated states as if they are not correlated, leading to overconfident estimates. The degree of this overconfidence depends on how correlated the interpolated states are as well as the number of interpolated factors. Second, covariances that are interpolated using the after-main-solve can sometimes exhibit a variance `bubbling' effect,\footnote{By `bubbling', we refer to swelling of the state covariance (under-confidence) in the interpolated states that is due to the approximations introduced in Appendix~\ref{app:interp-during-solve}. This effect does not appear when this approximation is not made.} especially when estimated states are particularly far apart in time or the power spectral density matrix has large eigenvalues.
 
 \begin{lstlisting}[style=C++Style, label={lst:optimize}, caption={Optimization and after-main-solve interpolation.}, firstnumber=last]
 // Continues from Listing 6.3.
@@ -175,7 +177,7 @@ Values resultBorder = opt.optimize(); // only contains the border states.
 
 // Fill in the interpolated states using after-solve interpolation.
 // Construct an empty covariance map to hold the output
-auto covarianceMap = std::make_shapred<CovarianceMap>();
+auto covarianceMap = std::make_shared<CovarianceMap>();
 
 // Interpolate
 Values resultAll = updateInterpValues<Pose3>(graphInterp, resultBorder,
@@ -187,7 +189,10 @@ borderStates, interpStates, Q_se3, covarianceMap);
 
 Both of these phenomena are demonstrated in top two rows of Figure~\ref{fig:simple-se2-interp}. The figure provides a study of interpolation on a simple $SE(2)$ example. The ground-truth poses follow a constant velocity arc trajectory and no-noise unary measurements were generated at 60 equidistant poses along the trajectory. The figure shows a comparison of the solutions obtained by solving the full factor graph (green) versus interpolating all but three states at the beginning, middle and end. 
 
-The final row of the figure demonstrates an alternative method for finding the covariances at the interpolated states. In this method, we still find the means via Appendix~\ref{chap:interp-during-solve}, but compute their associated covariances from Laplace's approximation of the original graph about the interpolated means. As seen in Listing~\ref{lst:cov-alt}, this can be accomplished quite easily using existing \ac{GTSAM} functions. We emphasize that this method yields greater consistency because the interpolated factor graph is already overconfident when passed into \texttt{updateInterpValues}; by itself, after-main-solve querying is not overconfident.
+The final row of the figure demonstrates an alternative method for finding the covariances at the interpolated states. In this method, we still find the means via the approximations in Appendix~\ref{app:interp-during-solve}, but compute their associated covariances from Laplace's approximation of the original graph about the interpolated means. 
+As seen in Listing~\ref{lst:cov-alt}, this can be accomplished quite easily using existing \ac{GTSAM} functions. 
+
+Finally, we emphasize that these confidence issues are not due to the after-main-solve querying itself, but are a consequence of approximations in the main solve.
 
 \begin{figure}[ht!]
 	\centering
@@ -221,10 +226,10 @@ The \texttt{WNOAFactorGraph} overrides the \texttt{error} and \texttt{linearize}
 Wrapper factors simply retrieve these cached values during their own evaluations.
 This eliminates redundant computation and yields substantial runtime improvements, particularly when multiple wrapper factors share the same interpolated states.
 To leverage these overridden methods, we also provide a custom Levenberg–Marquardt solver, \texttt{WNOALevenbergMarquardtSolver}.
-Listing~\ref{lst:interp_wnoa} shows an example usage of this functionality.
+Listing~\ref{lst:interp_wnoa} shows an example usage of this functionality.\footnote{Similar to our conversion function, \texttt{interpolateFactorGraph}, we also provide a function, \texttt{interpolateWNOAFactorGraph}, for converting an existing factor graph into a \texttt{WNOAFactorGraph}.}
 
 We can achieve additional computational speed-up by omitting the computation of the $\mbf{C} \mbf{\Sigma}_{\tau} \mbf{C}^T$ term in the measurement covariance computation of our wrapper factors in  \eqref{eq:wrapped_meas}, since the computation of $\mbf{\Sigma}_{\tau}$ ends up being costly.
-We discuss the implications of omitting this terms with respect to accuracy and computational speed later throughout this section.
+We discuss the implications of omitting this terms with respect to accuracy and computational speed later in this section.
 
 Lastly, we note that it may be feasible to approximate the Lie group Jacobians as identity when the relative pose change between consecutive boundary states is small.
 This approximation can further reduce computational cost during derivative evaluation, while typically sacrificing only minimal accuracy and preserving overall convergence behavior.
@@ -266,7 +271,8 @@ This approximation can further reduce computational cost during derivative evalu
  // Define the interpolation factors to wrap the two original factors.
  auto Q_se3 = Vector6::Ones();  // Power spectral density
  const auto unaryFactorWrapped1 = WNOAInterpFactor<Pose3>(
- unaryFactor2, borderStates, interpStates, Q_se3);const auto unaryFactorWrapped2 = WNOAInterpFactor<Pose3>(
+ unaryFactor2, borderStates, interpStates, Q_se3);
+ const auto unaryFactorWrapped2 = WNOAInterpFactor<Pose3>(
  unaryFactor3, borderStates, interpStates, Q_se3);
 	
  // Define interpolated to border states mapping
@@ -292,13 +298,13 @@ This approximation can further reduce computational cost during derivative evalu
 \section{Implementation on Datasets}
 
 We now turn to robotics estimation problems using real-world datasets to demonstrate the capabilities of the continuous-time estimation framework across one-dimensional, two-dimensional, and three-dimensional scenarios.
-We present qualitative results for each dataset to highlight its core capabilities, and provide additional quantitative evaluations on the two-dimensional dataset comparing our interpolation scheme, which reduces the number of estimated states at runtime, to solving the full graph with all states included.
+We present qualitative results for each dataset to highlight its core capabilities, and provide additional quantitative evaluations on the two-dimensional dataset comparing our interpolation scheme. In particular, interpolation is used to reduce the number of estimated states in the factor graph relative to a `full' graph, which also includes the interpolated states.
 While high-level descriptions are provided in the following subsections, readers are encouraged to explore the dataset examples themselves, which are available in the GTSAM open-source repository along with the plotting scripts used to generate the graphs in this section.
 
 \subsection{1D: Giant Glass of Milk Dataset}
 \label{sec:exp-1d}
-In our first example dataset, we are investigating a linear one-dimensional problem, in which a mobile robot is driving back and forth in a straight line.
-The experimental setup is shown in Figure~\ref{fig:giant_glass_of_milk}, consisting of the robot, two fixed guiding rails as well as a large cylinder.
+In our first example dataset, we investigate a linear one-dimensional problem, in which a mobile robot drives back and forth in a straight line.
+The experimental setup is shown in Figure~\ref{fig:giant_glass_of_milk}, consisting of the robot, two fixed guiding rails as well as a large cylinder resembling a \emph{giant glass of milk}.
 Both the robot and the cylinder are equipped with reflective markers, which are tracked by a ten-camera motion-capture system, providing ground-truth positions with millimeter-level accuracy.
 Additionally, the robot is equipped with a laser rangefinder (Hokuyo URG-04LX) that provides 681 range measurements over a 240° horizontal field of view, centered straight ahead, as well as wheel odometers for measuring the robot's speed.
 
@@ -310,14 +316,13 @@ Additionally, the robot is equipped with a laser rangefinder (Hokuyo URG-04LX) t
 \end{figure}
 
 During data collection, the robot was driven back and forth along the two guiding rails for 20 minutes, logging laser rangefinder and odometer data at 10 Hz, while ground-truth positions were recorded at 70 Hz.
-All measurement data were temporally aligned in a post-processing step using linear interpolation.
+% All measurement data were temporally aligned in a post-processing step using linear interpolation.
 Moreover, the distance between the robot and the cylinder was extracted from each rangefinder scan by exploiting the cylinder's circular shape.
 This eliminates the need to process the raw laser scans directly, allowing the use of a simplified range measurement instead.
 Given the known location of the cylinder, the range measurement can be treated as a noisy observation of the robot’s position.
 The noise of each sensor was characterized using the ground-truth data provided by the motion-capture system.
 
 \subsubsection{Qualitative Estimation Results}
-
 
 \begin{figure}[ht!]
 	\centering
@@ -326,12 +331,11 @@ The noise of each sensor was characterized using the ground-truth data provided 
 	\label{fig:giant_glass_of_milk_results}
 \end{figure}
 
+Using our continuous-time state estimation framework, we estimate the robot's position and velocity through its approximately 280~m long trajectory based on noisy position and velocity measurements.
+For this, we set our problem up using GTSAM, defining estimation states (including position and velocity) every 0.1 seconds. States are sequentially connected by relative WNOA motion prior factors and position and velocity measurements are included via unary factors on the states.
 
-Using our continuous-time state estimation framework, we now seek to estimate its position and velocity throughout its approximately 280~m long trajectory using only the noisy position and velocity measurements.
-For this, we set our problem up using GTSAM, defining estimation states, including position and velocity, every 0.1 seconds, while adding relative WNOA motion prior factors between them.
-Position and velocity measurements are included as straightforward unary factors on the states.
-Fig.~\ref{fig:giant_glass_of_milk_results} shows the robot estimate on a subset of the trajectory at 10 Hz using our framework for different measurement frequencies.
-Three different cases are shown with measurements being available every 2.5, 5 and 7.5 seconds, respectively.
+We first show that our physics-based, \ac{WNOA} prior factor is effective at smoothing the state estimates between measurement times. 
+Fig.~\ref{fig:giant_glass_of_milk_results} shows the robot estimate on a subset of the trajectory with different intervals between available measurements (2.5, 5 and 7.5 seconds).
 It can be seen that our approach achieves good estimation accuracy even with relatively sparse data, leveraging the motion prior to produce a continuous estimate over time.
 As expected, accuracy improves with a higher number of measurements.
 Nonetheless, even with sparse data, the physics-based prior enables close approximations of the ground truth.
@@ -339,18 +343,16 @@ Nonetheless, even with sparse data, the physics-based prior enables close approx
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=1\textwidth]{a1_example_interpolation.pdf}
-	\caption{Comparison of incorporating discrete states into the factor graph at every 0.1 s versus only every 5 s (when measurements are available). In the latter case, intermediate states are recovered using our post-query interpolation scheme. For this one-dimensional linear example, both approaches yield identical solutions.}
+	\caption{Comparison estimating discrete states in the factor graph at every 0.1 s (left) versus only every 5 s when measurements are available (right). In the latter case, intermediate states are recovered using our post-query interpolation scheme. For this one-dimensional linear example, both approaches yield identical solutions.}
 	\label{fig:giant_glass_of_milk_interpolation}
 \end{figure}
 
-Lastly, we evaluate and validate the post-solve interpolation capabilities of our continuous-time state estimation framework.
-For this, we set up the problem so that discrete states are included in the main solves only at measurement times -- every 5 seconds in our case -- rather than solving explicitly for a state at every 0.1-second interval.
-As before, the remaining reduced set of states feature both unary position and velocity measurement factors as well as binary WNOA motion prior factors.
+Second, we evaluate and validate the post-solve interpolation capabilities of our continuous-time state estimation framework.
+To do so, we compare the solution quality when discrete states between measurements are interpolated versus explicitly included in the main solve.
+As before, the remaining reduced set of states feature both unary position and velocity measurement factors as well as binary \ac{WNOA} motion prior factors.
 After solving the resulting state estimation problem, we use the post-solve interpolation implementation detailed in Section \ref{sec:post-query-implem} to recover the estimated mean and covariance for states every 0.1 seconds.
 The results of this approach are presented in Fig.~\ref{fig:giant_glass_of_milk_interpolation}, where they are directly compared with the alternative of explicitly solving for the dense states during the main solve.
 It can be seen that the results in both cases are identical, which is expected for a linear state estimation problem.
-
-
 
 \subsection{2D: Lost in the Woods Dataset}
 
@@ -361,23 +363,26 @@ It can be seen that the results in both cases are identical, which is expected f
 	\label{fig:litw-setup}
 \end{figure}
 
-The second dataset that we introduce here is geared towards estimation problems on $SE(2)$ such as either localization or \ac{SLAM}. The setup consists of a wheeled robot exploring a flat space amongst a forest of fixed plastic tubes that can be used as landmarks. The robot is equipped with a laser rangefinder (Hokuyo URG-04LX sensor) scans with 681 range measurements over a 240 degree horizontal field of view centered on straight ahead. The robot also has wheel encoders that measure linear and angular speeds. 
+Our second dataset consists of a wheeled robot exploring a flat space amongst a forest of fixed plastic tubes that can be used as landmarks (hence the name, ``Lost in the Woods''). 
+The robot is equipped with the same laser rangefinder as in the first dataset, but is also outfitted with wheel encoders that measure linear and angular speeds. 
+In this case, we are interested estimating the robot's pose in $SE(2)$ and velocity (i.e., localization), but will also estimate the locations of the landmarks (i.e., \ac{SLAM}). 
 
 Sensor data has been sanitized to facilitate the study of back-end estimation routines. In particular, biases have been removed and rangefinder measurements have been converted to bearing-range measurements to landmarks, with known data association. The ground-truth position and orientation of the rangefinder origin on the robot and landmark locations are tracked via a Vicon motion-capture system. All data in the dataset has been synchronized at 10 Hz (approximately). Images of the setup and ground-truth trajectory for the dataset are shown in Figure~\ref{fig:litw-setup}.
 
 
 \subsubsection{Qualitative Estimation Results}
 
-Figure~\ref{fig:litw-gtsam-solve} shows a segment of the trajectory that has been optimized via \ac{GTSAM} with all available bearing-range and wheel odometry measurements. In this and all other cases, the optimization was initialized using a roll-out of the wheel odometry measurements. Note that with the available data, the robot can be localized to a high degree of accuracy.
+% First, we show that this estimation problem can be solved using standard discrete-time estimation tools: figure~\ref{fig:litw-gtsam-solve} shows a segment of the trajectory that has been optimized via \ac{GTSAM} with all available bearing-range and wheel odometry measurements. 
 
-\begin{figure}[ht!]
-	\centering
-	\includegraphics[width=0.75\textwidth]{a2_figs/litw_fig2_solve.png}
-	\caption{\ac{GTSAM} localization solution of a segment (timestep 1000 to timestep 6000) of the Lost in the Woods dataset using both bearing-range and wheel odometry measurements. The ground-truth trajectory is shown in green, while the optimal trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue for the estimated values.}
-	\label{fig:litw-gtsam-solve}
-\end{figure}
+% \begin{figure}[ht!]
+% 	\centering
+% 	\includegraphics[width=0.75\textwidth]{a2_figs/litw_fig2_solve.png}
+% 	\caption{\ac{GTSAM} localization solution of a segment (timestep 1000 to timestep 6000) of the Lost in the Woods dataset using both bearing-range and wheel odometry measurements. The ground-truth trajectory is shown in green, while the optimal trajectory is shown in blue. Covariance ellipsoids based on three standard deviations are plotted in blue for the estimated values.}
+% 	\label{fig:litw-gtsam-solve}
+% \end{figure}
+% We now turn our attention to the application of the continuous-time estimation on this dataset. 
 
-We now turn our attention to the application of the methods described herein to this dataset. We make the state estimation problem more challenging by artificially limiting the available measurements:  bearing-range measurements with range greater than 1 m are removed and the wheel odometry measurements are completely removed (though we still use odometry to initialize the trajectory). We then apply our \ac{WNOA} motion model factor between poses that are adjacent in time. The resulting trajectory is shown in Figure~\ref{fig:litw-loc-wnoa} (top). Note that the estimated trajectories deviate from the ground truth in regions where there are fewer available bearing-range measurements. In these regions, the estimate relies entirely upon the \ac{WNOA} prior, leading to an increase in uncertainty (covariance ellipsoids grow). 
+Similar to our first dataset, we first show that applying our \ac{WNOA} motion model is effective even when measurements are sparse. The top of Figure~\ref{fig:litw-loc-wnoa} shows the localized trajectory when wheel odometry and bearing-range measurements with range greater than 1 m are artificially removed. We rely on \ac{WNOA} motion model priors between adjacent states to `fill in the gaps'. The estimated trajectories deviate from the ground truth in regions where there are fewer available bearing-range measurements. In these regions, the estimate relies entirely upon the \ac{WNOA} prior, leading to a corresponding increase in uncertainty. 
 
 \begin{figure}[ht!]
 	\centering
@@ -387,46 +392,40 @@ We now turn our attention to the application of the methods described herein to 
 	\label{fig:litw-loc-wnoa}
 \end{figure}
 
-Figure~\ref{fig:litw-loc-wnoa} (bottom) shows the exact same problem, but only one in every 30 trajectory states are actually computed in the main solve, with the remainder being interpolated. Bearing-range factors on interpolated states were converted to new factors on the remaining states by applying our \texttt{WNOAInterpFactor} (described in Section~\ref{sec:during-query-implem}). We would like to draw the reader's attention to the fact that, despite this aggressive interpolation scheme, we are still able to recover a trajectory that is \emph{almost identical} to the full solve trajectory. The similarity of the covariances suggest that the overconfidence and bubbling issues described above for interpolation may not always be apparent for practical examples.
+Second, we demonstrate the power of the continuous-time scheme to reduce problem size:
+Figure~\ref{fig:litw-loc-wnoa} (bottom) shows the same problem, but only one in every 30 trajectory states are actually computed in the main solve, with the remainder being interpolated.\footnote{Note that bearing-range factors on interpolated states were converted to new factors on the remaining states by applying our \texttt{WNOAInterpFactor} (described in Section~\ref{sec:during-query-implem})} We would like to draw the reader's attention to the fact that, despite this aggressive interpolation scheme, we are still able to recover a trajectory that is \emph{almost identical} to the full solve trajectory. The similarity of the covariances also suggests that the confidence issues due to approximations may not always be apparent in practical examples.
 
 \begin{figure}[hb!]
 	\centering
 	\includegraphics[width=0.75\textwidth]{a2_figs/litw_slam_example.pdf}
-	\caption{\ac{GTSAM} SLAM solution with interpolation for the robot trajectory between 100 seconds and 250 seconds. The main solve only optimizes every $30$th state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. Ground truth is shown in green, while the estimates are shown in blue. Covariance ellipsoids are plotted based on three standard deviations.}
+	\caption{\ac{GTSAM} SLAM solution with interpolation for the robot trajectory between 100 seconds and 250 seconds. The main solve only optimizes every $30$th state in the trajectory (i.e., every 3 seconds), with the remainder of the states being interpolated. Ground truth is shown in green, while the estimates are shown in blue. Covariance ellipsoids are plotted based on three standard deviations. Bearing-range measurements are only included when the range is below 3 m.}
 	\label{fig:litw-SLAM-wnoa-interp}
 \end{figure}
 
-In Figure~\ref{fig:litw-SLAM-wnoa-interp}, we show an additional example of solving SLAM on the same subset of the trajectory, including the landmarks as to be estimated variables.
+We also demonstrate the ability of our custom interpolation to handle factors that are defined on a combination of interpolated and non-interpolated states.
+In Figure~\ref{fig:litw-SLAM-wnoa-interp}, we solve \ac{SLAM} on the same subset of the trajectory, including the landmarks as to be estimated variables.
 As in the previous example, we only keep one of every thirty states in the main solve, interpolating the remaining states and converting factors on interpolated states to \texttt{WNOAInterpFactor} factors.
-This experiment demonstrates the ability of our custom interpolation to handle factors that are defined on a combination of interpolated and non-interpolated states, as the landmarks are not interpolated.
-
-Note that, for this experiment, the range within which landmarks are considered observable by the states has been increased from 1 m to 3 m.
-Further, in this example, we extract the covariances of the interpolated states using the alternative method described in Section~\ref{sec:during-query-implem} (i.e., interpolating the mean values to linearize the original factor graph around them and use the Laplace approximation to obtain covariances). Note that both the estimated trajectory and the landmarks (blue) track the ground truth (green) well.
-
 
 \subsubsection{Quantitative Estimation Results}
 
-Lastly, we are interested how relying on the interpolation schemes introduced in this work compares to simply solving the full graph for the `Lost In the Woods' estimation problem.
-For this, we again consider a subset of the full trajectory (between 600 and 700 seconds).
-Again, we set up the problem to solely rely on bearing-landmark measurements and our WNOA motion prior, while setting the maximum distance at which landmarks are considered observable to 10 m.
+In this section, we investigate the trade-offs in compute time and accuracy introduced by continuous-time interpolation for the `Lost In the Woods' localization problem. In particular, we compare solving the full graph (i.e., explicitly including a state at every measurement time) to solving equivalent graphs that use \ac{GP} interpolation to remove varying numbers of states.
+We again consider a subset of the full trajectory (between 600 and 700 seconds)
+and set up the problem to solely rely on bearing-landmark measurements and our WNOA motion prior. However, in this section we consider landmarks to be observed when they are within 10 m of a given robot pose.
 
-In the following, we compare solving the full graph, i.e., explicitly including a state at every measurement time, to relying on interpolation.
-We evaluate different frequencies of state inclusion in the reduced graph.
-As before, the underlying trajectory is considered at 10 Hz.
-This means that, for example, including one state every 10 states corresponds to including a state once per second.
-
-We compare accuracy using the RMSE between the estimated and ground-truth trajectories, reported in meters.
-When interpolation is used, we distinguish between the accuracy of states included in the main optimization and the accuracy of all of the 10 Hz states recovered via interpolation.
-We also report both total computation time and average per-iteration runtime in seconds.
-Computation times for the after-the-solve interpolation are omitted, as they are negligible and orders of magnitude smaller than the solve times.
-Lastly, we evaluate the consistency of the obtained estimates using the Normalized Estimation Error Squared (NEES) metric.
-All experiments are conducted on the localization problem, assuming known landmark locations and leveraging parallelization in the implementation.
+% As before, the underlying trajectory is considered at 10 Hz.
+% This means that, for example, including one state every 10 states corresponds to including a state once per second.
+% When interpolation is used, we distinguish between the accuracy of states included in the main optimization and the accuracy of all of the 10 Hz states recovered via interpolation.
+% We also report both total computation time and average per-iteration runtime in seconds.
+% Computation times for the after-the-solve interpolation are omitted, as they are negligible and orders of magnitude smaller than the solve times.
+% We compare accuracy using the RMSE between the estimated and ground-truth trajectories, reported in meters.
+% Lastly, we evaluate the consistency of the obtained estimates using the Normalized Estimation Error Squared (NEES) metric.
+% All experiments are conducted on the localization problem, assuming known landmark locations and leveraging parallelization in the implementation.
 
 For the interpolation experiments, we consider two variants of the noise model for measurements at interpolated times, as derived in \eqref{eq:wrapped_meas}.
 The first variant, referred to as the simplified noise model, omits the term $\mathbf{C}\boldsymbol{\Sigma}_\tau\mathbf{C}^\top$ accounting for interpolation uncertainty.
 The second variant, referred to as the full noise model, includes this term.
 
-All estimation problems are solved using our custom \texttt{WNOAFactorGraph}, reyling on \texttt{WNOAInterpFactor} factors, and the associated \texttt{WNOALevenbergMarquardtOptimizer}.
+All estimation problems are solved using our custom \texttt{WNOAFactorGraph}, relying on \texttt{WNOAInterpFactor} factors, and the associated \texttt{WNOALevenbergMarquardtOptimizer}, leveraging parallel compute where possible. 
 
 \begin{figure}[b!]
 	\centering

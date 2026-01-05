@@ -212,7 +212,7 @@ The interpretation of this distribution is intuitive: the mean is obtained by ap
 
 The now-eliminated state $\mbf{x}_{\tau}$ can actually be dropped from the optimization,\footnote{We cannot completely forget about this state if we are dealing with a linearization of a nonlinear state-estimation problem. In this case, it is important to keep a record of $\mbf{x}_{\tau}$ to update the linearization point at each iteration.} leaving a motion prior and a new measurement factor between the non-interpolated states, $\mbf{x}_{k-1}$ and $ \mbf{x}_{k}$. In effect, we have removed $\mbf{x}_{\tau}$ from the optimization problem, but maintained the effect of its measurement.
 
-A similar situation also holds when we eliminate multiple query states with measurements between two non-interpolated states. However, we need to make an additional approximation to transform the original measurements into \emph{separate} factors. The interested reader can find a more detailed derivation for the case of multiple factors in Appendix~\ref{chap:interp-during-solve}.
+A similar situation also holds when we eliminate multiple query states with measurements between two non-interpolated states. However, we need to make an additional approximation to transform the original measurements into \emph{separate} factors. The interested reader can find a more detailed derivation for the case of multiple factors in Appendix~\ref{app:interp-during-solve}.
 
 
 
