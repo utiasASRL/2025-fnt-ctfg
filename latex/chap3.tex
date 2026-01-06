@@ -205,7 +205,7 @@ where we have moved the rightmost term out of the integral since it does not dep
 \end{equation}
 
 Assuming that the measurement is linear, $p(\mbf{y}| \mbf{x}_{\tau})=\mathcal{N}\left(\mbf{C} \mbf{x}_{\tau}, \mbf{R}\right)$, it is fairly straightforward to show that this measurement factor has the following distribution:
-\begin{equation}
+\begin{equation}\label{eq:wrapped_factor_simple}
      \phi_{y}(\mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}\left(\mbf{C} \check{\mbf{x}}_{\tau}, \mbf{C} \mbf{\Sigma}_{\tau}\mbf{C}^T + \mbf{R} \right).
 \end{equation}
 The interpretation of this distribution is intuitive: the mean is obtained by applying the measurement model to the bordering states after mapping through the motion model to the measurement time via interpolation. The covariance of the measurement is inflated proportionate to the temporal distance from the bordering states to measurement times, accounting for the uncertainty of the model. 

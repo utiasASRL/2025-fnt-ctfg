@@ -406,26 +406,26 @@ We also demonstrate the ability of our custom interpolation to handle factors th
 In Figure~\ref{fig:litw-SLAM-wnoa-interp}, we solve \ac{SLAM} on the same subset of the trajectory, including the landmarks as to be estimated variables.
 As in the previous example, we only keep one of every thirty states in the main solve, interpolating the remaining states and converting factors on interpolated states to \texttt{WNOAInterpFactor} factors.
 
-\subsubsection{Quantitative Estimation Results}
+\subsubsection{Runtime-Accuracy Trade-off}
 
-In this section, we investigate the trade-offs in compute time and accuracy introduced by continuous-time interpolation for the `Lost In the Woods' localization problem. In particular, we compare solving the full graph (i.e., explicitly including a state at every measurement time) to solving equivalent graphs that use \ac{GP} interpolation to remove varying numbers of states.
-We again consider a subset of the full trajectory (between 600 and 700 seconds)
-and set up the problem to solely rely on bearing-landmark measurements and our WNOA motion prior. However, in this section we consider landmarks to be observed when they are within 10 m of a given robot pose.
+In this section, we use the `Lost In the Woods' localization problem to investigate the trade-offs in compute time and accuracy introduced by continuous-time interpolation. In particular, we show that, though solving the full graph (i.e., explicitly including a state at every measurement time) can be more accurate in some cases, using interpolation can result in considerable gains in compute time while maintaining accuracy. 
 
-% As before, the underlying trajectory is considered at 10 Hz.
-% This means that, for example, including one state every 10 states corresponds to including a state once per second.
-% When interpolation is used, we distinguish between the accuracy of states included in the main optimization and the accuracy of all of the 10 Hz states recovered via interpolation.
-% We also report both total computation time and average per-iteration runtime in seconds.
-% Computation times for the after-the-solve interpolation are omitted, as they are negligible and orders of magnitude smaller than the solve times.
-% We compare accuracy using the RMSE between the estimated and ground-truth trajectories, reported in meters.
-% Lastly, we evaluate the consistency of the obtained estimates using the Normalized Estimation Error Squared (NEES) metric.
-% All experiments are conducted on the localization problem, assuming known landmark locations and leveraging parallelization in the implementation.
+Overall, we found that the \texttt{WNOAInterpFactor} slightly increases linearization cost, due to the need to backpropagate derivatives from interpolated states to their bordering states.
+However, solving the resulting linearized system can be faster, as it contains significantly fewer variables than the original problem. In practice, users are advised to carefully weigh this trade-off.
 
-For the interpolation experiments, we consider two variants of the noise model for measurements at interpolated times, as derived in \eqref{eq:wrapped_meas}.
-The first variant, referred to as the simplified noise model, omits the term $\mathbf{C}\boldsymbol{\Sigma}_\tau\mathbf{C}^\top$ accounting for interpolation uncertainty.
-The second variant, referred to as the full noise model, includes this term.
+For this experiment, we again consider a subset of the full trajectory (between 600 and 700 seconds)
+and set up the problem to solely rely on bearing-landmark measurements and our \ac{WNOA} motion prior. However, in this section we consider landmarks to be observed when they are within 10 m of a given robot pose. Accuracy and computation time results are shown in Figure~\ref{fig:litw-quant-results}, while Figure~\ref{fig:litw-quant-results-nees} shows the consistency results.
 
-All estimation problems are solved using our custom \texttt{WNOAFactorGraph}, relying on \texttt{WNOAInterpFactor} factors, and the associated \texttt{WNOALevenbergMarquardtOptimizer}, leveraging parallel compute where possible. 
+Throughout our experiments, we also observed that an additional approximation of the noise model used for interpolated factors lead to considerable gains in speed. In particular, this simplification omits the $\mathbf{C}\boldsymbol{\Sigma}_\tau\mathbf{C}^\top$ in the covariance of the interpolated factor equation, \eqref{eq:wrapped_factor_simple}.\footnote{Equivalently, we drop the same term when multiple states are interpolated. See Equation~\eqref{eq:wrapped_meas}.} In the following, we refer to the noise model without this term as the ``simplified noise model'', in contrast to the ``full noise model'' when it is included.
+
+Figure~\ref{fig:litw-quant-results} shows that increasing the number of interpolated states generally improves runtime, but (eventually) degrades the accuracy of the overall solve. Here, the $x$-axis indicates the number of interpolated states between each estimated state, while the $y$-axis reports compute time in seconds (full solve and per-iteration) and accuracy in terms of RMSE between the estimated and ground-truth trajectories, reported in meters. When interpolation is used, we also distinguish between the accuracy of states included in the main optimization (i.e., estimated states) and the accuracy of all the states (including those recovered via interpolation), denoted ``Est. Times'' and ``All Times'', respectively.
+
+Comparing the simplified noise model (left) to the full noise model (right) in Figure~\ref{fig:litw-quant-results}, we see that the simplified noise model is much faster, suggesting that the additional covariance term is computationally demanding. Even at interpolation intervals of five states, the runtime is reducing about one third, representing substantial gains.
+
+In terms of overall accuracy, Figure~\ref{fig:litw-quant-results} shows that both the simplified and full noise models maintain performance close to the full-graph solution for interpolation intervals up to roughly 20 states.
+We attribute accuracy degradation beyond this point to violations of the constant-velocity assumption underlying the motion model and to the interpolation scheme becoming inadequate to represent the true trajectory.
+
+However, the accuracy of the estimated states degrades more when the simplified model is used. Intuitively, we attribute this effect to the fact that the measurements interpolated states are not properly weighted in the main solve. In contrast, the accuracy of the estimated states with the full noise model remains high even for large interpolation intervals (e.g., 50 states, or 5 s). Interestingly, the accuracy degradation when all states are considered (including interpolated) is roughly equal for both models.\footnote{This is likely because the interpolated states are much less accurate than estimated states in both cases, so they dominate the metric.}
 
 \begin{figure}[b!]
 	\centering
@@ -434,15 +434,9 @@ All estimation problems are solved using our custom \texttt{WNOAFactorGraph}, re
 	\label{fig:litw-quant-results}
 \end{figure}
 
-Accuracy and computation time results are shown in Figure~\ref{fig:litw-quant-results}, while Figure~\ref{fig:litw-quant-results-nees} shows the consistency results.
-When including every state in the \texttt{WNOAFactorGraph}, the computation time is slightly higher than when using a standard \texttt{NonlinearFactorGraph}, likely due to additional bookkeeping during linearization and error evaluation.
-Nonetheless, relying on interpolation, i.e., omitting states from the main solve, can substantially reduce runtime.
-In general, decreasing the number of states included in the optimization leads to correspondingly lower computation times, reducing the runtime by about one third, when including only every fifth state.
-As expected, this effect is less pronounced when using the full noise model, where only small computational gains can be observed.
-
-Overall, we found that relying on the newly introduced \texttt{WNOAInterpFactor} slightly increases linearization cost, due to the need to backpropagate derivatives from interpolated states to their bordering states.
-However, solving the resulting linearized system can be faster, as it contains significantly fewer variables than the original problem.
-In practice, users are advised to carefully weigh this trade-off.
+Finally, we observe that the estimates for estimated states become increasingly overconfident when using the simplified noise model. This can be seen in Figure~\ref{fig:litw-quant-results-nees}, where we evaluate the consistency of the obtained estimates using the Normalized Estimation Error Squared (NEES) metric.
+This behavior is expected since our simplified model artificially removes uncertainty from measurements.
+In contrast, the full noise model maintains consistency levels for the estimated states that remain much closer to those of the full-graph solution.
 
 \begin{figure}[t!]
 	\centering
@@ -450,18 +444,6 @@ In practice, users are advised to carefully weigh this trade-off.
 	\caption{Comparison of the estimate's consistency when solving the problem using interpolation with and without the approximations applied to the derived noise model for measurements at interpolated times.}
 	\label{fig:litw-quant-results-nees}
 \end{figure}
-
-In terms of accuracy, Figure~\ref{fig:litw-quant-results} shows that both the simplified and full noise models maintain performance close to the full-graph solution for interpolation intervals up to roughly 20 states.
-Beyond this point, accuracy degrades, which we attribute to violations of the constant-velocity assumption underlying the motion model and to the interpolation scheme becoming inadequate for representing the true trajectory.
-With the simplified noise model, accuracy declines at a similar rate for both optimized and interpolated states, which is consistent with all measurements being assigned the same noise level regardless of their temporal distance from included states.
-For the full noise model, the accuracy of interpolated states similarly degrades at a slightly higher rate, but the accuracy at the states included in the main solve remains high even for large interpolation intervals (e.g., 50 states, or 5 s).
-This is explained by measurements farther from these states being increasingly down-weighted through inflated noise, preventing them from `pulling the solution away' from the full-graph estimate.
-In Figure~\ref{fig:litw-quant-results-nees}, we observe that the estimates for included states become increasingly overconfident when using the simplified noise model.
-This behavior is expected: as the interpolation interval grows, the accuracy deteriorates while the reported uncertainty remains artificially low, since each measurement is treated as equally reliable and the additional uncertainty introduced by interpolation is ignored.
-In contrast, the full noise model maintains consistency levels for these states that remain much closer to those of the full-graph solution.
-
-
-
 
 \subsection{3D: Starry Night Dataset}
 \begin{figure}[ht!]

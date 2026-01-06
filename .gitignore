@@ -28,3 +28,4 @@ latex/*.vrb
 *.swp
 *.swo
 .DS_Store
+*.log
