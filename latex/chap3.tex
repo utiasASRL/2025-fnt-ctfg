@@ -40,21 +40,22 @@ We can visually understand the factors by assembling them into a {\em factor gra
      \label{fig:elim_main_body}
 \end{figure}
 
-Aside from the benefits to intuition, factor graphs also lay the groundwork for efficient computation via the \emph{elimination algorithm}. The key idea behind this algorithm is shown in Figure~\ref{fig:elim_main_body}: we eliminate one variable at a time, and update the remaining factors in the graph accordingly. This update includes generating new factors between neighbouring, non-eliminated variables and identifying \emph{conditional dependencies} of the eliminated variables (indicated by arrows in the factor graph).
+Aside from the benefits to intuition, factor graphs also lay the groundwork for efficient computation via the \emph{elimination algorithm}. The key idea behind the iterations of this algorithm is shown in Figure~\ref{fig:elim_main_body}: we eliminate one variable at a time, and update the remaining factors in the graph accordingly. This update includes generating new factors between neighbouring, non-eliminated variables and identifying \emph{conditional dependencies} of the eliminated variables (indicated by arrows in the factor graph).
 Once all variables have been eliminated, we are left with a structure -- the so-called \emph{Bayes net} --  that allows for efficient recovery of the optimal posterior density.
 
 In the Appendix, we provide additional details about factor graphs, including the elimination algorithm (Section~\ref{sec:elim-algo}), show standard manipulations of factor graphs (Section~\ref{sec:fgelimfus}), and apply the factor graph approach to linear, discrete-time estimation (Section~\ref{sec:ldte}). We encourage readers that are not familiar with factor graphs to first read this appendix before proceeding to the next section.
 
 \section{Factor Graphs for Linear Continuous-Time Estimation}% Formerly "Main Solve"
-\begin{figure}[t]
+\begin{figure}[!h]
     \centering
     \includegraphics[width=0.95\textwidth]{ctfg.pdf}
     \caption{A continuous-time estimation problem with measurements at discrete times and a single query time.  We refer to this as `continuous-time' because the query(s) could be at any time along the trajectory.}
     \label{fig:ctfg}
 \end{figure}
 
-We have already shown that \ac{GP}-based, continuous-time state-estimation problems can be solved exactly by applying a combination of standard discrete-time estimation tools and \ac{GP} interpolation equations~\citep{barfoot_rss14}. In the rest of this chapter, we will show that this insight follows naturally when continuous-time estimation is cast into the factor graph framework.
+In the rest of this chapter, we will show that our insights from the previous chapter follows naturally when continuous-time estimation is cast into the factor graph framework. 
 
+We first focus on how \ac{GP}-based, continuous-time state-estimation problems can be solved exactly by applying a combination of standard discrete-time estimation tools and \ac{GP} interpolation equations~\citep{barfoot_rss14}. 
 Consider the factor graph of a simple continuous-time estimation problem shown in Figure~\ref{fig:ctfg}. We have introduced a single query state, $\mbf{x}_{\tau}$, at arbitrary time, $\tau$, to the otherwise standard discrete-time factor graph. As one might expect from the previous chapter, we can break the problem down into two main steps:
 \begin{enumerate}
     \item {\em main solve}: solve for the states at the measurement times
@@ -112,13 +113,15 @@ This is everything we need to populate the motion-model factors in Figure~\ref{f
      \label{fig:gausselim2}
 \end{figure}
 
-In this section, we discuss querying the trajectory at some time(s) of interest, $\mbf{x}_\tau$, as in Figure~\ref{fig:ctfg2}, where the query state does not have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the Gaussian elimination formula,~\eqref{eq:gausselim}, to write
+In this section, we discuss querying the trajectory at some time(s) of interest, $\tau$, as in Figure~\ref{fig:ctfg2}, where the query state, $\mbf{x}_\tau$, does not have any measurements associated with it.  In this case, querying is a straightforward application of the elimination algorithm from Figure~\ref{fig:gausselim}.  In other words, we can use the Gaussian elimination formula,~\eqref{eq:gausselim}, to write
 \begin{multline}
 || \mbf{x}_\tau - \mbf{A}_{\tau,k-1} \mbf{x}_{k-1} - \mbf{v}_{\tau,k-1} ||^2_{\mbf{Q}_{\tau,k-1}} + || \mbf{x}_{k} - \mbf{A}_{k,\tau} \mbf{x}_\tau - \mbf{v}_{k,\tau} ||^2_{\mbf{Q}_{k,\tau}}  \\ = || \mbf{x}_{k} - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} + || \mbf{x}_\tau - \mbs{\mu}_\tau ||^2_{\mbs{\Sigma}_\tau},
 \end{multline}
-where $\mbs{\mu}_\tau$ and $\mbs{\Sigma}_\tau$ are the mean and covariance of the Gaussian conditional density for $\mbf{x}_\tau$ and are given in Figure~\ref{fig:gausselim2}, which depicts our elimination graphically.  Critically, the new binary factor between the measurement states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, is identical to the form we would have used had we constructed it directly between these states to begin with; this ensures the presence/absence of the query state does not affect the solution.  It also means that we do not need to know about the query time when carrying out the main solve; we can simply solve for the states at the measurement times, and then query at any time(s) of interest later.
+where $\mbs{\mu}_\tau$ and $\mbs{\Sigma}_\tau$ are the mean and covariance of the Gaussian conditional density for $\mbf{x}_\tau$ and are given in Figure~\ref{fig:gausselim2}, which depicts our elimination graphically.  
 
-We want the posterior estimate for the query state, $p(\mbf{x}_\tau | \mbf{v}, \mbf{y})$, whereas we have the conditional density, $p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}(\mbs{\mu}_\tau, \mbs{\Sigma}_\tau)$.  We must therefore convolve the conditional density with the posterior for the separator states as follows:
+Critically, the new binary factor between the measurement states, $\mbf{x}_{k-1}$ and $\mbf{x}_{k}$, is identical to the form we would have used had we constructed it directly between these states to begin with; this ensures the presence/absence of the query state does not affect the solution.  It also means that we do not need to know about the query time when carrying out the main solve; we can simply solve for the states at the measurement times, and then query at any time(s) of interest later.
+
+We want the posterior estimate for the query state, $p(\mbf{x}_\tau | \mbf{v}, \mbf{y})$, whereas we have the conditional density, $p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) = \mathcal{N}(\mbs{\mu}_\tau, \mbs{\Sigma}_\tau)$.  We must therefore marginalize the separator states (i.e., convolve the conditional density with the posterior for the separator states) as follows:
 \begin{eqnarray}
 p(\mbf{x}_\tau | \mbf{v}, \mbf{y}) & = & \mathcal{N}\left( \est{\mbf{x}}_\tau, \est{\mbf{P}}_\tau \right) \nonumber \\ 
 & = &  \int p(\mbf{x}_\tau | \mbf{x}_{k-1}, \mbf{x}_{k}) p(\mbf{x}_{k-1}, \mbf{x}_{k} | \mbf{v}, \mbf{y}) \, d\mbf{x}_{k-1} d\mbf{x}_{k}. \qquad

@@ -445,15 +445,15 @@ Finally, we observe that the estimates for estimated states become increasingly 
 This behavior is expected since our simplified model artificially removes uncertainty from measurements.
 In contrast, the full noise model maintains consistency levels for the estimated states that remain much closer to those of the full-graph solution.
 
-\
+
 \subsection{3D: Starry Night Dataset}
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=\textwidth]{a3_figs/a3_setup.png}
+	\includegraphics[width=0.75\textwidth]{a3_figs/a3_setup.png}
 	\caption{Starry Night dataset collection setup. A rigid sensor head is moved around in dim environment while collecting IMU data and stereo measurements to Vicon markers on the ground (top row). The ground-truth poses of the sensor head are collected using a Vicon motion capture system.}
 	\label{fig:a3-setup}
 \end{figure}
-We now turn to a 3D dataset to demonstrate the above concepts in $SE(3)$. The setup consists of a sensor head that contains an inertial measurement unit (IMU) rigidly attached to a stereo camera. The sensor head is being moved around above a field of reflective markers acting as landmarks, and ground-truth poses of the sensor head is collected using a motion capture system. The localization objective is to estimate the trajectory of the sensor head. See Fig.~\ref{fig:a3-setup} for a visualization of the data collection process.
+We now turn to a 3D dataset to demonstrate the above concepts in $SE(3)$. The setup consists of a sensor head that contains an inertial measurement unit (IMU) rigidly attached to a stereo camera. The sensor head is being moved around above a field of reflective markers acting as landmarks that resemble a \emph{``starry night''}. The ground-truth poses of the sensor head are collected using a motion capture system. The localization objective is to estimate the trajectory of the sensor head. See Fig.~\ref{fig:a3-setup} for a visualization of the data collection process.
 
 This dataset has been sanitized to facilitate its use.
 For odometry, we have derived the sensor head's (unbiased) linear and angular velocities based on the raw IMU data.
@@ -462,16 +462,9 @@ The odometry and the ground-truth poses have been linearly interpolated to coinc
 
 \subsubsection{Qualitative Estimation Results}
 
-We compare the the performance of our state estimation approach both with and without interpolation on this 3D dataset in a localization scenario.
-We first perform standard localization using stereo measurements and a WNOA motion model, including a state at each measurement time during the main solve.
-We then perform localization with interpolation, adding only every $5^{th}$ state into the main solve and interpolating the rest following the procedure in Section~\ref{sec:imp}.
-We specifically make use of the \texttt{WNOAInterpFactor} described in Section~\ref{sec:during-query-implem}.
-For simplicity, covariance interpolation is performed following Section~\ref{sec:lie-after-query}, i.e., not using the alternative method.
-The two solutions and their corresponding error plots are shown in Fig.~\ref{fig:a3-3d-vis} and Fig.~\ref{fig:a3-errors}, respectively.
-
 \begin{figure}[ht!]
 	\centering
-	\includegraphics[width=\textwidth]{a3_figs/starryNight.png}
+	\includegraphics[width=0.75\textwidth]{a3_figs/starryNight.png}
 	\caption{Comparing \ac{GTSAM} localization solutions with and without interpolation between 112 seconds and 152 seconds of the Starry Night dataset. In the magenta trajectory, all states were included in the main solve. In the blue trajectory, every $5^{th}$ state was included in the main solve, with the remainder of the states being interpolated (cyan). We see that the two solutions are fairly close, despite that using interpolation involves much less states within the main solve.}
 	\label{fig:a3-3d-vis}
 \end{figure}
@@ -489,6 +482,13 @@ The two solutions and their corresponding error plots are shown in Fig.~\ref{fig
 	\caption{Pose error plots for the \ac{GTSAM} localization solutions in Fig.~\ref{fig:a3-3d-vis} with matching color schemes. The errors and covariances from interpolation (right) are reasonably similar to without interpolation (left), despite having only 20\% of all states included in the main solve.}
 	\label{fig:a3-errors}
 \end{figure}
+We compare the performance of our state estimation approach both with and without interpolation on this 3D dataset in a localization scenario.
+We first perform standard localization using stereo measurements and a WNOA motion model, including a state at each measurement time during the main solve.
+We then perform localization with interpolation, adding only every $5^{th}$ state into the main solve and interpolating the rest following the procedure in Section~\ref{sec:imp}.
+We specifically make use of the \texttt{WNOAInterpFactor} described in Section~\ref{sec:during-query-implem}.
+For simplicity, covariance interpolation is performed following Section~\ref{sec:lie-after-query}, i.e., not using the alternative method.
+The two solutions and their corresponding error plots are shown in Fig.~\ref{fig:a3-3d-vis} and Fig.~\ref{fig:a3-errors}, respectively.
+
 
 The interpolated solution is fairly close, but not identical, to the full-solve solution.
 This is expected since we have made three major approximations: (i) the independence approximation in Section~\ref{sec:ind-approx}; (ii) approximating Lie-group perturbations in Lie algebra (see~\eqref{eq:lie-perturb}); and (iii) approximations from linearizing the model.

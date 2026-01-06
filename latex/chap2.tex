@@ -13,7 +13,7 @@ We begin by considering systems with a continuous-time \ac{GP} prior and a discr
 \mbf{x}(t) & \sim & \mathcal{GP}( \pri{\mbf{x}}(t), \pri{\mbf{P}}(t,t^\prime) ), \qquad t_0 < t,t^\prime, \\
 \mbf{y}_k & = & \mbf{C}_k\mbf{x}(t_k) + \mbf{n}_k, \qquad t_0 < t_1 < \cdots < t_K,
 \eeqn 
-where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. Initially, $\mbf{x}(0) \sim \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$; it captures our prior belief about the likelihood of all possible trajectories that the state could take. Figure~\ref{fig:gpprior} illustrates this conceptually.
+where $\mbf{x}(t)$ is the state, $\pri{\mbf{x}}(t)$ is the mean function, $\pri{\mbf{P}}(t,t^\prime)$ is the covariance function, $\mbf{y}_k$ are measurements, $\mbf{n}_k \sim \mathcal{N}(\mbf{0}, \mbf{R}_k )$ is Gaussian measurement noise, and $\mbf{C}_k$ is the measurement model coefficient matrix. The state at $t=0$ is defined by a prior, $\mbf{x}(0) \sim \mathcal{N}( \pri{\mbf{x}}_0, \pri{\mbf{P}}_0 )$. The first equation defines a \emph{Guassian process} that captures our prior belief about the likelihood of all possible trajectories that the state could take. Accordingly, $\pri{\mbf{P}}(t,t^\prime)$ is a {\em kernel function} that describes the covariance between the state at two different times, $t$ and $t^\prime$. Figure~\ref{fig:gpprior} illustrates this conceptually.
 
 \begin{figure}[h]
     \centering
@@ -71,7 +71,7 @@ If, after solving for the estimate at the measurement times, we later want to qu
 \est{\mbf{P}}_{\tau\tau} & = & \pri{\mbf{P}}_{\tau\tau} + \left( \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}\right) \left( \est{\mbf{P}} - \pri{\mbf{P}} \right) \left( \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}\right)^T.
 \end{eqnarray}
 \end{subequations}
-This is linear interpolation in the state variable (but not necessarily in time).  
+This is linear interpolation in the state variable (though not necessarily equivalent to linear interpolation in time).  
 
 In general, this \index{Gaussian process} \ac{GP} approach has complexity $O(K^3 + K^2J)$ since the initial solve is $O(K^3)$ (for an arbitrary kernel function such as squared exponential) and the query is $O(K^2J)$; this is quite expensive, and next we will seek to improve the cost by designing a special kernel function.
 
@@ -97,14 +97,14 @@ where $\mbs{\Phi}(t,s)$ is known as the {\em transition function}.  In our case,
 \begin{equation}
 \mbs{\Phi}(t,s) = \exp\left( \mbs{A}(t-s) \right).
 \end{equation}
-Evaluating this kernel function at the measurement times allows us to write our prior as a joint Gaussian density:
+Evaluating the kernel function at the measurement times allows us to write our motion model prior as a joint Gaussian density:
 \begin{equation}
 \label{eq:gpprior}
 p(\mbf{x}) = \mathcal{N}(\pri{\mbf{x}}, \pri{\mbf{P}}) = \mathcal{N} \left( \mbf{A} \mbf{v}, \mbf{A} \mbf{Q} \mbf{A}^T \right),
 \end{equation}
 where
 \begin{gather}
-\mbf{v} = \bbm \pri{\mbf{x}}_0 \\ \mbf{v}_{1,0} \\ \vdots \\ \mbf{v}_{K,K-1} \ebm, \quad 
+\mbf{v} = \bbm \pri{\mbf{x}}_0 \\ \mbf{v}_{1,0} \\ \vdots \\ \pri{\mbf{x}}_k\\ \mbf{v}_{K,K-1} \ebm, \quad 
 \mbf{Q} = \diag\left( \pri{\mbf{P}}_0, \mbf{Q}_{1,0}, \mbf{Q}_{2,1}, \ldots, \mbf{Q}_{K,K-1} \right), \\
 \mbf{v}_{k,k-1} = \int_{t_{k-1}}^{t_k} \mbs{\Phi}(t_k,s) \mbs{v}(s) \, ds, \\
 \mbf{Q}_{k,k-1} = \int_{t_{k-1}}^{t_k} \mbs{\Phi}(t_k,s) \mbs{L} \mbs{Q} \mbs{L}^T \mbs{\Phi}(t_k,s)^T \, ds, \nonumber \\
@@ -143,11 +143,11 @@ Or, breaking it down by time steps,
 \begin{multline}
 \est{\mbf{x}} = \mbox{arg}\min_{\mbf{x}} || \pri{\mbf{x}}_0 - \mbf{x}_0 ||^2_{\pri{\mbf{P}}_0} + \sum_{k=1}^K || \mbf{x}_k - \mbf{A}_{k,k-1} \mbf{x}_{k-1} - \mbf{v}_{k,k-1} ||^2_{\mbf{Q}_{k,k-1}} \\ + \sum_{k=0}^K || \mbf{y}_k - \mbf{C}_k \mbf{x}_k||^2_{\mbf{R}_k}.
 \end{multline}
-It is clear from this expression that solving at the measurement times can be carried out using classical, discrete-time state estimation tools.\footnote{Note that from the factor graph perspective presented in the next Chapter~\ref{chap:fg-ctls}, each of these terms accounts for exactly one factor.}
+It is clear from this expression that solving at the measurement times can be carried out using classical, discrete-time state estimation tools. Note that from the factor graph perspective presented in the next Chapter~\ref{chap:fg-ctls}, each of these terms accounts for exactly one factor.
 
 \section{Querying is $O(1)$}
 
-Next, we will show that querying the trajectory at any time $\tau$ is an $O(1)$ operation.  To do this, we will use the interpolation equations~\eqref{eq:gpinterp}, where we notice that the product $\pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}$ plays a critical role.  To simplify matters, let us assume that we have only a single query time, $t_{k-1} < \tau < t_k$.  Then we can show that
+Finally, we show that querying the trajectory at any time $\tau$ is an $O(1)$ operation.  To do this, we use the interpolation equations~\eqref{eq:gpinterp}, where we notice that the product $\pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1}$ plays a critical role.  To simplify matters, let us assume that we have only a single query time, $t_{k-1} < \tau < t_k$.  Then we can show that
 \begin{multline}
 \pri{\mbf{P}}_\tau \pri{\mbf{P}}^{-1} = \Bigl[ \, \mbf{0} \;\;\; \cdots \;\;\;  \mbf{0} \;\;\; \underbrace{\mbf{A}_{\tau,k-1} - \mbf{Q}_{\tau,k-1} \mbf{A}_{k,\tau}^T \mbf{Q}_{k,k-1}^{-1} \mbf{A}_{k,k-1}}_{\mbs{\Lambda}_\tau\; \mbox{\small block column $k-1$}}  \\  \cdots \;\;\;  \underbrace{\mbf{Q}_{\tau,k} \mbf{A}_{k,\tau}^T \mbf{Q}_{k,k-1}^{-1}}_{\mbs{\Psi}_\tau,\;\mbox{\small block column $k$}}  \;\;\; \mbf{0} \;\;\; \cdots \;\;\; \mbf{0}  \, \Bigr],
 \end{multline}
