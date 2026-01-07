@@ -3,15 +3,15 @@
 \chapter{Robotics Examples in GTSAM}
 
 % This chapter discusses our open-source implementation of the continuous-time estimation framework as an addition to GTSAM.
-GTSAM is a widely used C++ library that leverages factor graphs to solve large-scale optimization problems in robotics and computer vision efficiently. One of the key contributions of our work is the introduction of Gaussian-process-based continuous-time (GP-CT) estimation into the existing GTSAM library. In this chapter, we will outline the essential functions that can be used to perform GP-CT estimation using our modified library and will provide some explanation of their implementation.
+\ac{GTSAM} is a widely used C++ library that leverages factor graphs to solve large-scale optimization problems in robotics and computer vision efficiently. One of the key contributions of our work is the introduction of Gaussian-process-based continuous-time (GP-CT) estimation into the existing \ac{GTSAM} library. In this chapter, we will outline the essential functions that can be used to perform GP-CT estimation using our modified library and will provide some explanation of their implementation.
 
 \section{GTSAM Primer}
 
-GTSAM provides a wide range of factor implementations that can be combined to construct arbitrary factor graphs.
+\ac{GTSAM} provides a wide range of factor implementations that can be combined to construct arbitrary factor graphs.
 In practice, users typically rely on existing factors or develop new ones tailored to their specific application.
 Each factor is associated with a set of keys, which index the state variables in the factor graph.
 
-A typical GTSAM workflow proceeds as follows:
+A typical \ac{GTSAM} workflow proceeds as follows:
 
 \begin{enumerate}
 	\item Define the factors and their associated symbols, indicating to which states each factor relates.
@@ -21,7 +21,7 @@ A typical GTSAM workflow proceeds as follows:
 	\item Extract the estimated means from the optimizer, and optionally compute the associated covariances.
 \end{enumerate}
 
-The implementation of our continuous-time framework within GTSAM maintains this workflow, as it mainly introduces new factor types that integrate seamlessly with the existing architecture.
+The implementation of our continuous-time framework within \ac{GTSAM} maintains this workflow, as it mainly introduces new factor types that integrate seamlessly with the existing architecture.
 In addition, we provide functionality to compute the mean and covariance of continuous-time states at arbitrary query times, which may differ from the discrete estimation times defined in the primary optimization problem.
 
 \section{Implementation Details}
@@ -139,7 +139,7 @@ Mathematically, our wrapper factor implements the conversion from a measurement 
 In Listing~\ref{lst:interp}, we define two factors on the interpolated states for the first and third poses. These factors are then wrapped using our \texttt{WNOAInterpFactor} factor (templated on $SE(3)$) and added to the graph.
 The resulting graph is defined only on the bordering states for the zeroth, second and fourth states (poses and velocities).
 These factors allow the user to exactly specify which states and factors they wish to convert.
-However, we also provide a function that automatically converts an entire factor graph into an equivalent, interpolated graph based on a list of interpolated states. In Listing~\ref{lst:convert}, the function \texttt{interpolateFactorGraph} effectively carries out the operations shown in Figure~\ref{fig:gausselim3b}: it replaces any factors defined on interpolated states with wrapped, interpolated factors and adds \ac{WNOA} motion models factors between adjacent border states. It will also remove any \ac{WNOA} motion model factors defined on interpolated states. The resulting output graph will not include any of the interpolated state variables and can be passed to any standard GTSAM optimizer for solving.
+However, we also provide a function that automatically converts an entire factor graph into an equivalent, interpolated graph based on a list of interpolated states. In Listing~\ref{lst:convert}, the function \texttt{interpolateFactorGraph} effectively carries out the operations shown in Figure~\ref{fig:gausselim3b}: it replaces any factors defined on interpolated states with wrapped, interpolated factors and adds \ac{WNOA} motion models factors between adjacent border states. It will also remove any \ac{WNOA} motion model factors defined on interpolated states. The resulting output graph will not include any of the interpolated state variables and can be passed to any standard \ac{GTSAM} optimizer for solving.
 
 \begin{lstlisting}[style=C++Style, label={lst:convert}, caption={Converting to an interpolated factor graph.}, firstnumber=37]
   // Replaces lines 37-47 in Listing 6.2.
@@ -218,7 +218,7 @@ Finally, we emphasize that these confidence issues are not due to the after-main
 
 The above implementation can introduce computational overhead because each wrapper factor processes interpolation independently.
 As a result, factors relying on the same interpolated state repeatedly recompute its mean and the associated Jacobians from the boundary states.
-To avoid this redundancy, we introduce the \texttt{WNOAFactorGraph}, a custom GTSAM graph that tracks all interpolated and estimated states.
+To avoid this redundancy, we introduce the \texttt{WNOAFactorGraph}, a custom \ac{GTSAM} graph that tracks all interpolated and estimated states.
 During construction, the graph receives a mapping from each interpolated state to its boundary states.
 A convenience function, \texttt{interpolateWNOAFactorGraph}, is provided to automatically convert a standard dense graph into this reduced form.
 
@@ -299,7 +299,7 @@ This approximation can further reduce computational cost during derivative evalu
 
 We now turn to robotics estimation problems using real-world datasets to demonstrate the capabilities of the continuous-time estimation framework across one-dimensional, two-dimensional, and three-dimensional scenarios.
 We present qualitative results for each dataset to highlight its core capabilities, and provide additional quantitative evaluations on the two-dimensional dataset comparing our interpolation scheme. In particular, interpolation is used to reduce the number of estimated states in the factor graph relative to a `full' graph, which also includes the interpolated states.
-While high-level descriptions are provided in the following subsections, readers are encouraged to explore the dataset examples themselves, which are available in the GTSAM open-source repository along with the plotting scripts used to generate the graphs in this section.
+While high-level descriptions are provided in the following subsections, readers are encouraged to explore the dataset examples themselves, which are available in the \ac{GTSAM} open-source repository along with the plotting scripts used to generate the graphs in this section.
 
 \subsection{1D: Giant Glass of Milk Dataset}
 \label{sec:exp-1d}
@@ -332,7 +332,7 @@ The noise of each sensor was characterized using the ground-truth data provided 
 \end{figure}
 
 Using our continuous-time state estimation framework, we estimate the robot's position and velocity through its approximately 280~m long trajectory based on noisy position and velocity measurements.
-For this, we set our problem up using GTSAM, defining estimation states (including position and velocity) every 0.1 seconds. States are sequentially connected by relative WNOA motion prior factors and position and velocity measurements are included via unary factors on the states.
+For this, we set our problem up using \ac{GTSAM}, defining estimation states (including position and velocity) every 0.1 seconds. States are sequentially connected by relative \ac{WNOA} motion prior factors and position and velocity measurements are included via unary factors on the states.
 
 We first show that our physics-based, \ac{WNOA} prior factor is effective at smoothing the state estimates between measurement times. 
 Fig.~\ref{fig:giant_glass_of_milk_results} shows the robot estimate on a subset of the trajectory with different intervals between available measurements (2.5, 5 and 7.5 seconds).
@@ -410,7 +410,7 @@ As in the previous example, we only keep one of every thirty states in the main 
 
 In this section, we use the `Lost In the Woods' localization problem to investigate the trade-offs in compute time and accuracy introduced by continuous-time interpolation. In particular, we show that, though solving the full graph (i.e., explicitly including a state at every measurement time) can be more accurate in some cases, using interpolation can result in considerable gains in compute time while maintaining accuracy. 
 
-Overall, we found that the \texttt{WNOAInterpFactor} slightly increases linearization cost, due to the need to backpropagate derivatives from interpolated states to their bordering states.
+Overall, we found that the \texttt{WNOAInterpFactor} slightly increases linearization cost, due to the need to chain derivatives from interpolated states to their bordering states.
 However, solving the resulting linearized system can be faster, as it contains significantly fewer variables than the original problem. In practice, users are advised to carefully weigh this trade-off.
 
 \begin{figure}[t!]
@@ -465,7 +465,7 @@ The odometry and the ground-truth poses have been linearly interpolated to coinc
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.75\textwidth]{a3_figs/starryNight.png}
-	\caption{Comparing \ac{GTSAM} localization solutions with and without interpolation between 112 seconds and 152 seconds of the Starry Night dataset. In the magenta trajectory, all states were included in the main solve. In the blue trajectory, every $5^{th}$ state was included in the main solve, with the remainder of the states being interpolated (cyan). We see that the two solutions are fairly close, despite that using interpolation involves much less states within the main solve.}
+	\caption{Comparing \ac{GTSAM} localization solutions with and without interpolation between 112 seconds and 152 seconds of the Starry Night dataset. In the magenta trajectory, all states were included in the main solve. In the blue trajectory, every $5^{th}$ state was included in the main solve, with the remainder of the states being interpolated (cyan). We see that the two solutions are fairly close, despite that using interpolation involves far fewer states within the main solve.}
 	\label{fig:a3-3d-vis}
 \end{figure}
 
@@ -483,7 +483,7 @@ The odometry and the ground-truth poses have been linearly interpolated to coinc
 	\label{fig:a3-errors}
 \end{figure}
 We compare the performance of our state estimation approach both with and without interpolation on this 3D dataset in a localization scenario.
-We first perform standard localization using stereo measurements and a WNOA motion model, including a state at each measurement time during the main solve.
+We first perform standard localization using stereo measurements and a \ac{WNOA} motion model, including a state at each measurement time during the main solve.
 We then perform localization with interpolation, adding only every $5^{th}$ state into the main solve and interpolating the rest following the procedure in Section~\ref{sec:imp}.
 We specifically make use of the \texttt{WNOAInterpFactor} described in Section~\ref{sec:during-query-implem}.
 For simplicity, covariance interpolation is performed following Section~\ref{sec:lie-after-query}, i.e., not using the alternative method.
@@ -492,13 +492,13 @@ The two solutions and their corresponding error plots are shown in Fig.~\ref{fig
 
 The interpolated solution is fairly close, but not identical, to the full-solve solution.
 This is expected since we have made three major approximations: (i) the independence approximation in Section~\ref{sec:ind-approx}; (ii) approximating Lie-group perturbations in Lie algebra (see~\eqref{eq:lie-perturb}); and (iii) approximations from linearizing the model.
-Expanding on the last point, since the WNOA motion model and the stereo measurement model is nonlinear, the expressiveness of the solution is limited by the number of linearization points. Nevertheless, we see that even with $80\%$ less linearization points, the interpolated solution has a similar accuracy and consistency as the full-solve solution.
-We encourage interested readers to try using other interpolation configurations, adding in the IMU odometry, or try out SLAM on this dataset using the provided code.
+Expanding on the last point, since the \ac{WNOA} motion model and the stereo measurement model is nonlinear, the expressiveness of the solution is limited by the number of linearization points. Nevertheless, we see that even with $80\%$ less linearization points, the interpolated solution has a similar accuracy and consistency as the full-solve solution.
+We encourage interested readers to try using other interpolation configurations, adding in the \ac{imu} odometry, or try out SLAM on this dataset using the provided code.
 
 
 \subsection{Key Takeaways and Guidelines}
 
-We have demonstrated practical examples of the proposed continuous-time estimation framework, implemented in GTSAM, across several datasets.
+We have demonstrated practical examples of the proposed continuous-time estimation framework, implemented in \ac{GTSAM}, across several datasets.
 In the following, we outline practical guidelines to help readers set up their own estimation problems:
 
 \begin{itemize}
