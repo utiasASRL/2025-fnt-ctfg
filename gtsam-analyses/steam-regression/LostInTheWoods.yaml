@@ -1,7 +1,7 @@
 files:
-  input : "examples/Data/LostInTheWoods.txt"
-  output : "results/lost_steam.csv" 
-  gt_out : "results/lost_gt.csv"
+  input : "LostInTheWoods.txt"
+  output : "../results/lost_steam.csv" 
+  gt_out : "../results/lost_gt.csv"
 params:
   r_max: 1.0
   del_t: 0.1
