@@ -1,13 +1,13 @@
 {
-  "name": "ct-gtsam-dev",
+  "name": "2025-fnt-ctfg-dev",
   "build": {
     "dockerfile": "Dockerfile",
     "args": {
       "USERNAME": "${localEnv:USER}",
-      "USERGNAME": "${localEnv:GROUP}",
       "USER_UID": "${localEnv:UID}",
-      "USER_GID": "${localEnv:GID}"
-    }
+      "USER_GID": "${localEnv:UID}" // GID same as UID
+    },
+    "context": "../extern"
   },
   "runArgs": [
     "--cap-add=SYS_PTRACE"
@@ -34,5 +34,7 @@
       }
     }
   },
-  "remoteUser": "cho"
+  // "containerUser": "root", // Start as root so usermod/groupmod works
+  "remoteUser": "${localEnv:USER}", // VS Code will run as this user
+  // "updateRemoteUserUID": true // Explicitly enable the sync
 }

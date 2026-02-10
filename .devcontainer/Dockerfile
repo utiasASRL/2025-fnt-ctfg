@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     libopenblas-dev \
+    doxygen \
     && rm -rf /var/lib/apt/lists/*
 
 # Boost env vars
@@ -47,30 +48,29 @@ RUN apt-get update && apt-get install -y \
 # tmux
 RUN apt-get update && apt-get install -y tmux
 
-# Clone and build yaml-cpp
-RUN git clone https://github.com/jbeder/yaml-cpp.git /opt/yaml-cpp \
-    && cd /opt/yaml-cpp \
+# Copy cloned repos into the container
+# Note: it is assumed that ../extern is used as the build context
+COPY . /opt/
+
+# Build yaml-cpp
+RUN cd /opt/yaml-cpp \
     && mkdir build && cd build \
     && cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DBUILD_SHARED_LIBS=OFF -DYAML_CPP_BUILD_TESTS=OFF \
     && make -j$(nproc) \
     && make install
 
-# Clone and build lgmath (for steam), install to /usr/local
-RUN mkdir -p /opt/lgmath \
-    && git clone https://github.com/utiasASRL/lgmath.git /opt/lgmath \
-    && cd /opt/lgmath \
+# Build lgmath (for steam), install to /usr/local
+RUN cd /opt/lgmath \
     && mkdir -p build && cd build \
     && cmake .. \
-    && cmake --build . \
+    && cmake --build . -j$(nproc)\
     && cmake --install . 
 
-# Clone and build STEAM
-RUN mkdir -p /opt/steam \
-    && git clone --branch lostinthewoods-ex https://github.com/utiasASRL/steam.git /opt/steam \
-    && cd /opt/steam \
+# Build STEAM
+RUN cd /opt/steam \
     && mkdir -p build && cd build \
     && cmake .. -DUSE_AMENT=off \
-    && cmake --build . -j \
+    && cmake --build . -j$(nproc) \
     && cmake --install . 
 
 # VNC SETUP
@@ -84,18 +84,27 @@ RUN apt-get update && apt-get install -y cmake-curses-gui
 RUN apt-get update && apt-get install -y kcachegrind
 
 # Set up user inside container to avoid issues with permissions.
+ARG RANDOM=1
 ARG USERNAME=cho
-ARG USERGNAME=cho
 ARG USER_UID=1094
 ARG USER_GID=1094
 
-RUN groupadd --gid $USER_GID $USERGNAME \
-&& useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
-
+# Create the user and group
+# We use the ":-" syntax to handle empty or unset variables
+RUN GROUP_ID=${USER_GID:-1000} && \
+    USER_ID=${USER_UID:-1000} && \
+    # Create group: if it exists, just exit success (-f)
+    groupadd -f --gid ${GROUP_ID} ${USERNAME} || true && \
+    # Create user: assign to the group we just made/verified
+    useradd --uid ${USER_ID} --gid ${GROUP_ID} -m ${USERNAME} || true && \
+    # Add sudo support
+    apt-get update && apt-get install -y sudo && \
+    echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
+    chmod 0440 /etc/sudoers.d/${USERNAME}
 # Change any ownerships here...
 
 # Move to working dir
-WORKDIR /${HOMEDIR}/gtsam-ct-factors
+WORKDIR /workspace
 
 # Switch user
 USER ${USERNAME}

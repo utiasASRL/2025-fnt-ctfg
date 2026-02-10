@@ -31,6 +31,6 @@ latex/*.vrb
 *.log
 
 # Analysis files
-gtsam_analyses/build/
-gtsam_analyses/results/
-gtsam_analyses/plots/
+gtsam-analyses/build/
+gtsam-analyses/results/
+gtsam-analyses/plots/
