@@ -7,3 +7,19 @@ latex/
 
 python/
 -contain code for examples
+
+gtsam_analyses/
+- contains analysis code for GTSAM examples
+
+gtsam-ct-factors/
+- temporary submodule containing GTSAM CT Factor fork of GTSAM
+
+# Running Analyses
+
+To run the examples in the `gtsam_analyses` directory, you must first build GTSAM and make sure that it is available to be found by `cmake` in the analyses folder. Use the following script to do so:
+
+```bash
+cd gtsam-ct-factors \
+&& mkdir build \
+&& cd build \
+```
