@@ -1,3 +1,12 @@
 [submodule "gtsam-ct-factors"]
 	path = gtsam-ct-factors
 	url = git@github.com:utiasASRL/gtsam-ct-factors.git
+[submodule "extern/yaml-cpp"]
+	path = extern/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "extern/steam"]
+	path = extern/steam
+	url = https://github.com/utiasASRL/steam.git
+[submodule "extern/lgmath"]
+	path = extern/lgmath
+	url = https://github.com/utiasASRL/lgmath.git
