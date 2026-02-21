@@ -8,11 +8,14 @@ latex/
 python/
 -contain code for examples
 
-gtsam_analyses/
+gtsam-analyses/
 - contains analysis code for GTSAM examples
 
 gtsam-ct-factors/
 - temporary submodule containing GTSAM CT Factor fork of GTSAM
+
+gtsam-examples/
+- Contains GTSAM code and parameter files for the three sample datasets that were introduced in the FnT article.
 
 # Dev Container setup
 
@@ -34,4 +37,4 @@ cd gtsam-ct-factors \
 && cmake ..\ 
 && make -j 
 ```
-Note that this is temporary until our changes are merged properly into GTSAM.
+
