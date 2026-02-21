@@ -1,5 +1,5 @@
 [submodule "gtsam-ct-factors"]
-	path = gtsam-ct-factors
+	path = gtsam
 	url = git@github.com:utiasASRL/gtsam-ct-factors.git
 [submodule "extern/yaml-cpp"]
 	path = extern/yaml-cpp
