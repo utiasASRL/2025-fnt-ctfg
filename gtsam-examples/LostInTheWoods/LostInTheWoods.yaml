@@ -1,9 +1,9 @@
 files:
-  input : "examples/Data/LostInTheWoods.txt"
-  output : "results/lost.csv" 
-  gt_out : "results/lost_gt.csv"
-  interp_raw_file: "results/lost_interp_raw.csv"
-  interp_out : "results/lost_interp.csv" 
+  input : "LostInTheWoods/LostInTheWoods.txt"
+  output : "LostInTheWoods/results/lost.csv" 
+  gt_out : "LostInTheWoods/results/lost_gt.csv"
+  interp_raw_file: "LostInTheWoods/results/lost_interp_raw.csv"
+  interp_out : "LostInTheWoods/results/lost_interp.csv" 
 params:
   r_max: 4.0
   del_t: 0.1

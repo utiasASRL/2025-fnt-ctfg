@@ -24,13 +24,12 @@
 #include <unordered_map>
 #include <vector>
 
-using namespace std;
 using namespace gtsam;
 
 class DatasetLoader {
  private:
   // Store variable name to string (you can later convert to float, etc.)
-  unordered_map<string, string> variables;
+  std::unordered_map<std::string, std::string> variables;
 
  public:
   // singlve var definitions
@@ -92,7 +91,7 @@ class DatasetLoader {
     // Parse the variables after loading
     parseNumerics();
 
-    cout << "Loaded " << variables.size() << " variables from " << filename
+    std::cout << "Loaded " << variables.size() << " variables from " << filename
          << "\n";
   }
 
@@ -149,11 +148,11 @@ class DatasetLoader {
   }
 
   void parseNumerics() {
-    b_var = stod(variables["b_var"]);
-    d = stod(variables["d"]);
-    om_var = stod(variables["om_var"]);
-    r_var = stod(variables["r_var"]);
-    v_var = stod(variables["v_var"]);
+    b_var = std::stod(variables["b_var"]);
+    d = std::stod(variables["d"]);
+    om_var = std::stod(variables["om_var"]);
+    r_var = std::stod(variables["r_var"]);
+    v_var = std::stod(variables["v_var"]);
     om = flattenIfVector(parseEigenMatrix(variables["om"]));
     v = flattenIfVector(parseEigenMatrix(variables["v"]));
     t = flattenIfVector(parseEigenMatrix(variables["t"]));
@@ -168,35 +167,35 @@ class DatasetLoader {
   }
 
   void checkSizes() {
-    cout << "b_var: " << b_var << "\n";
-    cout << "d: " << d << "\n";
-    cout << "om_var: " << om_var << "\n";
-    cout << "r_var: " << r_var << "\n";
-    cout << "v_var: " << v_var << "\n";
-    cout << "om shape: " << om.rows() << " x " << om.cols() << "\n";
-    cout << "t shape: " << t.rows() << " x " << t.cols() << "\n";
-    cout << "th_true shape: " << th_true.rows() << " x " << th_true.cols()
+    std::cout << "b_var: " << b_var << "\n";
+    std::cout << "d: " << d << "\n";
+    std::cout << "om_var: " << om_var << "\n";
+    std::cout << "r_var: " << r_var << "\n";
+    std::cout << "v_var: " << v_var << "\n";
+    std::cout << "om shape: " << om.rows() << " x " << om.cols() << "\n";
+    std::cout << "t shape: " << t.rows() << " x " << t.cols() << "\n";
+    std::cout << "th_true shape: " << th_true.rows() << " x " << th_true.cols()
          << "\n";
-    cout << "x_true shape: " << x_true.rows() << " x " << x_true.cols() << "\n";
-    cout << "y_true shape: " << y_true.rows() << " x " << y_true.cols() << "\n";
-    cout << "bearing shape: " << bearing.rows() << " x " << bearing.cols()
+    std::cout << "x_true shape: " << x_true.rows() << " x " << x_true.cols() << "\n";
+    std::cout << "y_true shape: " << y_true.rows() << " x " << y_true.cols() << "\n";
+    std::cout << "bearing shape: " << bearing.rows() << " x " << bearing.cols()
          << "\n";
-    cout << "range shape: " << range.rows() << " x " << range.cols() << "\n";
-    cout << "landmarks shape: " << landmarks.rows() << " x " << landmarks.cols()
+    std::cout << "range shape: " << range.rows() << " x " << range.cols() << "\n";
+    std::cout << "landmarks shape: " << landmarks.rows() << " x " << landmarks.cols()
          << "\n";
-    cout << "traj len: " << size << endl;
+    std::cout << "traj len: " << size << std::endl;
   }
 };
 
 // --- Save Poses to CSV ---
 int saveResultToFile(Values& result, NonlinearFactorGraph& graph,
-                     const string& filename, bool save_landmarks = false, std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map = nullptr) {
+                     const std::string& filename, bool save_landmarks = false, std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map = nullptr) {
   
-  cout << "Writing solve output to " << filename << endl;
+  std::cout << "Writing solve output to " << filename << std::endl;
   // Get marginals
   Marginals marginals(graph, result, Marginals::Factorization::QR);
   // open file, print header
-  ofstream poses_file(filename);
+  std::ofstream poses_file(filename);
   if (poses_file.is_open()) {
     poses_file
         << "key,x,y,theta,C11,C12,C13,C22,C23,C33\n";  // Header for Pose2
@@ -216,15 +215,15 @@ int saveResultToFile(Values& result, NonlinearFactorGraph& graph,
     }
     poses_file.close();
   } else {
-    cerr << "Error opening file" << endl;
+    std::cerr << "Error opening file" << std::endl;
     return 0;
   }
 
   if(save_landmarks) {
-    string filename_lm = filename;
+    std::string filename_lm = filename;
     filename_lm.replace(filename_lm.find(".csv"), 4, "_landmarks.csv");
     // open file, print header
-    ofstream landmarks_file(filename_lm);
+    std::ofstream landmarks_file(filename_lm);
     if (landmarks_file.is_open()) {
       landmarks_file << "key,x,y,C11,C12,C22\n";  // Header for Point2
       // filter results for Point2
@@ -237,7 +236,7 @@ int saveResultToFile(Values& result, NonlinearFactorGraph& graph,
       landmarks_file.close();
     }
     else {
-      cerr << "Error opening file" << endl;
+      std::cerr << "Error opening file" << std::endl;
       return 0;
     }
   }

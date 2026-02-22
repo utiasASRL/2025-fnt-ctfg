@@ -37,3 +37,6 @@ gtsam-analyses/plots/
 
 # Example files
 gtsam-examples/build/
+gtsam-examples/*/results/
+*.g2o
+*.dot

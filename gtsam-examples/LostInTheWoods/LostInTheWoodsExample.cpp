@@ -1,8 +1,10 @@
 #include "LostInTheWoodsExample.h"
 
+using namespace std;
+
 int main(int argc, char* argv[]) {
   // Get configuration data
-  string config_file = "examples/Data/LostInTheWoods.yaml";
+  string config_file = "LostInTheWoods/LostInTheWoods.yaml";
   if (argc > 1) {
     config_file = argv[1];
   }
@@ -235,7 +237,7 @@ int main(int argc, char* argv[]) {
   // Save results
   cout << "Optimizer has finished...saving results..." << endl;
   saveResultToFile(result, graph, output_file, solve_slam);
-  saveResultToFile(gt, graph, "results/lost_gt.csv");
+  saveResultToFile(gt, graph, gt_output_file, solve_slam);
 
   return 0;
 }
