@@ -122,8 +122,7 @@ class FileUtils {
  public:
   FileUtils() = delete;
   FileUtils(std::string config_filename, std::string output_filename) {
-    std::string config_filepath =
-        findExampleDataFile(config_filename + ".yaml");
+    std::string config_filepath =config_filename + ".yaml";
     YAML::Node config = YAML::LoadFile(config_filepath);
 
     if (output_filename == "") {
@@ -137,15 +136,15 @@ class FileUtils {
     params_ = getParamsFromConfig(config);
 
     output_file_poses_ =
-        "../results/starry_night_results/" + output_filename + "_poses";
+        "StarryNight/results/" + output_filename + "_poses";
     output_file_poses_dr_ =
-        "../results/starry_night_results/" + output_filename + "_poses_dr";
+        "StarryNight/results/" + output_filename + "_poses_dr";
     output_file_landmarks_ =
-        "../results/starry_night_results/" + output_filename + "_landmarks";
+        "StarryNight/results/" + output_filename + "_landmarks";
     output_file_marginals_ =
-        "../results/starry_night_results/" + output_filename + "_marginals";
+        "StarryNight/results/" + output_filename + "_marginals";
     output_file_groundtruth_ =
-        "../results/starry_night_results/" + output_filename + "_groundtruth";
+        "StarryNight/results/" + output_filename + "_groundtruth";
   }
 
   ConfigParams getParams() const { return params_; }
@@ -154,7 +153,7 @@ class FileUtils {
   // DR: Odometry Input (delta distance traveled and delta heading change)
   //    Time (sec)  omega v
   static void readInputs(std::vector<TimedInput>& inputs) {
-    std::string data_file = findExampleDataFile("starryNightInput.txt");
+    std::string data_file = "StarryNight/starryNightInput.txt";
     std::ifstream is(data_file.c_str());
     while (is) {
       double t;
@@ -171,7 +170,7 @@ class FileUtils {
   // load camera calibration (intrinsics and extrinsics) and noise params
   std::tuple<Cal3_S2Stereo::shared_ptr, Pose3, NM::Diagonal::shared_ptr,
              NM::Diagonal::shared_ptr> static getMetadata() {
-    std::string data_file = findExampleDataFile("starryNightMetadata.txt");
+    std::string data_file = "StarryNight/starryNightMetadata.txt";
     std::ifstream is(data_file.c_str());
     std::string line;
 
@@ -216,7 +215,7 @@ class FileUtils {
 
   static void readMeasurements(std::vector<MeasTriple>& measTripleVector,
                                size_t numLandmarks) {
-    std::string data_file = findExampleDataFile("starryNightMeas.txt");
+    std::string data_file = "StarryNight/starryNightMeas.txt";
     std::ifstream is(data_file.c_str());
     size_t poseID = 0;
     while (is) {
@@ -241,7 +240,7 @@ class FileUtils {
   static void readGroundTruth(std::vector<Pose3>& poses,
                               std::vector<Point3>& landmarks) {
     // groundtruth poses in world frame
-    std::string data_file = findExampleDataFile("starryNightGroundtruth.txt");
+    std::string data_file = "StarryNight/starryNightGroundtruth.txt";
     std::ifstream is(data_file.c_str());
     std::string line;
     while (std::getline(is, line)) {
@@ -260,7 +259,7 @@ class FileUtils {
     is.clear();
 
     // landmarks
-    data_file = findExampleDataFile("starryNightLandmarkPos.txt");
+    data_file = "StarryNight/starryNightLandmarkPos.txt";
     std::ifstream is2(data_file.c_str());
     while (std::getline(is2, line)) {
       std::istringstream iss(line);
