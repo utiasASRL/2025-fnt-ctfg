@@ -10,73 +10,7 @@ using std::string;
 using std::vector;
 using namespace std;
 
-struct LostInTheWoodsParams {
-  // File paths
-  string input_file;
-  string output_file;
-  string gt_output_file;
-  string interp_raw_file;
-  string interp_out;
-  string interp_graph_out;
 
-  // Flags
-  bool include_prior;
-  bool include_odom;
-  bool include_wnoa;
-  bool include_br_meas;
-  bool gt_init;
-  bool solve_slam;
-
-  // Interpolation
-  bool interp_enable;
-  uint interp_period;
-  bool fixed_noise;
-
-  // Parameters
-  double r_max;
-  double del_t;
-  int start;
-  int end;
-
-  // Noise
-  vector<double> sigma_prior_vec;
-  vector<double> sigma_wnoa_vec;
-  double sigma_y_odom;
-  double mult_bearing;
-  double mult_range;
-
-  // Constructor to load from YAML node
-  LostInTheWoodsParams(const YAML::Node& config) {
-    input_file = config["files"]["input"].as<string>();
-    output_file = config["files"]["output"].as<string>();
-    gt_output_file = config["files"]["gt_out"].as<string>();
-    interp_raw_file = config["files"]["interp_raw_file"].as<string>();
-    interp_out = config["files"]["interp_out"].as<string>();
-    interp_graph_out = config["files"]["interp_graph_out"].as<string>();
-
-    include_prior = config["flags"]["prior"].as<bool>();
-    include_odom = config["flags"]["odom"].as<bool>();
-    include_wnoa = config["flags"]["wnoa"].as<bool>();
-    include_br_meas = config["flags"]["br"].as<bool>();
-    gt_init = config["flags"]["gt_init"].as<bool>();
-    solve_slam = config["flags"]["solve_slam"].as<bool>();
-
-    interp_enable = config["interp"]["enable"].as<bool>();
-    interp_period = config["interp"]["interp_period"].as<uint>();
-    fixed_noise = config["interp"]["fixed_noise"].as<bool>();
-
-    r_max = config["params"]["r_max"].as<double>();
-    del_t = config["params"]["del_t"].as<double>();
-    start = config["params"]["start"].as<int>();
-    end = config["params"]["end"].as<int>();
-
-    sigma_prior_vec = config["noise"]["prior"].as<vector<double>>();
-    sigma_wnoa_vec = config["noise"]["wnoa"].as<vector<double>>();
-    sigma_y_odom = config["noise"]["odom_y"].as<double>();
-    mult_bearing = config["noise"]["bearing"].as<double>();
-    mult_range = config["noise"]["range"].as<double>();
-  }
-};
 
 int runLostInTheWoods(LostInTheWoodsParams& params) {
   // Load Files

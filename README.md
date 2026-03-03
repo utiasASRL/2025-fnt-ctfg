@@ -1,4 +1,4 @@
-This repo contains latex and coded examples for a 2025 FnT Article
+This repo contains latex and coded examples for a 2026 FnT Article
 
 "Smoothing Out the Edges:  Continuous-Time Estimation with Gaussian Process Motion Priors on Factor Graphs"
 

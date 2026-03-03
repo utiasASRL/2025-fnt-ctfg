@@ -9,11 +9,11 @@
 #include <gtsam/nonlinear/LevenbergMarquardtParams.h>
 #include <gtsam/nonlinear/Marginals.h>
 #include <gtsam/nonlinear/Values.h>
+#include <gtsam/nonlinear/WNOAFactor.h>
+#include <gtsam/nonlinear/WNOAInterpFactor.h>
 #include <gtsam/slam/BetweenFactor.h>
 #include <gtsam/slam/dataset.h>
 #include <gtsam/slam/expressions.h>
-#include <gtsam/nonlinear/WNOAFactor.h>
-#include <gtsam/nonlinear/WNOAInterpFactor.h>
 #include <yaml-cpp/yaml.h>
 
 #include <Eigen/Dense>
@@ -92,7 +92,7 @@ class DatasetLoader {
     parseNumerics();
 
     std::cout << "Loaded " << variables.size() << " variables from " << filename
-         << "\n";
+              << "\n";
   }
 
   // Parse a matrix from a MATLAB-style string into an Eigen::MatrixXd
@@ -175,22 +175,27 @@ class DatasetLoader {
     std::cout << "om shape: " << om.rows() << " x " << om.cols() << "\n";
     std::cout << "t shape: " << t.rows() << " x " << t.cols() << "\n";
     std::cout << "th_true shape: " << th_true.rows() << " x " << th_true.cols()
-         << "\n";
-    std::cout << "x_true shape: " << x_true.rows() << " x " << x_true.cols() << "\n";
-    std::cout << "y_true shape: " << y_true.rows() << " x " << y_true.cols() << "\n";
+              << "\n";
+    std::cout << "x_true shape: " << x_true.rows() << " x " << x_true.cols()
+              << "\n";
+    std::cout << "y_true shape: " << y_true.rows() << " x " << y_true.cols()
+              << "\n";
     std::cout << "bearing shape: " << bearing.rows() << " x " << bearing.cols()
-         << "\n";
-    std::cout << "range shape: " << range.rows() << " x " << range.cols() << "\n";
-    std::cout << "landmarks shape: " << landmarks.rows() << " x " << landmarks.cols()
-         << "\n";
+              << "\n";
+    std::cout << "range shape: " << range.rows() << " x " << range.cols()
+              << "\n";
+    std::cout << "landmarks shape: " << landmarks.rows() << " x "
+              << landmarks.cols() << "\n";
     std::cout << "traj len: " << size << std::endl;
   }
 };
 
 // --- Save Poses to CSV ---
-int saveResultToFile(Values& result, NonlinearFactorGraph& graph,
-                     const std::string& filename, bool save_landmarks = false, std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map = nullptr) {
-  
+int saveResultToFile(
+    Values& result, NonlinearFactorGraph& graph, const std::string& filename,
+    bool save_landmarks = false,
+    std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map =
+        nullptr) {
   std::cout << "Writing solve output to " << filename << std::endl;
   // Get marginals
   Marginals marginals(graph, result, Marginals::Factorization::QR);
@@ -203,9 +208,9 @@ int saveResultToFile(Values& result, NonlinearFactorGraph& graph,
     for (const auto& [key, pose] : result.extract<Pose2>()) {
       // check if key is defined in covariance map before using the marginals
       Matrix cov;
-      if (cov_map && cov_map->count(key)){
+      if (cov_map && cov_map->count(key)) {
         cov = (*cov_map)[key];
-      }else{
+      } else {
         cov = marginals.marginalCovariance(key);
       }
       poses_file << key << "," << pose.x() << "," << pose.y() << ","
@@ -219,7 +224,7 @@ int saveResultToFile(Values& result, NonlinearFactorGraph& graph,
     return 0;
   }
 
-  if(save_landmarks) {
+  if (save_landmarks) {
     std::string filename_lm = filename;
     filename_lm.replace(filename_lm.find(".csv"), 4, "_landmarks.csv");
     // open file, print header
@@ -230,12 +235,11 @@ int saveResultToFile(Values& result, NonlinearFactorGraph& graph,
       for (const auto& [key, point] : result.extract<Point2>()) {
         Matrix cov = marginals.marginalCovariance(key);
         landmarks_file << key << "," << point.x() << "," << point.y() << ","
-                      << cov(0, 0) << "," << cov(0, 1) << ","
-                      << cov(1, 1) << "\n";
+                       << cov(0, 0) << "," << cov(0, 1) << "," << cov(1, 1)
+                       << "\n";
       }
       landmarks_file.close();
-    }
-    else {
+    } else {
       std::cerr << "Error opening file" << std::endl;
       return 0;
     }
@@ -261,8 +265,8 @@ BearingRange2_ BearingRangeLandmarkPrediction(Key posekey,
 
 // Expression function for Range-Bearing to non-fixed Landmark factor
 BearingRange2_ BearingRangeLandmarkPredictionSLAM(Key posekey,
-                                              const Key landmark,
-                                              const Pose2 T_vs) {
+                                                  const Key landmark,
+                                                  const Pose2 T_vs) {
   // Define Expression for pose and landmark
   Pose2_ T_iv(posekey);
   Point2_ landmark_(landmark);
@@ -271,3 +275,78 @@ BearingRange2_ BearingRangeLandmarkPredictionSLAM(Key posekey,
   // Compute the bearing and range to the point
   return BearingRange2_(BearingRange2::Measure, T_is, landmark_);
 }
+
+struct LostInTheWoodsParams {
+  // File paths
+  string input_file;        // Path to input dataset file
+  string output_file;       // Path to output CSV for estimated poses
+  string gt_output_file;    // Path to output CSV for ground truth poses
+  string interp_raw_file;   // Path to output CSV for raw (estimated-only)
+                            // interpolated results
+  string interp_out;        // Path to output CSV for full interpolated results
+  string interp_graph_out;  // Path to output CSV for interpolated results with
+                            // graph covariances
+
+  // Flags
+  bool include_prior;    // Add a prior factor on the starting pose and velocity
+  bool include_odom;     // Add odometry between-factors
+  bool include_wnoa;     // Add white-noise-on-acceleration (WNOA) motion prior
+                         // factors
+  bool include_br_meas;  // Add bearing-range measurement factors to landmarks
+  bool gt_init;          // Initialize the optimizer with ground truth values
+  bool solve_slam;  // Estimate landmark positions (SLAM) instead of using known
+                    // landmarks
+
+  // Interpolation
+  bool interp_enable;  // Enable GP interpolation to reduce the number of
+                       // estimated states
+  uint
+      interp_period;  // Keep every Nth state as estimated; interpolate the rest
+  bool fixed_noise;   // Use fixed (non-interpolated) noise for interpolated
+                      // factors
+
+  // Parameters
+  double r_max;  // Maximum range (m) for accepting bearing-range measurements
+  double del_t;  // Time step between consecutive states (s)
+  int start;     // Index of the first trajectory state to include
+  int end;       // Index of the last trajectory state to include
+
+  // Noise
+  vector<double> sigma_prior_vec;  // Prior noise sigmas [x, y, theta]
+  vector<double> sigma_wnoa_vec;   // WNOA process noise sigmas [x, y, theta]
+  double sigma_y_odom;  // Lateral (y) odometry noise standard deviation
+  double mult_bearing;  // Multiplier on bearing measurement noise variance
+  double mult_range;    // Multiplier on range measurement noise variance
+
+  // Constructor to load from YAML node
+  LostInTheWoodsParams(const YAML::Node& config) {
+    input_file = config["files"]["input"].as<string>();
+    output_file = config["files"]["output"].as<string>();
+    gt_output_file = config["files"]["gt_out"].as<string>();
+    interp_raw_file = config["files"]["interp_raw_file"].as<string>();
+    interp_out = config["files"]["interp_out"].as<string>();
+    interp_graph_out = config["files"]["interp_graph_out"].as<string>();
+
+    include_prior = config["flags"]["prior"].as<bool>();
+    include_odom = config["flags"]["odom"].as<bool>();
+    include_wnoa = config["flags"]["wnoa"].as<bool>();
+    include_br_meas = config["flags"]["br"].as<bool>();
+    gt_init = config["flags"]["gt_init"].as<bool>();
+    solve_slam = config["flags"]["solve_slam"].as<bool>();
+
+    interp_enable = config["interp"]["enable"].as<bool>();
+    interp_period = config["interp"]["interp_period"].as<uint>();
+    fixed_noise = config["interp"]["fixed_noise"].as<bool>();
+
+    r_max = config["params"]["r_max"].as<double>();
+    del_t = config["params"]["del_t"].as<double>();
+    start = config["params"]["start"].as<int>();
+    end = config["params"]["end"].as<int>();
+
+    sigma_prior_vec = config["noise"]["prior"].as<vector<double>>();
+    sigma_wnoa_vec = config["noise"]["wnoa"].as<vector<double>>();
+    sigma_y_odom = config["noise"]["odom_y"].as<double>();
+    mult_bearing = config["noise"]["bearing"].as<double>();
+    mult_range = config["noise"]["range"].as<double>();
+  }
+};

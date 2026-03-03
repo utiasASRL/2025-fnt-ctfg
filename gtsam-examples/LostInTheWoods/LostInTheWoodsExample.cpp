@@ -10,48 +10,24 @@ int main(int argc, char* argv[]) {
   }
   YAML::Node config = YAML::LoadFile(config_file);
 
-  // Load Files
-  string input_file = config["files"]["input"].as<string>();
-  string output_file = config["files"]["output"].as<string>();
-  string gt_output_file = config["files"]["gt_out"].as<string>();
-  string interp_raw_file = config["files"]["interp_raw_file"].as<string>();
-  string interp_out = config["files"]["interp_out"].as<string>();
+  // Use parameter struct to load all parameters
+  LostInTheWoodsParams p(config);
+
   // Load dataset
   DatasetLoader data;
-  data.loadFromFile(input_file);
+  data.loadFromFile(p.input_file);
   data.checkSizes();
 
-  // switches for factors/init
-  bool include_prior = config["flags"]["prior"].as<bool>();
-  bool include_odom = config["flags"]["odom"].as<bool>();
-  bool include_wnoa = config["flags"]["wnoa"].as<bool>();
-  bool include_br_meas = config["flags"]["br"].as<bool>();
-  bool gt_init = config["flags"]["gt_init"].as<bool>();
-  bool solve_slam = config["flags"]["solve_slam"].as<bool>();
-  // interpolation
-  bool interp_enable = config["interp"]["enable"].as<bool>();
-  uint interp_period = config["interp"]["interp_period"].as<uint>();
-  bool fixed_noise = config["interp"]["fixed_noise"].as<bool>();
-  if (interp_enable) {
-    output_file = interp_out;
-  }
-  // Get inputs from param file
-  double r_max = config["params"]["r_max"].as<double>();
-  double del_t = config["params"]["del_t"].as<double>();
-  int start = config["params"]["start"].as<int>();
-  int end = config["params"]["end"].as<int>();
-  // Get noise model parameters
-  Vector sigma_prior =
-      Vector3(config["noise"]["prior"].as<vector<double>>().data());
-  Vector sigma_wnoa =
-      Vector3(config["noise"]["wnoa"].as<vector<double>>().data());
-  double sigma_y_odom = config["noise"]["odom_y"].as<double>();
-  double mult_bearing = config["noise"]["bearing"].as<double>();
-  double mult_range = config["noise"]["range"].as<double>();
+  // Determine output file
+  string output_file = p.interp_enable ? p.interp_out : p.output_file;
+
+  // Build Eigen vectors from param struct
+  Vector sigma_prior = Vector3(p.sigma_prior_vec.data());
+  Vector sigma_wnoa = Vector3(p.sigma_wnoa_vec.data());
   Vector sigma_odom =
-      Vector3(sqrt(data.v_var), sigma_y_odom, sqrt(data.om_var)) * del_t;
-  Vector sigma_br =
-      Vector2(sqrt(mult_bearing * data.b_var), sqrt(mult_range * data.r_var));
+      Vector3(sqrt(data.v_var), p.sigma_y_odom, sqrt(data.om_var)) * p.del_t;
+  Vector sigma_br = Vector2(sqrt(p.mult_bearing * data.b_var),
+                            sqrt(p.mult_range * data.r_var));
 
   // Generate noise models
   auto priorNoise = noiseModel::Diagonal::Sigmas(sigma_prior);  // prior
@@ -62,10 +38,10 @@ int main(int argc, char* argv[]) {
   // Get ground truth solution
   Values gt;
   vector<StateData> all_states;
-  for (int i = start; i <= end; i++) {
+  for (int i = p.start; i <= p.end; i++) {
     gt.insert(Symbol('x', i),
               Pose2(data.x_true[i], data.y_true[i], data.th_true[i]));
-    if (include_wnoa || interp_enable) {
+    if (p.include_wnoa || p.interp_enable) {
       gt.insert(Symbol('v', i), Vector3(data.v[i], 0.0, data.om[i]));
       // create vector of states for interpolation
       all_states.push_back(
@@ -82,25 +58,26 @@ int main(int argc, char* argv[]) {
   ExpressionFactorGraph graph;
 
   // Starting point
-  Pose2 startPose(data.x_true[start], data.y_true[start], data.th_true[start]);
+  Pose2 startPose(data.x_true[p.start], data.y_true[p.start],
+                  data.th_true[p.start]);
   // Initial Pose Prior
-  if (include_prior) {
+  if (p.include_prior) {
     cout << "Adding Prior on start pose: " << sigma_prior << endl;
-    graph.add(PriorFactor<Pose2>(Symbol('x', start), startPose, priorNoise));
-    if (include_wnoa || interp_enable) {
+    graph.add(PriorFactor<Pose2>(Symbol('x', p.start), startPose, priorNoise));
+    if (p.include_wnoa || p.interp_enable) {
       // Add in velocity prior on first state
       cout << "Adding Prior on start velocity" << endl;
-      Vector vel_init = Vector3(data.v[start], 0.0, data.om[start]);
-      graph.addPrior<Vector3>(Symbol('v', start), vel_init, odoNoise);
+      Vector vel_init = Vector3(data.v[p.start], 0.0, data.om[p.start]);
+      graph.addPrior<Vector3>(Symbol('v', p.start), vel_init, odoNoise);
     }
   }
   // Odometry factors
-  if (include_odom) {
+  if (p.include_odom) {
     cout << "Adding odometry prior factors " << endl;
 
-    for (int i = start + 1; i <= end; i++) {
+    for (int i = p.start + 1; i <= p.end; i++) {
       // define odometry measurement
-      Pose2 odom(data.v[i - 1] * del_t, 0.0, data.om[i - 1] * del_t);
+      Pose2 odom(data.v[i - 1] * p.del_t, 0.0, data.om[i - 1] * p.del_t);
       // add factor to graph
       const auto factor = BetweenFactor<Pose2>(Symbol('x', i - 1),
                                                Symbol('x', i), odom, odoNoise);
@@ -110,7 +87,7 @@ int main(int argc, char* argv[]) {
 
   // White-Noise-On-Acceleration Prior
   // Only add if not adding later for interpolated factors
-  if (include_wnoa) {
+  if (p.include_wnoa) {
     cout << "Adding WNOA factors" << endl;
     // Add WNOA Motion Factors between states
     for (uint i = 0; i < all_states.size() - 1; i++) {
@@ -123,7 +100,7 @@ int main(int argc, char* argv[]) {
   // Create a list of 18 booleans that track which landmarks have been observed
   // at least once
   vector<bool> landmark_observed(data.n_landmarks, false);
-  if (include_br_meas) {
+  if (p.include_br_meas) {
     cout << "Adding bearing range measurement factors" << endl;
 
     // Define landmarks
@@ -133,14 +110,14 @@ int main(int argc, char* argv[]) {
     }
 
     Pose2 T_vs(data.d, 0.0, 0.0);
-    for (int i = start; i <= end; i++) {
+    for (int i = p.start; i <= p.end; i++) {
       // Define Key
       Key xi = Symbol('x', i);
       for (int j = 0; j < data.n_landmarks; j++) {
         Key landmark = Symbol('l', j);
         // Check if we have a valid measurement
         if ((data.range(i, j) > 0.0) && (abs(data.bearing(i, j)) > 0.0) &&
-            (data.range(i, j) < r_max)) {
+            (data.range(i, j) < p.r_max)) {
           // Landmark has been observed
           landmark_observed[j] = true;
           // Get Bearing Range measurement
@@ -149,7 +126,7 @@ int main(int argc, char* argv[]) {
           // If we solve slam, use unknown landmark variable, otherwise use
           // ground-truth value
           auto predict =
-              solve_slam
+              p.solve_slam
                   ? BearingRangeLandmarkPredictionSLAM(xi, landmark, T_vs)
                   : BearingRangeLandmarkPrediction(xi, landmarks[j], T_vs);
           // Define Factor
@@ -161,26 +138,26 @@ int main(int argc, char* argv[]) {
 
   // Initialization
   Values initial;
-  if (gt_init) {
+  if (p.gt_init) {
     cout << "Ground truth initialization enabled" << endl;
     initial = gt;
   } else {
     cout << "Ground truth initialization disabled" << endl;
     // Rollout odometry
-    for (int i = start; i <= end; i++) {
-      if (i == start) {
+    for (int i = p.start; i <= p.end; i++) {
+      if (i == p.start) {
         initial.insert(Symbol('x', i), startPose);
         Vector3 zero = Vector3::Zero();
-        if (include_wnoa || interp_enable) {
+        if (p.include_wnoa || p.interp_enable) {
           initial.insert(Symbol('v', i), zero);
         }
       } else {
         Vector vel = Vector3(data.v[i - 1], 0.0, data.om[i - 1]);
-        Vector3 vel_t = del_t * vel;
+        Vector3 vel_t = p.del_t * vel;
         Pose2 odom = Pose2::Expmap(vel_t);
         initial.insert(Symbol('x', i),
                        initial.at<Pose2>(Symbol('x', i - 1)).compose(odom));
-        if (include_wnoa || interp_enable) {
+        if (p.include_wnoa || p.interp_enable) {
           initial.insert(Symbol('v', i), vel);
         }
       }
@@ -188,7 +165,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Initialize landmarks if doing full SLAM
-  if (solve_slam) {
+  if (p.solve_slam) {
     // Initialize landmarks at zero
     for (int j = 0; j < data.n_landmarks; j++) {
       // Only add keys for landmarks that have been observed
@@ -199,19 +176,19 @@ int main(int argc, char* argv[]) {
   }
 
   // set up optimizer
-  LevenbergMarquardtParams params;
-  params.setVerbosityLM("SUMMARY");
+  LevenbergMarquardtParams opt_params;
+  opt_params.setVerbosityLM("SUMMARY");
 
   // Run optimizer
   Values result;
   Values result_interp;
-  if (interp_enable) {
+  if (p.interp_enable) {
     cout << "Interpolation enabled!" << endl;
     // process states into estimated and interpolated
     set<StateData> interp;
     set<StateData> estim;
     for (size_t i = 0; i < all_states.size(); i++) {
-      if (i == 0 || i == all_states.size() - 1 || i % interp_period == 0) {
+      if (i == 0 || i == all_states.size() - 1 || i % p.interp_period == 0) {
         estim.insert(all_states[i]);
       } else {
         interp.insert(all_states[i]);
@@ -221,23 +198,25 @@ int main(int argc, char* argv[]) {
       }
     }
     // Generate interpolated version of graph
-    NonlinearFactorGraph graph_interp =
-        interpolateFactorGraph<Pose2>(graph, estim, interp, sigma_wnoa, fixed_noise);
+    NonlinearFactorGraph graph_interp = interpolateFactorGraph<Pose2>(
+        graph, estim, interp, sigma_wnoa, p.fixed_noise);
     // Run optimizer
     result_interp =
-        LevenbergMarquardtOptimizer(graph_interp, initial, params).optimize();
+        LevenbergMarquardtOptimizer(graph_interp, initial, opt_params)
+            .optimize();
     // save intermediate result with only estimated states
-    saveResultToFile(result_interp, graph_interp, interp_raw_file, solve_slam);
+    saveResultToFile(result_interp, graph_interp, p.interp_raw_file,
+                     p.solve_slam);
     // Recover interpolated means using interpolator
     result = updateInterpValues<Pose2>(graph_interp, result_interp, estim,
                                        interp, sigma_wnoa);
   } else {
-    result = LevenbergMarquardtOptimizer(graph, initial, params).optimize();
+    result = LevenbergMarquardtOptimizer(graph, initial, opt_params).optimize();
   }
   // Save results
   cout << "Optimizer has finished...saving results..." << endl;
-  saveResultToFile(result, graph, output_file, solve_slam);
-  saveResultToFile(gt, graph, gt_output_file, solve_slam);
+  saveResultToFile(result, graph, output_file, p.solve_slam);
+  saveResultToFile(gt, graph, p.gt_output_file, p.solve_slam);
 
   return 0;
 }
