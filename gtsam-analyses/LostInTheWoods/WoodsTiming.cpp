@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <iomanip>
 
 #include "LostInTheWoodsExample.h"
 #include <gtsam/nonlinear/WNOAFactorGraph.h>
@@ -11,6 +12,7 @@
 
 using std::string;
 using std::vector;
+using namespace std;
 
 struct TimingParams {
   // File paths
