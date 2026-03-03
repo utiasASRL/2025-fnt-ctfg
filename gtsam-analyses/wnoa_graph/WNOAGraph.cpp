@@ -3,7 +3,7 @@
 #define ENABLE_TIMING
 #endif
 
-#include <gtsam/nonlinear/Interpolator.h>
+#include <gtsam/nonlinear/WNOAInterpolator.h>
 
 #include <chrono>
 

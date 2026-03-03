@@ -1,4 +1,4 @@
-#include <gtsam/nonlinear/Interpolator.h>
+#include <gtsam/nonlinear/WNOAInterpolator.h>
 
 #include <chrono>
 
