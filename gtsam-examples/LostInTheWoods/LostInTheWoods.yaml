@@ -5,7 +5,7 @@ files:
   gt_out : "LostInTheWoods/results/lost_gt.csv"           # Path to output CSV for ground truth poses
   interp_raw_file: "LostInTheWoods/results/lost_interp_raw.csv"  # Path to output CSV for raw (estimated-only) interpolated results
   interp_out : "LostInTheWoods/results/lost_interp.csv"   # Path to output CSV for full interpolated results
-
+  interp_graph_out : "LostInTheWoods/results/graph_out.csv" # Path to output graph
 # Parameters
 params:
   r_max: 4.0      # Maximum range (m) for accepting bearing-range measurements

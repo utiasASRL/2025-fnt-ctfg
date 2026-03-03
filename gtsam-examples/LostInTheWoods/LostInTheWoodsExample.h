@@ -278,13 +278,13 @@ BearingRange2_ BearingRangeLandmarkPredictionSLAM(Key posekey,
 
 struct LostInTheWoodsParams {
   // File paths
-  string input_file;        // Path to input dataset file
-  string output_file;       // Path to output CSV for estimated poses
-  string gt_output_file;    // Path to output CSV for ground truth poses
-  string interp_raw_file;   // Path to output CSV for raw (estimated-only)
+  std::string input_file;        // Path to input dataset file
+  std::string output_file;       // Path to output CSV for estimated poses
+  std::string gt_output_file;    // Path to output CSV for ground truth poses
+  std::string interp_raw_file;   // Path to output CSV for raw (estimated-only)
                             // interpolated results
-  string interp_out;        // Path to output CSV for full interpolated results
-  string interp_graph_out;  // Path to output CSV for interpolated results with
+  std::string interp_out;        // Path to output CSV for full interpolated results
+  std::string interp_graph_out;  // Path to output CSV for interpolated results with
                             // graph covariances
 
   // Flags
@@ -312,20 +312,20 @@ struct LostInTheWoodsParams {
   int end;       // Index of the last trajectory state to include
 
   // Noise
-  vector<double> sigma_prior_vec;  // Prior noise sigmas [x, y, theta]
-  vector<double> sigma_wnoa_vec;   // WNOA process noise sigmas [x, y, theta]
+  std::vector<double> sigma_prior_vec;  // Prior noise sigmas [x, y, theta]
+  std::vector<double> sigma_wnoa_vec;   // WNOA process noise sigmas [x, y, theta]
   double sigma_y_odom;  // Lateral (y) odometry noise standard deviation
   double mult_bearing;  // Multiplier on bearing measurement noise variance
   double mult_range;    // Multiplier on range measurement noise variance
 
   // Constructor to load from YAML node
   LostInTheWoodsParams(const YAML::Node& config) {
-    input_file = config["files"]["input"].as<string>();
-    output_file = config["files"]["output"].as<string>();
-    gt_output_file = config["files"]["gt_out"].as<string>();
-    interp_raw_file = config["files"]["interp_raw_file"].as<string>();
-    interp_out = config["files"]["interp_out"].as<string>();
-    interp_graph_out = config["files"]["interp_graph_out"].as<string>();
+    input_file = config["files"]["input"].as<std::string>();
+    output_file = config["files"]["output"].as<std::string>();
+    gt_output_file = config["files"]["gt_out"].as<std::string>();
+    interp_raw_file = config["files"]["interp_raw_file"].as<std::string>();
+    interp_out = config["files"]["interp_out"].as<std::string>();
+    interp_graph_out = config["files"]["interp_graph_out"].as<std::string>();
 
     include_prior = config["flags"]["prior"].as<bool>();
     include_odom = config["flags"]["odom"].as<bool>();
@@ -343,8 +343,8 @@ struct LostInTheWoodsParams {
     start = config["params"]["start"].as<int>();
     end = config["params"]["end"].as<int>();
 
-    sigma_prior_vec = config["noise"]["prior"].as<vector<double>>();
-    sigma_wnoa_vec = config["noise"]["wnoa"].as<vector<double>>();
+    sigma_prior_vec = config["noise"]["prior"].as<std::vector<double>>();
+    sigma_wnoa_vec = config["noise"]["wnoa"].as<std::vector<double>>();
     sigma_y_odom = config["noise"]["odom_y"].as<double>();
     mult_bearing = config["noise"]["bearing"].as<double>();
     mult_range = config["noise"]["range"].as<double>();
