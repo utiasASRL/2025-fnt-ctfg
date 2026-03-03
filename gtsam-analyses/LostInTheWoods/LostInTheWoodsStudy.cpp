@@ -8,6 +8,7 @@
 
 using std::string;
 using std::vector;
+using namespace std;
 
 struct LostInTheWoodsParams {
   // File paths
