@@ -1,29 +1,38 @@
+# File paths
 files:
-  input : "LostInTheWoods/LostInTheWoods.txt"
-  output : "results/litw_fig2_solve.csv" 
-  gt_out : "results/litw_fig2_gt.csv"
-  interp_raw_file: "results/lost_interp_raw.csv"
-  interp_out : "results/lost_interp.csv" 
+  input : "LostInTheWoods/LostInTheWoods.txt"       # Path to input dataset file
+  output : "results/litw_fig2_solve.csv"             # Path to output CSV for estimated poses
+  gt_out : "results/litw_fig2_gt.csv"                # Path to output CSV for ground truth poses
+  interp_raw_file: "results/lost_interp_raw.csv"     # Path to output CSV for raw (estimated-only) interpolated results
+  interp_out : "results/lost_interp.csv"             # Path to output CSV for full interpolated results
+
+# Parameters
 params:
-  r_max: 10.0
-  del_t: 0.1
-  start: 1000
-  end: 6000
-  n_runs: 1
+  r_max: 10.0     # Maximum range (m) for accepting bearing-range measurements
+  del_t: 0.1      # Time step between consecutive states (s)
+  start: 1000     # Index of the first trajectory state to include
+  end: 6000       # Index of the last trajectory state to include
+  n_runs: 1       # Number of Monte Carlo runs
+
+# Flags
 flags:
-  prior: true
-  odom: true
-  wnoa: False
-  br: true
-  gt_init: false
-  solve_slam: false
+  prior: true        # Add a prior factor on the starting pose and velocity
+  odom: true         # Add odometry between-factors
+  wnoa: False        # Add white-noise-on-acceleration (WNOA) motion prior factors
+  br: true           # Add bearing-range measurement factors to landmarks
+  gt_init: false     # Initialize the optimizer with ground truth values
+  solve_slam: false  # Estimate landmark positions (SLAM) instead of using known landmarks
+
+# Interpolation
 interp:
-  enable: false
-  interp_period: 10 
-  fixed_noise: false
+  enable: false       # Enable GP interpolation to reduce the number of estimated states
+  interp_period: 10   # Keep every Nth state as estimated; interpolate the rest
+  fixed_noise: false  # Use fixed (non-interpolated) noise for interpolated factors
+
+# Noise
 noise:
-  prior: [1e-2, 1e-2, 1e-3]
-  odom_y: 1.0e-2
-  wnoa: [1e-2, 1e-3, 5e-4]
-  bearing: 1.5
-  range: 1.5
+  prior: [1e-2, 1e-2, 1e-3]  # Prior noise sigmas [x, y, theta]
+  odom_y: 1.0e-2              # Lateral (y) odometry noise standard deviation
+  wnoa: [1e-2, 1e-3, 5e-4]   # WNOA process noise sigmas [x, y, theta]
+  bearing: 1.5                # Multiplier on bearing measurement noise variance
+  range: 1.5                  # Multiplier on range measurement noise variance
