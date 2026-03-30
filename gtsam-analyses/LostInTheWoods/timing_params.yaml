@@ -1,0 +1,45 @@
+# File paths
+files:
+  input : "LostInTheWoods/LostInTheWoods.txt"       # Path to input dataset file
+  output : "results/lost.csv"                       # Path to output CSV for estimated poses
+  gt_out : "results/lost_gt.csv"                    # Path to output CSV for ground truth poses
+  interp_raw_file: "results/lost_interp_raw.csv"    # Path to output CSV for raw (estimated-only) interpolated results
+  interp_out : "results/lost_wrapper.csv"           # Path to output CSV for full interpolated results
+  interp_graph_out : "results/default_graph.csv"    # Path to output CSV for interpolated results with graph covariances
+
+# Parameters
+params:
+  r_max: 10       # Maximum range (m) for accepting bearing-range measurements
+  del_t: 0.1      # Time step between consecutive states (s)
+  start: 6000     # Index of the first trajectory state to include
+  end: 7000       # Index of the last trajectory state to include
+  n_runs: 50      # Number of Monte Carlo runs
+
+# Flags
+flags:
+  prior: true        # Add a prior factor on the starting pose and velocity
+  odom: false        # Add odometry between-factors
+  wnoa: true         # Add white-noise-on-acceleration (WNOA) motion prior factors
+  br: true           # Add bearing-range measurement factors to landmarks
+  gt_init: false     # Initialize the optimizer with ground truth values
+  solve_slam: true   # Estimate landmark positions (SLAM) instead of using known landmarks
+
+# Interpolation
+interp:
+  interp_period: 10   # Keep every Nth state as estimated; interpolate the rest
+  fixed_noise: true   # Use fixed (non-interpolated) noise for interpolated factors
+
+#noise: #loc
+  #prior: [1.0e1, 1.0e1, 1.0e0]   # Prior noise sigmas [x, y, theta]
+  #odom_y: 1.0e-2                  # Lateral (y) odometry noise standard deviation
+  #wnoa: [1.0e0, 1.0e-1, 1.0e0]   # WNOA process noise sigmas [x, y, theta]
+  #bearing:  10.0                  # Multiplier on bearing measurement noise variance
+  #range: 10.0                     # Multiplier on range measurement noise variance
+
+# Noise
+noise: #slam
+  prior: [1.0e-4, 1.0e-4, 1.0e-4]  # Prior noise sigmas [x, y, theta]
+  odom_y: 1.0e-2                    # Lateral (y) odometry noise standard deviation
+  wnoa: [1.0e0, 1.0e-1, 1.0e0]     # WNOA process noise sigmas [x, y, theta]
+  bearing:  1.0                     # Multiplier on bearing measurement noise variance
+  range: 1.0                        # Multiplier on range measurement noise variance

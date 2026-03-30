@@ -29,3 +29,14 @@ latex/*.vrb
 *.swo
 .DS_Store
 *.log
+
+# Analysis files
+gtsam-analyses/build/
+gtsam-analyses/results/
+gtsam-analyses/plots/
+
+# Example files
+gtsam-examples/build/
+gtsam-examples/*/results/
+*.g2o
+*.dot
