@@ -12,21 +12,21 @@ We consider a general Lie group quantity $\Tsmall \in G$, where $G$ is a Lie gro
 The tangent space at the identity element of the Lie group is called the Lie algebra, denoted $\mathfrak{g}$.  
 Although the elements of the Lie algebra often have non-trivial matrix structures, the Lie algebra itself is an $m$-dimensional vector space, so we can represent each element using a coordinate vector, $\mbs{\xi}\in\Real^m$. For each Lie group, we can define a unique, isomorphic mapping (called the {\em wedge operator}), $\wdg:~\Real^m\rightarrow \mathfrak{g}$, as well as its associated inverse map, $\vee:~\mathfrak{g}\rightarrow \Real^m$, so that $\mbs{\xi}^\wdg \in \mathfrak{g}$ is in the Lie algebra . Given this isomorphism, we often refer to $\mbs{\xi}$ as an element of the Lie algebra.
 
-The exponential map $\mbox{exp}: \mathfrak{g} \to G$ maps elements of the Lie algebra to the Lie group, while the logarithm map $\mbox{log}: G \to \mathfrak{g}$ maps elements of the Lie group back to the Lie algebra: 
+The exponential map, $\mbox{exp}: \mathfrak{g} \to G$, maps elements of the Lie algebra to the Lie group, while the logarithm map, $\mbox{log}: G \to \mathfrak{g}$, maps elements of the Lie group back to the Lie algebra: 
 \begin{equation}
 \Tsmall = \mbox{exp}(\mbs{\xi}^\wdg)= \mbox{Exp}(\mbs{\xi}), \quad \mbs{\xi} = \mbox{log}(\Tsmall)^\vee=\mbox{Log}(\Tsmall),
 \end{equation}
-where $\mbox{exp}$ and $\mbox{log}$ are the {\em matrix exponential and logarithm}, respectively, and we define convenience operators $\mbox{Exp}$ and $\mbox{Log}$, following~\citet{solaMicroLieTheory2021}.
+where $\mbox{exp}$ and $\mbox{log}$ are the {\em matrix exponential and logarithm},\footnote{For general manifolds, these maps will not necessarily correspond to the matrix exponential and logarithm, but for the matrix Lie groups used in robotics, this is most often the case.} respectively, and we define convenience operators, $\mbox{Exp}$ and $\mbox{Log}$, following~\citet{solaMicroLieTheory2021}.
 
 The interested reader can find several examples of Lie groups, their Lie algebras and mapping operators in~\citet{solaMicroLieTheory2021} and~\citet{barfoot_ser24}.
 Some common Lie groups include the special orthogonal group $SO(3)$, which represents rotations in three-dimensional space, and the special Euclidean group $SE(3)$, which represents rigid-body motions in three-dimensional space.  The Lie algebra for $SO(3)$ is $\mathfrak{so}(3)$, which can be represented as a skew-symmetric matrix, while the Lie algebra for $SE(3)$ is $\mathfrak{se}(3)$, which can be represented as a six-dimensional vector (the twist) that combines rotation and translation.
 
 For optimization on Lie groups, what we really want is a well-defined way to perturb an element of the Lie group.
-For the groups in which we are interested, such as $SE(3)$, there are constraints on the scalar elements of the Lie group elements, $\mbf{T}$.  This makes it a bit challenging to work with these elements directly, so we will often work with the Lie algebra elements, $\mbs{\xi}$, instead. 
+For the groups in which we are interested, such as $SE(3)$, there are constraints on the scalar elements of the Lie group elements, $\mbf{T}$.  This makes it a bit challenging to work with these elements directly, so we will often work with the Lie algebra elements, $\mbs{\xi}$, instead (since they are unconstrained). 
 
-The exponential map $\mbox{Exp}(\mbs{\xi})$ is a local diffeomorphism around the identity element of the Lie group, which means that we can use it to define Lie group elements around the identity. To perturb a Lie group element, we can write
+The exponential map, $\mbox{Exp}(\mbs{\xi})$, is a local diffeomorphism around the identity element of the Lie group, which means that we can use it to define Lie group elements around the identity. To perturb a general Lie group element, we can simply multiply by a perturbation of Identity,
 \begin{equation}\label{eq:lie-perturb}
-\Tsmall = \Tsmall_{\rm op}\mbox{Exp}(\mbs{\xi}) \approx \Tsmall_{\rm op} (\mbf{I}+\mbs{\xi}^\wdg) = \Tsmall_{\rm op} + \Tsmall_{\rm op} \mbs{\xi}^\wdg,
+\Tsmall = \Tsmall_{\rm op}\mbox{Exp}(\mbs{\xi}) \approx \Tsmall_{\rm op} \underbrace{(\mbf{I}+\mbs{\xi}^\wdg)}_{\substack{\text{approx.} \\\text{perturb. of}\\\mbf{I}}} = \underbrace{\Tsmall_{\rm op} + \Tsmall_{\rm op} \mbs{\xi}^\wdg}_{\substack{\text{approx.} \\\text{perturb. of}\\\Tsmall_{\rm op}}},
 \end{equation}
 where $\Tsmall_{\rm op}$ is the operating point of the perturbation. The approximation in~\eqref{eq:lie-perturb} is only valid if $\mbs{\xi}$ is small, but is quite convenient when linearizing error terms involving elements of a Lie group.  For example, in state estimation, it is common to optimize over measurement-based error functions of the following form: 
 \begin{equation}
@@ -42,7 +42,7 @@ Representing uncertainty on Lie groups is also facilitated by the exponential ma
 \begin{equation}
 \mbf{T} \sim \mathcal{N}(\est{\mbf{T}}, \est{\mbf{P}}) \quad \Leftrightarrow \quad \mbf{T} = \est{\mbf{T}} \, \mbox{Exp}(\mbs{\xi}), \quad \mbs{\xi} \sim \mathcal{N}(\mbf{0}, \est{\mbf{P}}).
 \end{equation}
-In other words, we define a zero-mean Gaussian distribution on the Lie algebra, and then map it to the Lie group using the exponential map and the closure property of the Lie group.  This allows us to represent uncertainty on the Lie group in a way that is consistent with the geometry of the Lie group.  This approach is only appropriate for fairly concentrated Gaussians.
+In other words, we define a zero-mean Gaussian distribution on the Lie algebra, and then map it to the Lie group using the exponential map and the closure property of the Lie group.  This allows us to represent uncertainty on the Lie group in a way that is consistent with the geometry of the Lie group.\footnote{For more details on representing uncertainty on Lie groups, see~\cite{barfoot_tro14}.}  This approach is only appropriate for fairly concentrated Gaussians.
 
 \section{Motion Priors on Lie Groups}
 

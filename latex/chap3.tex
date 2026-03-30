@@ -15,7 +15,7 @@ We first provide a brief introduction to factor graphs in the next section. This
      \label{fig:dtfg1}
 \end{figure}
 
-Typically in state estimation, we are interested in computing a posterior density representing the likelihood of a state given some inputs and measurements of the form
+Typically in state estimation, we are interested in computing a posterior density representing the likelihood of a state,
 \begin{equation}
 p(\mbf{x} | \mbf{v}, \mbf{y}),
 \end{equation}
@@ -182,7 +182,7 @@ We follow the procedure outlined in the previous sections: (i) solve for the sta
 
 Up to this point, we have only considered the case where our interpolated query states are not associated with any measurements. Owing to our particular choice of continuous-time motion model, we showed that elimination of these query states resulted in a new motion factor corresponding to the same motion model. 
 
-We would also like to consider what happens when we eliminate a state that \emph{does} have an associated measurement with the ultimate goal of incorporating measurements without needing to explicitly include an associated state in the optimization. Practically speaking, this is useful in two scenarios:
+We would also like to consider what happens when we eliminate a state that \emph{does} have an associated measurement, with the ultimate goal of incorporating measurements without needing to explicitly include an associated state in the optimization. Practically speaking, this is useful in two scenarios:
 \begin{enumerate}
      \item It can reduce the size of the optimization problem when dealing with measurements from high-rate sensors, such as \ac{lidar}, \ac{radar}, or an \ac{imu}.
      \item It can allow us to regularly space our optimization states in time even when measurements are asynchronous. This regular spacing can be conducive to more accurate approximation of the posterior density \citep{zhang_tro24}

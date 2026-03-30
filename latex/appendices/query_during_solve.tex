@@ -84,7 +84,7 @@ At this point, it is worth noting that, even though the original measurement dis
 \section{Independence Approximation}
 \label{sec:ind-approx}
 
-To keep the batch optimization lightweight, we would like to be able to treat each measurement as a separate factor, even after marginalization of the interpolated states. This can be accomplished by dropping the cross-covariances between the interpolated variables. In other words, we can make the approximating assumption that the distribution of the $\mbf{x}_{\tau_{i}}$ variables are independent when conditioned on the bordering states:
+To keep the batch optimization lightweight, we may want to treat each measurement as a separate factor, even after marginalization of the interpolated states. This can be accomplished by dropping the cross-covariances between the interpolated variables. In other words, we can make the approximating assumption that the distribution of the $\mbf{x}_{\tau_{i}}$ variables are independent when conditioned on the bordering states:
 \begin{equation}
      p(\mbf{x}_{\tau_{1:N}}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}) = \prod\limits_{n=1}^{N} p(\mbf{x}_{\tau_{n}}|\mbf{x}_k, \mbf{x}_{k-1}, \mbf{v}).
 \end{equation}
