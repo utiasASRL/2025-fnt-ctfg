@@ -1,0 +1,39 @@
+# File paths
+files:
+  input : "LostInTheWoods/LostInTheWoods.txt"                # Path to input dataset file
+  output : "results/litw_fig3_full.csv"                      # Path to output CSV for estimated poses
+  gt_out : "results/litw_fig3_gt.csv"                        # Path to output CSV for ground truth poses
+  interp_raw_file: "results/litw_fig3_est.csv"               # Path to output CSV for raw (estimated-only) interpolated results
+  interp_out : "results/litw_fig3_interp.csv"                # Path to output CSV for full interpolated results
+  interp_graph_out : "results/litw_fig3_graph_interp.csv"    # Path to output CSV for interpolated results with graph covariances
+
+# Parameters
+params:
+  r_max: 1.0      # Maximum range (m) for accepting bearing-range measurements
+  del_t: 0.1      # Time step between consecutive states (s)
+  start: 1000     # Index of the first trajectory state to include
+  end: 2500       # Index of the last trajectory state to include
+  n_runs: 1       # Number of Monte Carlo runs
+
+# Flags
+flags:
+  prior: false       # Add a prior factor on the starting pose and velocity
+  odom: false        # Add odometry between-factors
+  wnoa: true         # Add white-noise-on-acceleration (WNOA) motion prior factors
+  br: true           # Add bearing-range measurement factors to landmarks
+  gt_init: false     # Initialize the optimizer with ground truth values
+  solve_slam: false  # Estimate landmark positions (SLAM) instead of using known landmarks
+
+# Interpolation
+interp:
+  enable: True        # Enable GP interpolation to reduce the number of estimated states
+  interp_period: 30   # Keep every Nth state as estimated; interpolate the rest
+  fixed_noise: False  # Use fixed (non-interpolated) noise for interpolated factors
+
+# Noise
+noise:
+  prior: [1e-2, 1e-2, 1e-3]  # Prior noise sigmas [x, y, theta]
+  odom_y: 1.0e-2              # Lateral (y) odometry noise standard deviation
+  wnoa: [1e-2, 1e-3, 5e-4]   # WNOA process noise sigmas [x, y, theta]
+  bearing: 1.0                # Multiplier on bearing measurement noise variance
+  range: 1.0                  # Multiplier on range measurement noise variance

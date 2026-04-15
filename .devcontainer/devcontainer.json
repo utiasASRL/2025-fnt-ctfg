@@ -1,0 +1,40 @@
+{
+  "name": "2025-fnt-ctfg-dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "USERNAME": "${localEnv:USER}",
+      "USER_UID": "${localEnv:UID}",
+      "USER_GID": "${localEnv:UID}" // GID same as UID
+    },
+    "context": "../extern"
+  },
+  "runArgs": [
+    "--cap-add=SYS_PTRACE"
+  ],
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "source=python_packages,target=/opt/conda/lib/python3.10/site-packages,type=volume"
+  ],
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "GitHub.vscode-pull-request-github",
+        "GitHub.copilot",
+        "ms-vscode.cmake-tools"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/conda/bin/python"
+      }
+    }
+  },
+  // "containerUser": "root", // Start as root so usermod/groupmod works
+  "remoteUser": "${localEnv:USER}", // VS Code will run as this user
+  // "updateRemoteUserUID": true // Explicitly enable the sync
+}
