@@ -22,24 +22,24 @@ flags:
   wnoa: true         # Add white-noise-on-acceleration (WNOA) motion prior factors
   br: true           # Add bearing-range measurement factors to landmarks
   gt_init: false     # Initialize the optimizer with ground truth values
-  solve_slam: true   # Estimate landmark positions (SLAM) instead of using known landmarks
+  solve_slam: false   # Estimate landmark positions (SLAM) instead of using known landmarks
 
 # Interpolation
 interp:
   interp_period: 10   # Keep every Nth state as estimated; interpolate the rest
   fixed_noise: true   # Use fixed (non-interpolated) noise for interpolated factors
 
-#noise: #loc
-  #prior: [1.0e1, 1.0e1, 1.0e0]   # Prior noise sigmas [x, y, theta]
-  #odom_y: 1.0e-2                  # Lateral (y) odometry noise standard deviation
-  #wnoa: [1.0e0, 1.0e-1, 1.0e0]   # WNOA process noise sigmas [x, y, theta]
-  #bearing:  10.0                  # Multiplier on bearing measurement noise variance
-  #range: 10.0                     # Multiplier on range measurement noise variance
+noise: #loc
+  prior: [1.0e1, 1.0e1, 1.0e0]   # Prior noise sigmas [x, y, theta]
+  odom_y: 1.0e-2                  # Lateral (y) odometry noise standard deviation
+  wnoa: [1.0e0, 1.0e-1, 1.0e0]   # WNOA process noise sigmas [x, y, theta]
+  bearing:  10.0                  # Multiplier on bearing measurement noise variance
+  range: 10.0                     # Multiplier on range measurement noise variance
 
-# Noise
-noise: #slam
-  prior: [1.0e-4, 1.0e-4, 1.0e-4]  # Prior noise sigmas [x, y, theta]
-  odom_y: 1.0e-2                    # Lateral (y) odometry noise standard deviation
-  wnoa: [1.0e0, 1.0e-1, 1.0e0]     # WNOA process noise sigmas [x, y, theta]
-  bearing:  1.0                     # Multiplier on bearing measurement noise variance
-  range: 1.0                        # Multiplier on range measurement noise variance
+# # Noise
+# noise: #slam
+#   prior: [1.0e-4, 1.0e-4, 1.0e-4]  # Prior noise sigmas [x, y, theta]
+#   odom_y: 1.0e-2                    # Lateral (y) odometry noise standard deviation
+#   wnoa: [1.0e0, 1.0e-1, 1.0e0]     # WNOA process noise sigmas [x, y, theta]
+#   bearing:  1.0                     # Multiplier on bearing measurement noise variance
+#   range: 1.0                        # Multiplier on range measurement noise variance

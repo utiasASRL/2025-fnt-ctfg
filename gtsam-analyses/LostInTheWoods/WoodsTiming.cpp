@@ -1,3 +1,8 @@
+/**
+ * @file    WoodsTiming.cpp
+ * @brief   Quantitative timing analysis for Lost in the Woods example
+ * @author  Sven Lilge
+ */
 #include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
 #include <gtsam/nonlinear/WnoaFactorGraph.h>
 #include <yaml-cpp/yaml.h>
@@ -525,7 +530,7 @@ int runLostInTheWoods(TimingParams& params) {
 
 int main(int argc, char* argv[]) {
   // Get configuration data
-  string config_file = "LostInTheWoods/timing_params.yaml";
+  string config_file = "LostInTheWoods/configs/timing_params.yaml";
   if (argc > 1) {
     config_file = argv[1];
   }

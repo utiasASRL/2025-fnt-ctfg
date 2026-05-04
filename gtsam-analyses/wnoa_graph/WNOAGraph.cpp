@@ -1,3 +1,9 @@
+/**
+ * @file    WNOAGraph.cpp
+ * @brief   An experimentation script for the WNOA interpolation-aware factor graph
+ * @author  Sven Lilge
+ */
+
 // Enable GTSAM timing instrumentation for this translation unit (must precede
 // including timing.h)
 #ifndef ENABLE_TIMING
@@ -123,8 +129,10 @@ void runInterpExample(InterpExampleParams& p) {
       graph, estimated_states, interpolated_states, p.Q_wnoa, p.fixed_noise);
 
   // generate WNOA graph
-  WnoaFactorGraph<Pose2> graph_wnoa = interpolateFactorGraph<Pose2, WnoaFactorGraph<Pose2>>(
-      graph, estimated_states, interpolated_states, p.Q_wnoa, p.fixed_noise);
+  WnoaFactorGraph<Pose2> graph_wnoa =
+      interpolateFactorGraph<Pose2, WnoaFactorGraph<Pose2>>(
+          graph, estimated_states, interpolated_states, p.Q_wnoa,
+          p.fixed_noise);
 
   // // check if both graphs are identical
   // std::cout << "Checking if both linearized graphs are identical..." <<
@@ -225,8 +233,8 @@ void runInterpExample(InterpExampleParams& p) {
     // start timer (chrono)
     // auto start = std::chrono::high_resolution_clock::now();
     for (unsigned int i = 0; i < p.n_runs; i++) {
-      auto lm_opt_wnoa = LevenbergMarquardtOptimizer(
-          graph_wnoa, values_interp_init, params);
+      auto lm_opt_wnoa =
+          LevenbergMarquardtOptimizer(graph_wnoa, values_interp_init, params);
       result_wnoa = lm_opt_wnoa.optimize();
       if (i == 0) {
         std::cout << "WNOA Interpolated Graph: " << lm_opt_wnoa.iterations()
