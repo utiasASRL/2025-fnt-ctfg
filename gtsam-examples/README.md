@@ -22,6 +22,12 @@ mkdir build \
 ```
 Example runs should then appear in the `build` directory. Each example also makes use of .yaml files to load parameters.
 
-# Additional Details
+# Examples
+
+| Name | Manifold | Run Instructions |
+|------|----------|------------------|
+| Giant Glass of Milk | R¹ | `./build/GiantGlassOfMilk` |
+| Lost in the Woods | SE(2) | `./build/LostInTheWoods` |
+| Starry Night | SE(3) | `./build/StarryNight` |
 
 Additional information about these datasets (e.g. data collection, labelling, etc.) can be found in [AssignmentsDatasetDescription.pdf](AssignmentsDatasetDescription.pdf). 

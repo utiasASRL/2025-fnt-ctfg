@@ -13,12 +13,11 @@
 #include <gtsam/nonlinear/Marginals.h>
 #include <gtsam/nonlinear/NonlinearFactorGraph.h>
 #include <gtsam/nonlinear/Values.h>
-#include <gtsam/nonlinear/WNOAFactor.h>
-#include <gtsam/nonlinear/WNOAInterpolator.h>
+#include <gtsam/nonlinear/WnoaFactor.h>
+#include <gtsam/nonlinear/WnoaInterpolator.h>
 #include <gtsam/nonlinear/expressions.h>
 #include <gtsam/slam/dataset.h>
 #include <yaml-cpp/yaml.h>
-
 
 using namespace gtsam;
 

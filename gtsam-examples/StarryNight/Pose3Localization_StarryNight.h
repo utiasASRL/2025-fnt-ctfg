@@ -47,8 +47,8 @@ using gtsam::Symbol;
 #include <gtsam/nonlinear/Marginals.h>
 
 // Odometry factors
-#include <gtsam/nonlinear/WNOAFactor.h>
-#include <gtsam/nonlinear/WNOAInterpFactor.h>
+#include <gtsam/nonlinear/WnoaFactor.h>
+#include <gtsam/nonlinear/WnoaInterpFactor.h>
 #include <gtsam/slam/BetweenFactor.h>
 #include <gtsam/slam/dataset.h>
 
@@ -63,7 +63,7 @@ using gtsam::tictoc_print_;
 #include <gtsam/nonlinear/NonlinearEquality.h>
 
 // For post-solve interpolation
-#include <gtsam/nonlinear/WNOAInterpolator.h>
+#include <gtsam/nonlinear/WnoaInterpolator.h>
 
 // Standard headers, added last, so we know headers above work on their own.
 #include <yaml-cpp/yaml.h>
@@ -88,7 +88,7 @@ class FileUtils {
  public:
   struct ConfigParams {
     bool useOdomFactor;
-    bool useWNOAFactor;
+    bool useWnoaFactor;
     bool useMeasurements;
     bool initAtGT;
     bool fixLandmarks;
@@ -122,7 +122,7 @@ class FileUtils {
  public:
   FileUtils() = delete;
   FileUtils(std::string config_filename, std::string output_filename) {
-    std::string config_filepath =config_filename + ".yaml";
+    std::string config_filepath = config_filename + ".yaml";
     YAML::Node config = YAML::LoadFile(config_filepath);
 
     if (output_filename == "") {
@@ -135,8 +135,7 @@ class FileUtils {
     std::cout << "Using config file: " << config_filepath << std::endl;
     params_ = getParamsFromConfig(config);
 
-    output_file_poses_ =
-        "StarryNight/results/" + output_filename + "_poses";
+    output_file_poses_ = "StarryNight/results/" + output_filename + "_poses";
     output_file_poses_dr_ =
         "StarryNight/results/" + output_filename + "_poses_dr";
     output_file_landmarks_ =
@@ -276,7 +275,7 @@ class FileUtils {
     FileUtils::ConfigParams params;
 
     params.useOdomFactor = config["main_solve"]["odom"].as<bool>();
-    params.useWNOAFactor = config["main_solve"]["wnoa"].as<bool>();
+    params.useWnoaFactor = config["main_solve"]["wnoa"].as<bool>();
     params.useMeasurements = config["main_solve"]["include_meas"].as<bool>();
     params.initAtGT = config["main_solve"]["gt_init"].as<bool>();
     params.fixLandmarks = config["main_solve"]["fix_landmarks"].as<bool>();
@@ -292,13 +291,13 @@ class FileUtils {
         config["interp_after_solve"]["interp_covariance"].as<bool>();
 
     // params validity checks
-    if (params.interpDuringSolve && !params.useWNOAFactor) {
+    if (params.interpDuringSolve && !params.useWnoaFactor) {
       std::cerr
           << "Error: interp_during_solve requires WNOA factor to be enabled."
           << std::endl;
       exit(1);
     }
-    if (params.interpAfterSolve && !params.useWNOAFactor) {
+    if (params.interpAfterSolve && !params.useWnoaFactor) {
       std::cerr
           << "Error: interp_after_solve requires WNOA factor to be enabled."
           << std::endl;

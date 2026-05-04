@@ -9,8 +9,9 @@
 #include <gtsam/nonlinear/LevenbergMarquardtParams.h>
 #include <gtsam/nonlinear/Marginals.h>
 #include <gtsam/nonlinear/Values.h>
-#include <gtsam/nonlinear/WNOAFactor.h>
-#include <gtsam/nonlinear/WNOAInterpFactor.h>
+#include <gtsam/nonlinear/WnoaFactor.h>
+#include <gtsam/nonlinear/WnoaInterpFactor.h>
+#include <gtsam/nonlinear/WnoaFactorGraph.h>
 #include <gtsam/slam/BetweenFactor.h>
 #include <gtsam/slam/dataset.h>
 #include <gtsam/slam/expressions.h>
@@ -278,14 +279,14 @@ BearingRange2_ BearingRangeLandmarkPredictionSLAM(Key posekey,
 
 struct LostInTheWoodsParams {
   // File paths
-  std::string input_file;        // Path to input dataset file
-  std::string output_file;       // Path to output CSV for estimated poses
-  std::string gt_output_file;    // Path to output CSV for ground truth poses
-  std::string interp_raw_file;   // Path to output CSV for raw (estimated-only)
-                            // interpolated results
-  std::string interp_out;        // Path to output CSV for full interpolated results
-  std::string interp_graph_out;  // Path to output CSV for interpolated results with
-                            // graph covariances
+  std::string input_file;       // Path to input dataset file
+  std::string output_file;      // Path to output CSV for estimated poses
+  std::string gt_output_file;   // Path to output CSV for ground truth poses
+  std::string interp_raw_file;  // Path to output CSV for raw (estimated-only)
+                                // interpolated results
+  std::string interp_out;  // Path to output CSV for full interpolated results
+  std::string interp_graph_out;  // Path to output CSV for interpolated results
+                                 // with graph covariances
 
   // Flags
   bool include_prior;    // Add a prior factor on the starting pose and velocity
@@ -313,7 +314,8 @@ struct LostInTheWoodsParams {
 
   // Noise
   std::vector<double> sigma_prior_vec;  // Prior noise sigmas [x, y, theta]
-  std::vector<double> sigma_wnoa_vec;   // WNOA process noise sigmas [x, y, theta]
+  std::vector<double>
+      sigma_wnoa_vec;   // WNOA process noise sigmas [x, y, theta]
   double sigma_y_odom;  // Lateral (y) odometry noise standard deviation
   double mult_bearing;  // Multiplier on bearing measurement noise variance
   double mult_range;    // Multiplier on range measurement noise variance

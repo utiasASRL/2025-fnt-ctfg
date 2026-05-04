@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
     cout << "Adding WNOA factors" << endl;
     // Add WNOA Motion Factors between states
     for (uint i = 0; i < all_states.size() - 1; i++) {
-      graph.add(WNOAMotionFactor<Pose2>(all_states[i], all_states[i + 1],
+      graph.add(WnoaMotionFactor<Pose2>(all_states[i], all_states[i + 1],
                                         sigma_wnoa));
     }
   }
@@ -194,7 +194,7 @@ int main(int argc, char* argv[]) {
         interp.insert(all_states[i]);
         // remove interpolated states from initial values
         initial.erase(all_states[i].pose);
-        initial.erase(all_states[i].vel);
+        initial.erase(all_states[i].velocity);
       }
     }
     // Generate interpolated version of graph

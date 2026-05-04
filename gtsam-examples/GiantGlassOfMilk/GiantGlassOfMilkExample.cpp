@@ -13,7 +13,7 @@ int main() {
 
   // input processing
   bool use_interpolation = config["params"]["interp"].as<bool>();
-  
+
   // Loading data as: t, x, v, x_real
   Matrix data = load_csv<Eigen::MatrixXd>(input_file, false);
 
@@ -62,7 +62,7 @@ int main() {
   unsigned int num_states =
       static_cast<unsigned int>(std::round(times.tail<1>()(0) / dt_state)) + 1;
   for (unsigned int i = 0; i < num_states - 1; i++) {
-    graph.add(WNOAMotionFactor<Point1>(X(i), V(i), X(i + 1), V(i + 1), dt_state,
+    graph.add(WnoaMotionFactor<Point1>(X(i), V(i), X(i + 1), V(i + 1), dt_state,
                                        Qc_mat));
 
     // Add initial guess for next state (zero)
