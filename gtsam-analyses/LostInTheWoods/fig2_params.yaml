@@ -1,10 +1,12 @@
 # File paths
 files:
   input : "LostInTheWoods/LostInTheWoods.txt"       # Path to input dataset file
-  output : "results/litw_fig2_solve.csv"             # Path to output CSV for estimated poses
+  output : "results/litw_fig2_gtsam.csv"             # Path to output CSV for estimated poses
   gt_out : "results/litw_fig2_gt.csv"                # Path to output CSV for ground truth poses
   interp_raw_file: "results/lost_interp_raw.csv"     # Path to output CSV for raw (estimated-only) interpolated results
   interp_out : "results/lost_interp.csv"             # Path to output CSV for full interpolated results
+  interp_graph_out : "results/lost_graph_interp.csv"             # Path to output CSV for full interpolated results + covariances
+
 
 # Parameters
 params:

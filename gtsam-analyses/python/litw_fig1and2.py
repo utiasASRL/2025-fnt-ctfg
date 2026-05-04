@@ -2,12 +2,18 @@ import numpy as np
 import pandas as pd
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 """
 Plots figures for Figure 2 of the Lost in the woods section.
 Ground truth trajectory and a localization using odometry 
 and bearing range measurements.
 """
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
+RESULTS_DIR = PROJECT_DIR / "results"
+PLOTS_DIR = PROJECT_DIR / "plots"
 
 # GT landmark locations
 landmarks = np.array(
@@ -187,9 +193,10 @@ def plot_cov_ellipse(ax, xi, yi, ti, cov, n_std=3.0, **kwargs):
 
 
 if __name__ == "__main__":
-    path_gt_full = "analyses/results/lost_gt_full.csv"
-    path_gt = "analyses/results/litw_fig2_gt.csv"
-    path_solve = "analyses/results/litw_fig2_gtsam.csv"
+    
+    path_gt_full = RESULTS_DIR / "lost_gt_full.csv"
+    path_gt = RESULTS_DIR / "litw_fig2_gt.csv"
+    path_solve = RESULTS_DIR / "litw_fig2_gtsam.csv"
     titles = ["Ground Truth Trajectory"
               "GTSAM Solve"]
     downsample=40
@@ -210,6 +217,6 @@ if __name__ == "__main__":
     dpi=800
     save_figs = input("Save figures? [Y/n]: ").strip().lower()
     if save_figs == "" or save_figs == "y":
-        fig1.savefig("analyses/plots/litw_fig1_gt.png", dpi=dpi, bbox_inches='tight')
-        fig2.savefig("analyses/plots/litw_fig2_solve.png", dpi=dpi, bbox_inches='tight')
+        fig1.savefig(PLOTS_DIR / "litw_fig1_gt.png", dpi=dpi, bbox_inches='tight')
+        fig2.savefig(PLOTS_DIR / "litw_fig2_solve.png", dpi=dpi, bbox_inches='tight')
     
