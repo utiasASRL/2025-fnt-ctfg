@@ -36,7 +36,7 @@ using CovarianceMap = Interpolator<Pose3>::CovarianceMap;
 std::tuple<std::string, std::string> parseCommandLine(int argc, char** argv) {
   // Get configuration data
   std::string config_filename =
-      "StarryNight/starryNight";  // default config file
+      "StarryNight/configs/starryNight";  // default config file
   std::string output_filename = "";
 
   // Parse command line arguments

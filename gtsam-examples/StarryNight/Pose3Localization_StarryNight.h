@@ -426,7 +426,13 @@ class FileUtils {
                                   poseSymbol.string());
         }
       }
-      marginalsFile << covariance.reshaped(1, covariance.size()) << "\n";
+      for (Eigen::Index i = 0; i < covariance.size(); ++i) {
+        if (i > 0) {
+          marginalsFile << ",";
+        }
+        marginalsFile << covariance.data()[i];
+      }
+      marginalsFile << "\n";
     }
     marginalsFile.close();
   }
