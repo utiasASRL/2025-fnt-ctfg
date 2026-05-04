@@ -94,7 +94,7 @@ int runLostInTheWoods(LostInTheWoodsParams& params) {
     cout << "Adding WNOA factors" << endl;
     // Add WNOA Motion Factors between states
     for (int i = start + 1; i <= end; i++) {
-      graph.add(WNOAMotionFactor<Pose2>(Symbol('x', i - 1), Symbol('v', i - 1),
+      graph.add(WnoaMotionFactor<Pose2>(Symbol('x', i - 1), Symbol('v', i - 1),
                                         Symbol('x', i), Symbol('v', i), del_t,
                                         sigma_wnoa));
     }
@@ -223,7 +223,7 @@ int runLostInTheWoods(LostInTheWoodsParams& params) {
         interp.insert(all_states[i]);
         // remove interpolated states from initial values
         initial.erase(all_states[i].pose);
-        initial.erase(all_states[i].vel);
+        initial.erase(all_states[i].velocity);
       }
     }
     // Generate interpolated version of graph

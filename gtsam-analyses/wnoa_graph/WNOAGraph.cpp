@@ -1,18 +1,18 @@
-// Enable GTSAM timing instrumentation for this translation unit (must precede including timing.h)
+// Enable GTSAM timing instrumentation for this translation unit (must precede
+// including timing.h)
 #ifndef ENABLE_TIMING
 #define ENABLE_TIMING
 #endif
 
-#include <gtsam/nonlinear/WNOAInterpolator.h>
+#include <gtsam/base/timing.h>
+#include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
+#include <gtsam/nonlinear/WnoaFactorGraph.h>
+#include <gtsam/nonlinear/WnoaInterpolator.h>
+#include <valgrind/callgrind.h>
 
 #include <chrono>
 
-#include <valgrind/callgrind.h>
 #include "LostInTheWoodsExample.h"
-#include <gtsam/nonlinear/WNOAFactorGraph.h>
-#include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
-#include <gtsam/nonlinear/WNOALevenbergMarquardtOptimizer.h>
-#include <gtsam/base/timing.h>
 
 using namespace std;
 using namespace gtsam;
@@ -75,7 +75,7 @@ void runInterpExample(InterpExampleParams& p) {
       // update pose
       pose_curr = pose_curr.expmap(p.del_t * p.vel_mean);
       // Add WNOA motion model
-      auto factor_wnoa = std::make_shared<WNOAMotionFactor<Pose2>>(
+      auto factor_wnoa = std::make_shared<WnoaMotionFactor<Pose2>>(
           P(i - 1), V(i - 1), P(i), V(i), p.del_t, p.Q_wnoa);
       graph.add(factor_wnoa);
     }
@@ -90,7 +90,8 @@ void runInterpExample(InterpExampleParams& p) {
     } else {
       pose_meas = pose_curr;
     }
-    for(unsigned int m = 0; m < p.n_unary; m++)  // Add multiple priors to increase density for testing purposes
+    for (unsigned int m = 0; m < p.n_unary;
+         m++)  // Add multiple priors to increase density for testing purposes
     {
       graph.addPrior(P(i), pose_meas, p.cov_diag_unary.asDiagonal());
     }
@@ -108,7 +109,7 @@ void runInterpExample(InterpExampleParams& p) {
       estimated_states.insert(states[i]);
       // fill in initial values
       Key pose_key = states[i].pose;
-      Key vel_key = states[i].vel;
+      Key vel_key = states[i].velocity;
       values_interp_init.insert(pose_key, values_init.at<Pose2>(pose_key));
       values_interp_init.insert(vel_key, values_init.at<Vector3>(vel_key));
     } else {
@@ -116,19 +117,18 @@ void runInterpExample(InterpExampleParams& p) {
     }
   }
 
-
   // generate interpolated graph
-   NonlinearFactorGraph graph_interp;
-   graph_interp = interpolateFactorGraph<Pose2>(
-     graph, estimated_states, interpolated_states, p.Q_wnoa, p.fixed_noise);
+  NonlinearFactorGraph graph_interp;
+  graph_interp = interpolateFactorGraph<Pose2>(
+      graph, estimated_states, interpolated_states, p.Q_wnoa, p.fixed_noise);
 
   // generate WNOA graph
-  WNOAFactorGraph<Pose2> graph_wnoa = interpolateWNOAFactorGraph<Pose2>(
-    graph, estimated_states, interpolated_states, p.Q_wnoa, p.fixed_noise);
+  WnoaFactorGraph<Pose2> graph_wnoa = interpolateFactorGraph<Pose2, WnoaFactorGraph<Pose2>>(
+      graph, estimated_states, interpolated_states, p.Q_wnoa, p.fixed_noise);
 
   // // check if both graphs are identical
-  // std::cout << "Checking if both linearized graphs are identical..." << std::endl;
-  // if(linear_graph_interp->equals(*linear_graph_wnoa, 1e-9))
+  // std::cout << "Checking if both linearized graphs are identical..." <<
+  // std::endl; if(linear_graph_interp->equals(*linear_graph_wnoa, 1e-9))
   // {
   //   std::cout << "Both linearized graphs are identical!" << std::endl;
   // }
@@ -148,101 +148,102 @@ void runInterpExample(InterpExampleParams& p) {
   // else
   // {
   //   std::cout << "Errors are NOT identical!" << std::endl;
-  //   std::cout << "Error Interp: " << error_interp << " Error WNOA: " << error_wnoa << std::endl;
+  //   std::cout << "Error Interp: " << error_interp << " Error WNOA: " <<
+  //   error_wnoa << std::endl;
   // }
 
   // set up optimizer
   LevenbergMarquardtParams params;
   params.setVerbosityLM("SILENT");
 
-  if(p.print_timing)
-  {
-      tictoc_reset();
+  if (p.print_timing) {
+    tictoc_reset();
   }
 
   // run optimization on original graph
 
-  if(p.run_original)
-  {
+  if (p.run_original) {
     Values result_original;
     // start timer (chrono)
     // auto start = std::chrono::high_resolution_clock::now();
 
-    for(unsigned int i = 0; i < p.n_runs; i++)
-    {
-      auto lm_opt_original = LevenbergMarquardtOptimizer(graph, values_init, params);
+    for (unsigned int i = 0; i < p.n_runs; i++) {
+      auto lm_opt_original =
+          LevenbergMarquardtOptimizer(graph, values_init, params);
       result_original = lm_opt_original.optimize();
-     if(i == 0)
-     {
-       std::cout << "Original Graph: " << lm_opt_original.iterations() << " iterations until convergence." << std::endl;
-       std::cout << "Original Graph: " << graph.size() << " factors, " << graph.keys().size() << " variables." << std::endl;
-     }
-   }
+      if (i == 0) {
+        std::cout << "Original Graph: " << lm_opt_original.iterations()
+                  << " iterations until convergence." << std::endl;
+        std::cout << "Original Graph: " << graph.size() << " factors, "
+                  << graph.keys().size() << " variables." << std::endl;
+      }
+    }
     // stop timer and print
     // auto end = std::chrono::high_resolution_clock::now();
     // std::chrono::duration<double> elapsed = (end - start)/p.n_runs;
-    // std::cout << "Original Graph Optimization Time: " << elapsed.count() << " seconds." << std::endl;
+    // std::cout << "Original Graph Optimization Time: " << elapsed.count() << "
+    // seconds." << std::endl;
   }
 
-   if(p.print_timing)
-   {
-      tictoc_print();
-      tictoc_reset();
-   }
-   
-  
-   // run optimization on interpolated version
-   if(p.run_wrapper)
-   {
-     Values result_interp;
+  if (p.print_timing) {
+    tictoc_print();
+    tictoc_reset();
+  }
+
+  // run optimization on interpolated version
+  if (p.run_wrapper) {
+    Values result_interp;
     // start timer (chrono)
     // auto start = std::chrono::high_resolution_clock::now();
-     for(unsigned int i = 0; i < p.n_runs; i++)
-     {
-       auto lm_opt_interp = LevenbergMarquardtOptimizer(graph_interp, values_interp_init, params);
-       result_interp = lm_opt_interp.optimize();
-       if(i == 0)
-       {
-         std::cout << "Wrapper Interpolated Graph: " << lm_opt_interp.iterations() << " iterations until convergence." << std::endl;
-         std::cout << "Wrapper Interpolated Graph: " << graph_interp.size() << " factors, " << graph_interp.keys().size() << " variables." << std::endl;
-       }
-     }
+    for (unsigned int i = 0; i < p.n_runs; i++) {
+      auto lm_opt_interp =
+          LevenbergMarquardtOptimizer(graph_interp, values_interp_init, params);
+      result_interp = lm_opt_interp.optimize();
+      if (i == 0) {
+        std::cout << "Wrapper Interpolated Graph: "
+                  << lm_opt_interp.iterations()
+                  << " iterations until convergence." << std::endl;
+        std::cout << "Wrapper Interpolated Graph: " << graph_interp.size()
+                  << " factors, " << graph_interp.keys().size() << " variables."
+                  << std::endl;
+      }
+    }
     // stop timer and print
     // auto end = std::chrono::high_resolution_clock::now();
     // std::chrono::duration<double> elapsed = (end - start)/p.n_runs;
-    // std::cout << "Wrapper Interpolated Graph Optimization Time: " << elapsed.count() << " seconds." << std::endl;
-   }
+    // std::cout << "Wrapper Interpolated Graph Optimization Time: " <<
+    // elapsed.count() << " seconds." << std::endl;
+  }
 
-   if(p.print_timing)
-   {
-      tictoc_print();
-      tictoc_reset();
-   }
-  
-   if(p.run_wnoa_wrapper)
-   {
-     Values result_wnoa;
+  if (p.print_timing) {
+    tictoc_print();
+    tictoc_reset();
+  }
+
+  if (p.run_wnoa_wrapper) {
+    Values result_wnoa;
     // start timer (chrono)
     // auto start = std::chrono::high_resolution_clock::now();
-     for(unsigned int i = 0; i < p.n_runs; i++)
-     {
-       auto lm_opt_wnoa = WNOALevenbergMarquardtOptimizer<Pose2>(graph_wnoa, values_interp_init, params);
-       result_wnoa = lm_opt_wnoa.optimize();
-        if(i == 0)
-        {
-          std::cout << "WNOA Interpolated Graph: " << lm_opt_wnoa.iterations() << " iterations until convergence." << std::endl;
-          std::cout << "WNOA Interpolated Graph: " << graph_wnoa.size() << " factors, " << graph_wnoa.keys().size() << " variables." << std::endl;
-        }
-     }
+    for (unsigned int i = 0; i < p.n_runs; i++) {
+      auto lm_opt_wnoa = LevenbergMarquardtOptimizer(
+          graph_wnoa, values_interp_init, params);
+      result_wnoa = lm_opt_wnoa.optimize();
+      if (i == 0) {
+        std::cout << "WNOA Interpolated Graph: " << lm_opt_wnoa.iterations()
+                  << " iterations until convergence." << std::endl;
+        std::cout << "WNOA Interpolated Graph: " << graph_wnoa.size()
+                  << " factors, " << graph_wnoa.keys().size() << " variables."
+                  << std::endl;
+      }
+    }
     // stop timer and print
     // auto end = std::chrono::high_resolution_clock::now();
     // std::chrono::duration<double> elapsed = (end - start)/p.n_runs;
-    // std::cout << "WNOA Interpolated Graph Optimization Time: " << elapsed.count() << " seconds." << std::endl;
-   }
+    // std::cout << "WNOA Interpolated Graph Optimization Time: " <<
+    // elapsed.count() << " seconds." << std::endl;
+  }
 
-
-  if(p.print_timing)
-  {
+  if (p.print_timing) {
     tictoc_print();
     tictoc_reset();
   }

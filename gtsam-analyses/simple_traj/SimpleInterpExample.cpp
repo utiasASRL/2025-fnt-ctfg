@@ -1,8 +1,8 @@
-#include <gtsam/nonlinear/WNOAInterpolator.h>
+#include <gtsam/nonlinear/WnoaInterpolator.h>
+#include <valgrind/callgrind.h>
 
 #include <chrono>
 
-#include <valgrind/callgrind.h>
 #include "LostInTheWoodsExample.h"
 
 using namespace std;
@@ -62,7 +62,7 @@ void runInterpExample(InterpExampleParams& p, bool run_full_opt = true) {
       // update pose
       pose_curr = pose_curr.expmap(p.del_t * p.vel_mean);
       // Add WNOA motion model
-      auto factor_wnoa = std::make_shared<WNOAMotionFactor<Pose2>>(
+      auto factor_wnoa = std::make_shared<WnoaMotionFactor<Pose2>>(
           P(i - 1), V(i - 1), P(i), V(i), p.del_t, p.Q_wnoa);
       graph.add(factor_wnoa);
     }
@@ -92,7 +92,7 @@ void runInterpExample(InterpExampleParams& p, bool run_full_opt = true) {
       estimated_states.insert(states[i]);
       // fill in initial values
       Key pose_key = states[i].pose;
-      Key vel_key = states[i].vel;
+      Key vel_key = states[i].velocity;
       values_interp_init.insert(pose_key, values_init.at<Pose2>(pose_key));
       values_interp_init.insert(vel_key, values_init.at<Vector3>(vel_key));
     } else {
@@ -103,20 +103,19 @@ void runInterpExample(InterpExampleParams& p, bool run_full_opt = true) {
   auto start = chrono::high_resolution_clock::now();
   auto end = chrono::high_resolution_clock::now();
 
-
   // generate interpolated graph
   start = chrono::high_resolution_clock::now();
   NonlinearFactorGraph graph_interp;
-  for(unsigned int i = 0; i < p.n_runs; i++)
-  {
+  for (unsigned int i = 0; i < p.n_runs; i++) {
     graph_interp = interpolateFactorGraph<Pose2>(
-      graph, estimated_states, interpolated_states, p.Q_wnoa, p.fixed_noise);
+        graph, estimated_states, interpolated_states, p.Q_wnoa, p.fixed_noise);
   }
   end = chrono::high_resolution_clock::now();
   auto T_interp_graph =
-      chrono::duration_cast<chrono::microseconds>(end - start).count()/p.n_runs;
+      chrono::duration_cast<chrono::microseconds>(end - start).count() /
+      p.n_runs;
   cout << "Graph Conversion Time: " << T_interp_graph << " (micro-s)" << endl;
-  
+
   if (run_full_opt) {
     // set up optimizer
     GaussNewtonParams params;
@@ -125,27 +124,29 @@ void runInterpExample(InterpExampleParams& p, bool run_full_opt = true) {
     // run optimization on interpolated version
     start = chrono::high_resolution_clock::now();
     Values result_interp;
-    for(unsigned int i = 0; i < p.n_runs; i++)
-    {
-      result_interp = GaussNewtonOptimizer(graph_interp, values_interp_init, params).optimize();
+    for (unsigned int i = 0; i < p.n_runs; i++) {
+      result_interp =
+          GaussNewtonOptimizer(graph_interp, values_interp_init, params)
+              .optimize();
     }
     end = chrono::high_resolution_clock::now();
     auto T_solve_interp =
-      chrono::duration_cast<chrono::microseconds>(end - start).count()/p.n_runs;
+        chrono::duration_cast<chrono::microseconds>(end - start).count() /
+        p.n_runs;
     cout << "Interp Solve Time: " << T_solve_interp << " micros" << endl;
-    
+
     // Solve full graph
     start = chrono::high_resolution_clock::now();
     Values result_full;
-    for(unsigned int i = 0; i < p.n_runs; i++)
-    {
+    for (unsigned int i = 0; i < p.n_runs; i++) {
       result_full = GaussNewtonOptimizer(graph, values_init, params).optimize();
     }
     end = chrono::high_resolution_clock::now();
     auto T_solve_full =
-      chrono::duration_cast<chrono::microseconds>(end - start).count()/p.n_runs;
+        chrono::duration_cast<chrono::microseconds>(end - start).count() /
+        p.n_runs;
     cout << "Full Solve Time: " << T_solve_full << " micros" << endl;
-  
+
     // define covariance map
     auto cov_map_interp =
         std::make_shared<Interpolator<Pose2>::CovarianceMap>();
@@ -173,15 +174,15 @@ void runInterpExample(InterpExampleParams& p, bool run_full_opt = true) {
   opt_reduced.iterate();  // run once to clear any overhead
   start = chrono::high_resolution_clock::now();
   CALLGRIND_START_INSTRUMENTATION;
-  for(unsigned int i = 0; i < p.n_runs; i++)
-  {
+  for (unsigned int i = 0; i < p.n_runs; i++) {
     opt_reduced.iterate();
   }
   CALLGRIND_STOP_INSTRUMENTATION;
   CALLGRIND_DUMP_STATS_AT("iterate_reduced");
   end = chrono::high_resolution_clock::now();
   auto T_iter_interp =
-      chrono::duration_cast<chrono::microseconds>(end - start).count()/p.n_runs;
+      chrono::duration_cast<chrono::microseconds>(end - start).count() /
+      p.n_runs;
   cout << "Interpolated Graph" << endl;
   cout << "Iteration Time: " << T_iter_interp << " micros" << endl;
   cout << "Number of factors in graph:" << graph_interp.size() << endl;
@@ -191,20 +192,19 @@ void runInterpExample(InterpExampleParams& p, bool run_full_opt = true) {
   opt_full.iterate();  // run once to clear any overhead
   start = chrono::high_resolution_clock::now();
   CALLGRIND_START_INSTRUMENTATION;
-  for(unsigned int i = 0; i < p.n_runs; i++)
-  {
+  for (unsigned int i = 0; i < p.n_runs; i++) {
     opt_full.iterate();
   }
   CALLGRIND_STOP_INSTRUMENTATION;
   CALLGRIND_DUMP_STATS_AT("iterate_full");
   end = chrono::high_resolution_clock::now();
   auto duration_full =
-      chrono::duration_cast<chrono::microseconds>(end - start).count()/p.n_runs;
+      chrono::duration_cast<chrono::microseconds>(end - start).count() /
+      p.n_runs;
   cout << "Full Graph" << endl;
   cout << "Iteration Time: " << duration_full << " micros" << endl;
   cout << "Number of factors in graph:" << graph.size() << endl;
   cout << "Number of variables: " << values_init.size() << endl;
-
 }
 
 int main(int argc, char* argv[]) {

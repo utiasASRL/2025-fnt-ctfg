@@ -1,14 +1,13 @@
+#include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
+#include <gtsam/nonlinear/WnoaFactorGraph.h>
 #include <yaml-cpp/yaml.h>
 
 #include <chrono>
+#include <iomanip>
 #include <string>
 #include <vector>
-#include <iomanip>
 
 #include "LostInTheWoodsExample.h"
-#include <gtsam/nonlinear/WNOAFactorGraph.h>
-#include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
-#include <gtsam/nonlinear/WNOALevenbergMarquardtOptimizer.h>
 
 using std::string;
 using std::vector;
@@ -155,7 +154,7 @@ int runLostInTheWoods(TimingParams& params) {
     cout << "Adding WNOA factors" << endl;
     // Add WNOA Motion Factors between states
     for (int i = start + 1; i <= end; i++) {
-      graph.add(WNOAMotionFactor<Pose2>(Symbol('x', i - 1), Symbol('v', i - 1),
+      graph.add(WnoaMotionFactor<Pose2>(Symbol('x', i - 1), Symbol('v', i - 1),
                                         Symbol('x', i), Symbol('v', i), del_t,
                                         sigma_wnoa));
     }
@@ -261,7 +260,6 @@ int runLostInTheWoods(TimingParams& params) {
     }
   }
 
-
   // set up optimizer parameters
   LevenbergMarquardtParams opt_params;
   opt_params.setVerbosityLM("SUMMARY");
@@ -272,10 +270,10 @@ int runLostInTheWoods(TimingParams& params) {
   Values result_full, result_interp;
 
   // WARMUP runs
-  //for(unsigned int i = 0; i < 20; i++)
+  // for(unsigned int i = 0; i < 20; i++)
   //{
-  //  auto LM_warmup = LevenbergMarquardtOptimizer(graph, initial, opt_params_silent);
-  //  LM_warmup.optimize();
+  //  auto LM_warmup = LevenbergMarquardtOptimizer(graph, initial,
+  //  opt_params_silent); LM_warmup.optimize();
   //}
 
   // set up stopwatch
@@ -285,22 +283,22 @@ int runLostInTheWoods(TimingParams& params) {
       chrono::duration_cast<chrono::microseconds>(t_end - t_start).count();
 
   // Run optimizer for original graph
-  std::cout << "Number of factors in original graph: " << graph.size() << std::endl;
-  result_full = LevenbergMarquardtOptimizer(graph, initial, opt_params).optimize();
-
-  
+  std::cout << "Number of factors in original graph: " << graph.size()
+            << std::endl;
+  result_full =
+      LevenbergMarquardtOptimizer(graph, initial, opt_params).optimize();
 
   t_start = chrono::steady_clock::now();
-  for(unsigned int i = 0; i < params.n_runs; i++)
-  {
-    auto LM_opt = LevenbergMarquardtOptimizer(graph, initial, opt_params_silent);
+  for (unsigned int i = 0; i < params.n_runs; i++) {
+    auto LM_opt =
+        LevenbergMarquardtOptimizer(graph, initial, opt_params_silent);
     LM_opt.optimize();
   }
   t_end = chrono::steady_clock::now();
   t_runtime =
       chrono::duration_cast<chrono::microseconds>(t_end - t_start).count();
-  cout << "Runtime for solving original graph: " << t_runtime / params.n_runs << " (micro-s)" << endl;
-  
+  cout << "Runtime for solving original graph: " << t_runtime / params.n_runs
+       << " (micro-s)" << endl;
 
   // Run optimizer for wrapper graph
   // process states into estimated and interpolated
@@ -314,57 +312,63 @@ int runLostInTheWoods(TimingParams& params) {
       interp.insert(all_states[i]);
       // remove interpolated states from initial values
       initial.erase(all_states[i].pose);
-      initial.erase(all_states[i].vel);
+      initial.erase(all_states[i].velocity);
     }
     all.insert(all_states[i]);
   }
 
   t_start = chrono::steady_clock::now();
-  for(unsigned int i = 0; i < params.n_runs; i++)
-  {
+  for (unsigned int i = 0; i < params.n_runs; i++) {
     // Generate interpolated version of graph
-    WNOAFactorGraph graph_interp = interpolateWNOAFactorGraph<Pose2>(
-        graph, estim, interp, sigma_wnoa, params.fixed_noise);
+    WnoaFactorGraph<Pose2> graph_interp =
+        interpolateFactorGraph<Pose2, WnoaFactorGraph<Pose2>>(
+            graph, estim, interp, sigma_wnoa, params.fixed_noise);
   }
   t_end = chrono::steady_clock::now();
-  t_runtime = chrono::duration_cast<chrono::microseconds>(t_end - t_start).count();
-  cout << "Runtime for generating interpolated graph: " << t_runtime / params.n_runs << " (micro-s)" << endl;
+  t_runtime =
+      chrono::duration_cast<chrono::microseconds>(t_end - t_start).count();
+  cout << "Runtime for generating interpolated graph: "
+       << t_runtime / params.n_runs << " (micro-s)" << endl;
 
-
-  WNOAFactorGraph graph_interp = interpolateWNOAFactorGraph<Pose2>(
-      graph, estim, interp, sigma_wnoa, params.fixed_noise);
+  WnoaFactorGraph<Pose2> graph_interp =
+      interpolateFactorGraph<Pose2, WnoaFactorGraph<Pose2>>(
+          graph, estim, interp, sigma_wnoa, params.fixed_noise);
 
   // Run optimizer
 
-  std::cout << "Number of factors in interpolated graph: " << graph_interp.size() << std::endl;
-  result_interp = WNOALevenbergMarquardtOptimizer<Pose2>(graph_interp, initial, opt_params).optimize();
+  std::cout << "Number of factors in interpolated graph: "
+            << graph_interp.size() << std::endl;
+  result_interp =
+      LevenbergMarquardtOptimizer(graph_interp, initial, opt_params).optimize();
   t_start = chrono::steady_clock::now();
-  for(unsigned int i = 0; i < params.n_runs; i++)
-  {
-    auto LM_inter = WNOALevenbergMarquardtOptimizer<Pose2>(graph_interp, initial, opt_params_silent);
+  for (unsigned int i = 0; i < params.n_runs; i++) {
+    auto LM_inter =
+        LevenbergMarquardtOptimizer(graph_interp, initial, opt_params_silent);
     LM_inter.optimize();
   }
   t_end = chrono::steady_clock::now();
-  t_runtime = chrono::duration_cast<chrono::microseconds>(t_end - t_start).count();
-  cout << "Runtime for solving wrapper graph: " << t_runtime / params.n_runs << " (micro-s)" << endl;
+  t_runtime =
+      chrono::duration_cast<chrono::microseconds>(t_end - t_start).count();
+  cout << "Runtime for solving wrapper graph: " << t_runtime / params.n_runs
+       << " (micro-s)" << endl;
 
   // Recover interpolated means using interpolator
-  std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map = std::make_shared<Interpolator<Pose2>::CovarianceMap>();
-
+  std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map =
+      std::make_shared<Interpolator<Pose2>::CovarianceMap>();
 
   // Define interpolator
   Interpolator<Pose2> interpolator(sigma_wnoa);
 
   t_start = chrono::steady_clock::now();
-  for(unsigned int i = 0; i < params.n_runs; i++)
-  {
-  Values tmp = interpolator.interpolatePosesAndVelocities(
-      graph_interp, result_interp, estim, all, nullptr);
+  for (unsigned int i = 0; i < params.n_runs; i++) {
+    Values tmp = interpolator.interpolatePosesAndVelocities(
+        graph_interp, result_interp, estim, all, nullptr);
   }
   t_end = chrono::steady_clock::now();
-  t_runtime = chrono::duration_cast<chrono::microseconds>(t_end - t_start).count();
-  cout << "Runtime for recovering interpolated means: " << t_runtime / params.n_runs << " (micro-s)" << endl;
-
+  t_runtime =
+      chrono::duration_cast<chrono::microseconds>(t_end - t_start).count();
+  cout << "Runtime for recovering interpolated means: "
+       << t_runtime / params.n_runs << " (micro-s)" << endl;
 
   // get interpolated values
   Values result_restored = interpolator.interpolatePosesAndVelocities(
@@ -387,22 +391,27 @@ int runLostInTheWoods(TimingParams& params) {
   saveResultToFile(result_full, graph, params.output_file, solve_slam, nullptr);
   saveResultToFile(gt, graph, params.gt_output_file);
   // Save results, interpolate covariances from graph at interp mean
-  saveResultToFile(result_interp, graph, params.interp_out, solve_slam, cov_map);
+  saveResultToFile(result_interp, graph, params.interp_out, solve_slam,
+                   cov_map);
 
-  // Compute position RMSE for between resul_full and gt as well as result_interp and gt
-  std::vector<Point2> errors_full, errors_interp, errors_interp_full, errors_interp_est_times;
+  // Compute position RMSE for between resul_full and gt as well as
+  // result_interp and gt
+  std::vector<Point2> errors_full, errors_interp, errors_interp_full,
+      errors_interp_est_times;
   std::vector<Rot2> errors_full_rot, errors_interp_rot, errors_interp_full_rot;
   std::vector<double> nees_interp, nees_interp_est_times;
-  for(int i = start; i <= end; i++) {
+  for (int i = start; i <= end; i++) {
     Pose2 pose_full = result_full.at<Pose2>(Symbol('x', i));
     Pose2 pose_interp = result_interp.at<Pose2>(Symbol('x', i));
     Pose2 pose_gt = gt.at<Pose2>(Symbol('x', i));
     Point2 err_full = (pose_full.inverse().compose(pose_gt)).translation();
     Point2 err_interp = (pose_interp.inverse().compose(pose_gt)).translation();
-    Point2 err_interp_full = (pose_interp.inverse().compose(pose_full)).translation();
+    Point2 err_interp_full =
+        (pose_interp.inverse().compose(pose_full)).translation();
     Rot2 err_full_rot = (pose_full.inverse().compose(pose_gt)).rotation();
     Rot2 err_interp_rot = (pose_interp.inverse().compose(pose_gt)).rotation();
-    Rot2 err_interp_full_rot = (pose_interp.inverse().compose(pose_full)).rotation();
+    Rot2 err_interp_full_rot =
+        (pose_interp.inverse().compose(pose_full)).rotation();
     errors_full.push_back(err_full);
     errors_interp.push_back(err_interp);
     errors_interp_full.push_back(err_interp_full);
@@ -410,9 +419,7 @@ int runLostInTheWoods(TimingParams& params) {
     errors_interp_rot.push_back(err_interp_rot);
     errors_interp_full_rot.push_back(err_interp_full_rot);
 
-
-
-    Matrix2 cov_interp = cov_map->at(Symbol('x', i)).topLeftCorner<2,2>();
+    Matrix2 cov_interp = cov_map->at(Symbol('x', i)).topLeftCorner<2, 2>();
     double nees_i = err_interp.transpose() * cov_interp.inverse() * err_interp;
     nees_interp.push_back(nees_i);
 
@@ -420,7 +427,6 @@ int runLostInTheWoods(TimingParams& params) {
       errors_interp_est_times.push_back(err_interp);
       nees_interp_est_times.push_back(nees_i);
     }
-
   }
 
   // Compute RMSE values from vectors
@@ -429,11 +435,13 @@ int runLostInTheWoods(TimingParams& params) {
   double sum_sq_full_x = 0.0, sum_sq_full_y = 0.0;
   double sum_sq_interp_x = 0.0, sum_sq_interp_y = 0.0;
   double sum_sq_interp_full_x = 0.0, sum_sq_interp_full_y = 0.0;
-  double sum_sq_full_rot = 0.0, sum_sq_interp_rot = 0.0, sum_sq_interp_full_rot = 0.0;
+  double sum_sq_full_rot = 0.0, sum_sq_interp_rot = 0.0,
+         sum_sq_interp_full_rot = 0.0;
   for (size_t i = 0; i < n; ++i) {
     double fx = errors_full[i].x(), fy = errors_full[i].y();
     double ix = errors_interp[i].x(), iy = errors_interp[i].y();
-    double ix_full = errors_interp_full[i].x(), iy_full = errors_interp_full[i].y();
+    double ix_full = errors_interp_full[i].x(),
+           iy_full = errors_interp_full[i].y();
     sum_sq_full += fx * fx + fy * fy;
     sum_sq_interp += ix * ix + iy * iy;
     sum_sq_interp_full += ix_full * ix_full + iy_full * iy_full;
@@ -449,14 +457,13 @@ int runLostInTheWoods(TimingParams& params) {
     sum_sq_full_rot += ftheta * ftheta;
     sum_sq_interp_rot += itheta * itheta;
     sum_sq_interp_full_rot += itheta_full * itheta_full;
-
   }
 
-  //Compute RMSE at estimation times
+  // Compute RMSE at estimation times
   const size_t n_est = errors_interp_est_times.size();
   double sum_sq_interp_est = 0.0;
   double sum_sq_interp_x_est = 0.0, sum_sq_interp_y_est = 0.0;
-  for( size_t i = 0; i < n_est; ++i) {
+  for (size_t i = 0; i < n_est; ++i) {
     double ix = errors_interp_est_times[i].x();
     double iy = errors_interp_est_times[i].y();
     sum_sq_interp_est += ix * ix + iy * iy;
@@ -481,28 +488,37 @@ int runLostInTheWoods(TimingParams& params) {
   double rmse_interp_x_est = std::sqrt(sum_sq_interp_x_est / n_est);
   double rmse_interp_y_est = std::sqrt(sum_sq_interp_y_est / n_est);
 
-  double nees_interp_mean =  std::accumulate(nees_interp.begin(), nees_interp.end(), 0.0) / nees_interp.size();
-  double nees_interp_est_times_mean =  std::accumulate(nees_interp_est_times.begin(), nees_interp_est_times.end(), 0.0) / nees_interp_est_times.size();
+  double nees_interp_mean =
+      std::accumulate(nees_interp.begin(), nees_interp.end(), 0.0) /
+      nees_interp.size();
+  double nees_interp_est_times_mean =
+      std::accumulate(nees_interp_est_times.begin(),
+                      nees_interp_est_times.end(), 0.0) /
+      nees_interp_est_times.size();
 
   // Print with higher precision
   cout << std::fixed << std::setprecision(8);
-  cout << "--------------------------------------------------------------" << endl;
+  cout << "--------------------------------------------------------------"
+       << endl;
   cout << "RMSE (full)           : " << rmse_full << " m" << endl;
-  //cout << "RMSE rot (full)       : " << rmse_full_rot << " deg" << endl;
-  cout << "--------------------------------------------------------------" << endl;
+  // cout << "RMSE rot (full)       : " << rmse_full_rot << " deg" << endl;
+  cout << "--------------------------------------------------------------"
+       << endl;
   cout << "RMSE (interp)         : " << rmse_interp << " m" << endl;
-  //cout << "RMSE rot (interp)     : " << rmse_interp_rot << " deg" << endl;
+  // cout << "RMSE rot (interp)     : " << rmse_interp_rot << " deg" << endl;
   cout << "NEES (interp)         : " << nees_interp_mean << endl;
-  cout << "--------------------------------------------------------------" << endl;
+  cout << "--------------------------------------------------------------"
+       << endl;
   cout << "RMSE (interp, est ts) : " << rmse_interp_est << " m" << endl;
   cout << "NEES (interp, est ts) : " << nees_interp_est_times_mean << endl;
-  cout << "--------------------------------------------------------------" << endl;
-  //cout << "RMSE (interp-full)    : " << rmse_interp_full << " m" << endl;
-  //cout << "RMSE rot (interp-full): " << rmse_interp_full_rot << " deg" << endl;
-  //cout << "--------------------------------------------------------------" << endl;
-  // restore default formatting (optional)
+  cout << "--------------------------------------------------------------"
+       << endl;
+  // cout << "RMSE (interp-full)    : " << rmse_interp_full << " m" << endl;
+  // cout << "RMSE rot (interp-full): " << rmse_interp_full_rot << " deg" <<
+  // endl; cout <<
+  // "--------------------------------------------------------------" << endl;
+  //  restore default formatting (optional)
   cout << std::defaultfloat;
-
 
   return 0;
 }

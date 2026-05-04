@@ -31,3 +31,4 @@ Example runs should then appear in the `build` directory. Each example also make
 | Starry Night | SE(3) | `./build/StarryNight` |
 
 Additional information about these datasets (e.g. data collection, labelling, etc.) can be found in [AssignmentsDatasetDescription.pdf](AssignmentsDatasetDescription.pdf). 
+
