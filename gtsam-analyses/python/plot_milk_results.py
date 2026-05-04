@@ -1,11 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
+
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
+RESULTS_DIR = PROJECT_DIR / "results"
 
 
 def plotGiantGlassofMilkResults(filename, start_time=None, end_time=None):
     
+    # Ensure filename is a Path
+    filename = Path(filename)
+
     # Load data
-    data = np.genfromtxt(filename, delimiter=',', dtype=float, skip_header=0)
+    data = np.genfromtxt(str(filename), delimiter=',', dtype=float, skip_header=0)
     if start_time is None:
         start_time = data[:, 0].min()
     if end_time is None:
@@ -62,9 +71,24 @@ def plotGiantGlassofMilkResults(filename, start_time=None, end_time=None):
     ax2.set_title("Velocity Estimate")
     ax2.legend()
 
-    plt.show()
+    # Save figures to PROJECT_DIR/plots instead of showing
+    plots_dir = PROJECT_DIR / "plots"
+    plots_dir.mkdir(parents=True, exist_ok=True)
+
+    def _fmt(x):
+        s = str(x)
+        return s.replace('.', 'p')
+
+    base = filename.stem
+    pos_name = plots_dir / f"{base}_position_{_fmt(start_time)}-{_fmt(end_time)}.png"
+    vel_name = plots_dir / f"{base}_velocity_{_fmt(start_time)}-{_fmt(end_time)}.png"
+
+    fig1.savefig(pos_name, dpi=200, bbox_inches='tight')
+    fig2.savefig(vel_name, dpi=200, bbox_inches='tight')
+    plt.close(fig1)
+    plt.close(fig2)
 
 
 if __name__ == "__main__":
-    filename = "../../results/milk.csv"
+    filename = RESULTS_DIR / "milk.csv"
     plotGiantGlassofMilkResults(filename=filename, start_time=50, end_time=100)
