@@ -1,0 +1,31 @@
+# Analysis Results
+
+This directory contains the code used to generate results and figures throughout the paper. 
+
+# Build Instructions
+
+Make sure that GTSAM has been built prior to building the examples in this directory. Our specific version of GTSAM (with WNOA support) can be found in the `gtsam` directory. Follow the standard build instructions for GTSAM in that directory.
+
+These examples also make use of `yaml-cpp` provided in the `extern` directory. This library must also be built prior to building examples.
+
+Run this snippet to build these examples:
+```bash
+mkdir build \
+&& cd build \
+&& cmake .. \
+&& make -j
+```
+Example runs should then appear in the `build` directory. Each example also makes use of .yaml files to load parameters.
+
+## Lost in the Woods Figures:
+
+All data for figures was generated using the `LostInTheWoods/LostInTheWoodsStudy.cpp` file with different parameter inputs. Then, the corresponding Python script can be used to generate the plots in the figures. The table below shows the mapping between figures, parameter files, and python scripts.
+
+| Figure | YAML File | Python Script |
+|--------|-----------| -----------------|
+| Figure 5.5 | `configs/fig2_params.yaml` | `litw_fig2.py` |
+| Figure 5.6 (Full Solve)| `configs/fig3_full_params.yaml` | `litw_fig3.py` |
+| Figure 5.6 (Interpolated Solve)| `configs/fig3_params.yaml` | `litw_fig3.py` |
+| Figure 4 | `configs/fig4_params.yaml` | `litw_fig4.py` |
+
+

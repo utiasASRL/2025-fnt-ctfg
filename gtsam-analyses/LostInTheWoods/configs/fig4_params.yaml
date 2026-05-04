@@ -1,3 +1,5 @@
+# Configuration for running SLAM with Interpolation.
+
 # File paths
 files:
   input : "LostInTheWoods/LostInTheWoods.txt"                # Path to input dataset file
@@ -11,8 +13,8 @@ files:
 params:
   r_max: 10       # Maximum range (m) for accepting bearing-range measurements
   del_t: 0.1      # Time step between consecutive states (s)
-  start: 2000     # Index of the first trajectory state to include
-  end: 5000       # Index of the last trajectory state to include
+  start: 1000     # Index of the first trajectory state to include
+  end: 2500       # Index of the last trajectory state to include
   n_runs: 1       # Number of Monte Carlo runs
 
 # Flags

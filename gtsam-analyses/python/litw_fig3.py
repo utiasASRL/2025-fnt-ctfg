@@ -2,8 +2,15 @@ import numpy as np
 import pandas as pd
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
+RESULTS_DIR = PROJECT_DIR / "results"
+PLOTS_DIR = PROJECT_DIR / "plots"
 
 """
+
 Plots figures for Figure 3 of the Lost in the woods section.
 Localization with only WNOA and BearingRange Measurements (limited to 1m).
 subplot 1 : full solve + gt traj
@@ -180,11 +187,11 @@ def plot_cov_ellipse(ax, xi, yi, ti, cov, n_std=3.0, **kwargs):
 
 
 if __name__ == "__main__":
-    path_gt= "analyses/results/litw_fig3_gt.csv"
-    path_full = "analyses/results/litw_fig3_full.csv"
-    path_est = "analyses/results/litw_fig3_est.csv"
-    path_graph_interp = "analyses/results/litw_fig3_graph_interp.csv"
-    path_interp = "analyses/results/litw_fig3_interp.csv"
+    path_gt= RESULTS_DIR / "litw_fig3_gt.csv"
+    path_full = RESULTS_DIR / "litw_fig3_full.csv"
+    path_est = RESULTS_DIR / "litw_fig3_est.csv"
+    path_graph_interp = RESULTS_DIR / "litw_fig3_graph_interp.csv"
+    path_interp = RESULTS_DIR / "litw_fig3_interp.csv"
     
     ds=5
 
@@ -206,6 +213,7 @@ if __name__ == "__main__":
     dpi=800
     save_figs = input("Save figures? [Y/n]: ").strip().lower()
     if save_figs == "" or save_figs == "y":
-        fig1.savefig("analyses/plots/litw_fig3_full.png", dpi=dpi, bbox_inches='tight')
-        fig2.savefig("analyses/plots/litw_fig3_interp.png", dpi=dpi, bbox_inches='tight')
+        PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+        fig1.savefig(PLOTS_DIR / "litw_fig3_full.png", dpi=dpi, bbox_inches='tight')
+        fig2.savefig(PLOTS_DIR / "litw_fig3_interp.png", dpi=dpi, bbox_inches='tight')
     

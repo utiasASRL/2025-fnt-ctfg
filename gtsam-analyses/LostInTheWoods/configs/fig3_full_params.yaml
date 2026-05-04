@@ -1,4 +1,4 @@
-# Configuration file for LITW Interpolated solve 
+# Configuration file for LITW Full solve (no interpolation)
 
 # File paths
 files:
@@ -28,7 +28,7 @@ flags:
 
 # Interpolation
 interp:
-  enable: True        # Enable GP interpolation to reduce the number of estimated states
+  enable: False        # Enable GP interpolation to reduce the number of estimated states
   interp_period: 30   # Keep every Nth state as estimated; interpolate the rest
   fixed_noise: False  # Use fixed (non-interpolated) noise for interpolated factors
 
