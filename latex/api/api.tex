@@ -265,10 +265,10 @@ conditional covariances for interpolated states when requested.
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsection*{WNOAMotionFactor}
+\subsection*{WnoaMotionFactor}
 \label{sec:api-wnoafactor}
 
-\textbf{Header:} \texttt{gtsam/nonlinear/WNOAFactor.h}
+\textbf{Header:} \texttt{gtsam/nonlinear/WnoaFactor.h}
 
 \medskip\noindent
 WNOA (White Noise on Acceleration) motion prior factor. This factor implements
@@ -288,7 +288,7 @@ keys is: \texttt{pose\_k}, \texttt{vel\_k}, \texttt{pose\_kp1}, \texttt{vel\_kp1
 
 \subsubsection*{Constructors}
 \begin{description}[style=nextline,leftmargin=2em]
-	\item[\texttt{WNOAMotionFactor(const StateData\& state\_k, const StateData\& state\_kp1, const VectorN\& Q)}]
+	\item[\texttt{WnoaMotionFactor(const StateData\& state\_k, const StateData\& state\_kp1, const VectorN\& Q)}]
 	Construct a WNOA motion factor from two \texttt{StateData} entries.
 	\begin{itemize}[nosep]
 		\item \texttt{state\_k}: State data at time $t_k$ (contains pose key, vel key, and timestamp).
@@ -297,7 +297,7 @@ keys is: \texttt{pose\_k}, \texttt{vel\_k}, \texttt{pose\_kp1}, \texttt{vel\_kp1
 	\end{itemize}
 	Builds a factor connecting the pose and velocity keys contained in \texttt{state\_k} and \texttt{state\_kp1}. The internal noise model is constructed from the provided diagonal PSD vector \texttt{Q} and the timestep computed from the two state timestamps.
 	
-	\item[\texttt{WNOAMotionFactor(Key key1, Key key2, Key key3, Key key4, double delta\_t, const VectorN\& Q)}]
+	\item[\texttt{WnoaMotionFactor(Key key1, Key key2, Key key3, Key key4, double delta\_t, const VectorN\& Q)}]
 	Construct a WNOA factor given explicit keys and timestep.
 	\begin{itemize}[nosep]
 		\item \texttt{key1}: Key of the pose at time $t_k$.
@@ -384,10 +384,10 @@ keys is: \texttt{pose\_k}, \texttt{vel\_k}, \texttt{pose\_kp1}, \texttt{vel\_kp1
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsection*{WNOAInterpFactor}
+\subsection*{WnoaInterpFactor}
 \label{sec:api-wnoainterpfactor}
 
-\textbf{Header:} \texttt{gtsam/nonlinear/WNOAInterpFactor.h}
+\textbf{Header:} \texttt{gtsam/nonlinear/WnoaInterpFactor.h}
 
 \medskip\noindent
 Wrapper class that allows a variable of a factor to be replaced by a WNOA
@@ -413,7 +413,7 @@ the outer estimated states used by the main solve.
 
 \subsubsection*{Constructor}
 \begin{description}[style=nextline,leftmargin=2em]
-	\item[\texttt{WNOAInterpFactor(}\\\quad
+	\item[\texttt{WnoaInterpFactor(}\\\quad
 	\texttt{NonlinearFactor::shared\_ptr inner\_factor,}\\\quad
 	\texttt{const StateDataSet\& estimated\_states,}\\\quad
 	\texttt{const StateDataSet\& interp\_states,}\\\quad
@@ -499,14 +499,14 @@ the outer estimated states used by the main solve.
 
 % -----------------------------------------------------------------------------
 \newpage
-\subsection*{WNOAFactorGraph}
+\subsection*{WnoaFactorGraph}
 \label{sec:api-wnoafactorgraph}
 
-\textbf{Header:} \texttt{gtsam/nonlinear/WNOAFactorGraph.h}
+\textbf{Header:} \texttt{gtsam/nonlinear/WnoaFactorGraph.h}
 
 \medskip\noindent
 Factor graph specialized for WNOA interpolation-aware computation.
-\texttt{WNOAFactorGraph} wraps standard factor graph functionalities with
+\texttt{WnoaFactorGraph} wraps standard factor graph functionalities with
 utilities to compute interpolated pose/velocity states under a
 White-Noise-on-Acceleration (WNOA) motion prior. It stores the mapping from
 interpolated query times to their left/right bordering estimated states and
@@ -523,11 +523,11 @@ evaluating many wrapper factors using the same query times.
 
 \subsubsection*{Constructor}
 \begin{description}[style=nextline,leftmargin=2em]
-	\item[\texttt{WNOAFactorGraph(}\\\quad
+	\item[\texttt{WnoaFactorGraph(}\\\quad
 	\texttt{std::unordered\_map<StateData, std::pair<StateData, StateData>> interp\_map,}\\\quad
 	\texttt{const VectorN\& Q\_psd,}\\\quad
 	\texttt{bool fixed\_noise\_model = false)}]
-	Construct a \texttt{WNOAFactorGraph} with interpolation metadata.
+	Construct a \texttt{WnoaFactorGraph} with interpolation metadata.
 	\begin{itemize}[nosep]
 		\item \texttt{interp\_map}: Mapping from each interpolated \texttt{StateData} to its left/right bordering estimated \texttt{StateData}.
 		\item \texttt{Q\_psd}: Diagonal PSD vector for the WNOA interpolator (size must match PoseType dimension).
@@ -563,7 +563,7 @@ evaluating many wrapper factors using the same query times.
 Levenberg-Marquardt optimizer tuned for WNOA interpolation graphs.
 \texttt{WNOALevenbergMarquardtOptimizer} implements the Levenberg-Marquardt
 trust-region algorithm and is specialized to operate on
-\texttt{WNOAFactorGraph<PoseType>}. It can leverage interpolation
+\texttt{WnoaFactorGraph<PoseType>}. It can leverage interpolation
 precomputation in the factor graph to reduce redundant work during
 linearization and error evaluation when many wrapper factors are present.
 
@@ -575,24 +575,24 @@ linearization and error evaluation when many wrapper factors are present.
 \subsubsection*{Constructors}
 \begin{description}[style=nextline,leftmargin=2em]
 	\item[\texttt{WNOALevenbergMarquardtOptimizer(}\\\quad
-	\texttt{const WNOAFactorGraph<PoseType>\& graph,}\\\quad
+	\texttt{const WnoaFactorGraph<PoseType>\& graph,}\\\quad
 	\texttt{const Values\& initialValues,}\\\quad
 	\texttt{const LevenbergMarquardtParams\& params\\ = LevenbergMarquardtParams())}]
-	Construct optimizer for a \texttt{WNOAFactorGraph} with initial values.
+	Construct optimizer for a \texttt{WnoaFactorGraph} with initial values.
 	\begin{itemize}[nosep]
-		\item \texttt{graph}: The \texttt{WNOAFactorGraph} to optimize.
+		\item \texttt{graph}: The \texttt{WnoaFactorGraph} to optimize.
 		\item \texttt{initialValues}: Initial variable estimates.
 		\item \texttt{params}: LM algorithm parameters (default uses standard settings).
 	\end{itemize}
 	
 	\item[\texttt{WNOALevenbergMarquardtOptimizer(}\\\quad
-	\texttt{const WNOAFactorGraph<PoseType>\& graph,}\\\quad
+	\texttt{const WnoaFactorGraph<PoseType>\& graph,}\\\quad
 	\texttt{const Values\& initialValues,}\\\quad
 	\texttt{const Ordering\& ordering,}\\\quad
 	\texttt{const LevenbergMarquardtParams\& params\\ = LevenbergMarquardtParams())}]
 	Construct optimizer with explicit variable ordering for elimination/linearization.
 	\begin{itemize}[nosep]
-		\item \texttt{graph}: The \texttt{WNOAFactorGraph} to optimize.
+		\item \texttt{graph}: The \texttt{WnoaFactorGraph} to optimize.
 		\item \texttt{initialValues}: Initial variable estimates.
 		\item \texttt{ordering}: Variable elimination ordering.
 		\item \texttt{params}: LM algorithm parameters.
@@ -601,14 +601,14 @@ linearization and error evaluation when many wrapper factors are present.
 
 \subsubsection*{Public Methods}
 
-Public methods are equivalent to those of the regular \texttt{LevenbergMarquardtOptimizer} with the exception that internally, the custom \texttt{linearize()} and \texttt{error()} functions of the \texttt{WNOAFactorGraph} are called directly.
+Public methods are equivalent to those of the regular \texttt{LevenbergMarquardtOptimizer} with the exception that internally, the custom \texttt{linearize()} and \texttt{error()} functions of the \texttt{WnoaFactorGraph} are called directly.
 
 % -----------------------------------------------------------------------------
 \newpage
 \subsection*{Free Functions}
 \label{sec:api-free-functions}
 
-\textbf{Header:} \texttt{gtsam/nonlinear/WNOAInterpFactor.h}
+\textbf{Header:} \texttt{gtsam/nonlinear/WnoaInterpFactor.h}
 
 \subsubsection*{interpolateFactorGraph}
 \begin{description}[style=nextline,leftmargin=2em]
@@ -632,17 +632,17 @@ Public methods are equivalent to those of the regular \texttt{LevenbergMarquardt
 	\end{itemize}
 \end{description}
 
-\subsubsection*{interpolateWNOAFactorGraph}
+\subsubsection*{interpolateWnoaFactorGraph}
 \begin{description}[style=nextline,leftmargin=2em]
 	\item[\texttt{template<typename PoseType>}\\
-	\texttt{WNOAFactorGraph<PoseType> interpolateWNOAFactorGraph(}\\\quad
+	\texttt{WnoaFactorGraph<PoseType> interpolateWnoaFactorGraph(}\\\quad
 	\texttt{const NonlinearFactorGraph\& graph,}\\\quad
 	\texttt{const StateDataSet\& estimated\_states,}\\\quad
 	\texttt{const StateDataSet\& interp\_states,}\\\quad
 	\texttt{const VectorN\& Q\_psd,}\\\quad
 	\texttt{bool fixed\_noise = false,}\\\quad
 	\texttt{bool small\_angle\_approx = false)}]
-	Convert a factor graph to a \texttt{WNOAFactorGraph} with interpolated states removed.
+	Convert a factor graph to a \texttt{WnoaFactorGraph} with interpolated states removed.
 	\begin{itemize}[nosep]
 		\item \texttt{graph}: Input factor graph possibly containing factors on interpolated states.
 		\item \texttt{estimated\_states}: Ordered set of estimated \texttt{StateData} (main-solve states).
@@ -650,7 +650,7 @@ Public methods are equivalent to those of the regular \texttt{LevenbergMarquardt
 		\item \texttt{Q\_psd}: Diagonal PSD vector for the WNOA motion prior.
 		\item \texttt{fixed\_noise}: If true, do not augment measurement noise models for interpolation.
 		\item \texttt{small\_angle\_approx}: If true, use small-angle approximation for interpolation.
-		\item \textit{Returns}: A \texttt{WNOAFactorGraph<PoseType>} where factors on interpolated states are replaced with wrapper factors acting on bordering estimated states. The returned graph carries interpolation metadata (borders and PSD) for efficient batched evaluation.
+		\item \textit{Returns}: A \texttt{WnoaFactorGraph<PoseType>} where factors on interpolated states are replaced with wrapper factors acting on bordering estimated states. The returned graph carries interpolation metadata (borders and PSD) for efficient batched evaluation.
 	\end{itemize}
 \end{description}
 
