@@ -1,8 +1,15 @@
 import numpy as np
 import pandas as pd
 from matplotlib.patches import Ellipse
+from pathlib import Path
 import sys
 import matplotlib.pyplot as plt
+
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
+RESULTS_DIR = PROJECT_DIR / "results"
+PLOTS_DIR = PROJECT_DIR / "plots"
 
 
 def load_csv(fname, step=None):
@@ -118,10 +125,10 @@ def plot_cov_ellipse(ax, xi, yi, ti, cov, n_std=3.0, **kwargs):
 
 
 if __name__ == "__main__":
-    path_full = "analyses/results/simple_ex_full.csv"
-    path_est = "analyses/results/simple_ex_estim.csv"
-    path_interp = "analyses/results/simple_ex_interp.csv"
-    path_graph_interp = "analyses/results/simple_ex_interp_graph.csv"
+    path_full = RESULTS_DIR / "simple_ex_full.csv"
+    path_est = RESULTS_DIR / "simple_ex_estim.csv"
+    path_interp = RESULTS_DIR / "simple_ex_interp.csv"
+    path_graph_interp = RESULTS_DIR / "simple_ex_interp_graph.csv"
    
     # Plot Interpolated Solve
     def plot_fig(title_on=True):
@@ -153,13 +160,14 @@ if __name__ == "__main__":
     plt.show(block=False)
     save_figs = input("Save figure? [Y/n]: ").strip().lower()
     if save_figs == "" or save_figs == "y":
-        fig.savefig("analyses/plots/interp_fig1.png", dpi=dpi, bbox_inches='tight')
+        PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+        fig.savefig(PLOTS_DIR / "interp_fig1.png", dpi=dpi, bbox_inches='tight')
         # Plot again with zoom
         fig, ax = plot_fig(False)
         plt.show(block=False)
         save_figs = input("Save Zoomed figure? [Y/n]: ").strip().lower()
         if save_figs == "" or save_figs == "y":
-            fig.savefig("analyses/plots/interp_fig1_zoom.png", dpi=dpi, bbox_inches='tight')
+            fig.savefig(PLOTS_DIR / "interp_fig1_zoom.png", dpi=dpi, bbox_inches='tight')
             
             
     
