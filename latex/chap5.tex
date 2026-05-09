@@ -218,15 +218,14 @@ Finally, we emphasize that these confidence issues are not due to the after-main
 
 The above implementation can introduce computational overhead because each wrapper factor processes interpolation independently.
 As a result, factors relying on the same interpolated state repeatedly recompute its mean and the associated Jacobians from the boundary states.
-To avoid this redundancy, we introduce the \texttt{WnoaFactorGraph}, a custom \ac{GTSAM} graph that tracks all interpolated and estimated states.
+To avoid this redundancy, we introduce the \texttt{WnoaFactorGraph}, a derived class of the \ac{GTSAM} \texttt{NonlinearFactorGraph} that has been modified to tracks all interpolated and estimated states.
 During construction, the graph receives a mapping from each interpolated state to its boundary states.
-A convenience function, \texttt{interpolateWnoaFactorGraph}, is provided to automatically convert a standard dense graph into this reduced form.
+The convenience function, \texttt{interpolateFactorGraph}, has a second template argument that determines the type of factor graph that it returns. By default, the template parameter is set to \texttt{NonlinearFactorGraph}, but it can also be set to \texttt{WnoaFactorGraph} to obtain a factor graph of this form.
 
 The \texttt{WnoaFactorGraph} overrides the \texttt{error} and \texttt{linearize} methods to compute and cache interpolated state means and Jacobians once per iteration, then pass them by reference to all wrapper factors.
 Wrapper factors simply retrieve these cached values during their own evaluations.
-This eliminates redundant computation and yields substantial runtime improvements, particularly when multiple wrapper factors share the same interpolated states.
-To leverage these overridden methods, we also provide a custom Levenberg–Marquardt solver, \texttt{WNOALevenbergMarquardtSolver}.
-Listing~\ref{lst:interp_wnoa} shows an example usage of this functionality.\footnote{Similar to our conversion function, \texttt{interpolateFactorGraph}, we also provide a function, \texttt{interpolateWnoaFactorGraph}, for converting an existing factor graph into a \texttt{WnoaFactorGraph}.}
+This eliminates redundant computation and yields substantial runtime improvements, particularly when multiple wrapper factors share the same interpolated states. Moreover, the existing \ac{GTSAM} optimizers do not need to be modified to leverage these overridden methods.
+Listing~\ref{lst:interp_wnoa} shows an example usage of this functionality.
 
 We can achieve additional computational speed-up by omitting the computation of the $\mbf{C} \mbf{\Sigma}_{\tau} \mbf{C}^T$ term in the measurement covariance computation of our wrapper factors in  \eqref{eq:wrapped_meas}, since the computation of $\mbf{\Sigma}_{\tau}$ ends up being costly.
 We discuss the implications of omitting this terms with respect to accuracy and computational speed later in this section.
@@ -291,7 +290,7 @@ This approximation can further reduce computational cost during derivative evalu
  Values initial = ...
  LevenbergMarquardtParams opt_params;
 
- Values result = WNOALevenbergMarquardtOptimizer<Pose3>(graphInterp, initial, opt_params).optimize();
+ Values result = LevenbergMarquardtOptimizer<Pose3>(graphInterp, initial, opt_params).optimize();
 
 \end{lstlisting}
 
