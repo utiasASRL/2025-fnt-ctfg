@@ -43,8 +43,7 @@ int main() {
 
   Interpolator<Point1>::StateDataSet mainSolveStateSet;
   Interpolator<Point1>::StateDataSet interpolateStateSet;
-  std::shared_ptr<Interpolator<Point1>::CovarianceMap> covarianceMap =
-      std::make_shared<Interpolator<Point1>::CovarianceMap>();
+  auto covarianceMap = std::make_shared<InterpCovarianceMap>();
 
   // Defining shorthand for symbols
   using symbol_shorthand::D;  // interpolated velocity

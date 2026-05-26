@@ -31,14 +31,12 @@ If you want to run the steam regression test (`gtsam_analyses/steam-regression`)
 To run the examples in the `gtsam-analyses` or `gtsam-examples` directory, you must first build GTSAM and make sure that it is available to be found by `cmake` in the analyses folder. First clone the GTSAM repository into the `extern` folder:
 ```bash
 cd extern \
-&& git clone https://github.com/borglab/gtsam.git \
+&& git clone https://github.com/borglab/gtsam.git
 ```
 Once the repository is cloned, you can build GTSAM using the following commands from within the `extern/gtsam` directory:
 ```bash
-&& mkdir build \
-&& cd build \
-&& cmake ..\ 
-&& make -j8 
+cmake -S . -B build
+cmake --build build --target install
 ```
 More detailed build instructions can be found at [the GTSAM build page](https://gtsam.org/build/). Once built, GTSAM should be available to be found by `cmake` in the analyses folder. You may need to set the `GTSAM_DIR` environment variable to point to the location of the GTSAM build directory, which contains the `GTSAMConfig.cmake` file. For example:
 ```bash

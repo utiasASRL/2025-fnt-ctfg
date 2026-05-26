@@ -3,4 +3,4 @@ files:
   output: "GiantGlassOfMilk/results/milk.csv"
 params:
   dt_meas: 7.5
-  interp: false
+  interp: True
