@@ -4,8 +4,8 @@ This directory contains the datasets used in the 2026 FnT Article
 
 "Smoothing Out the Edges:  Continuous-Time Estimation with Gaussian Process Motion Priors on Factor Graphs"
 
-# Datasets
-
+The datasets are organized into three subdirectories, each corresponding to one of the three examples in the paper: Giant Glass of Milk, Lost in the Woods, and Starry Night. Each subdirectory contains the code and data for that example. 
+Additional information about these datasets (e.g. data collection, labelling, etc.) can be found in [this PDF](AssignmentDatasetDescription.pdf). 
 
 # Build Instructions
 
@@ -43,5 +43,4 @@ By default, the outputs will be saved to the `results` directory in the subfolde
 ./build/StarryNight --config-file StarryNight/config/starryNightWNOA.yaml
 ```
 
-Additional information about these datasets (e.g. data collection, labelling, etc.) can be found in [AssignmentsDatasetDescription.pdf](AssignmentsDatasetDescription.pdf). 
 

@@ -1,6 +1,22 @@
+# Smoothing Out the Edges: Dataset Repository 
+
 This repo contains latex and coded examples for a 2026 FnT Article:
 
 "Smoothing Out the Edges:  Continuous-Time Estimation with Gaussian Process Motion Priors on Factor Graphs"
+
+If you use any of the data or code in this repository, please cite the above article:
+```
+@article{holmes2026smoothing,
+  title={Smoothing Out the Edges: Continuous-Time Estimation with Gaussian Process Motion Priors on Factor Graphs},
+  author={Holmes, Connor and Lilge, Sven and Guo, Zi Cong and Dellaert, Frank and Barfoot, Timothy D},
+  journal={arXiv preprint arXiv:2605.09073},
+  year={2026}
+}
+```
+
+Additional information about the datasets (e.g. data collection, labelling, etc.) can be found in [this PDF](gtsam-examples/AssignmentDatasetDescription.pdf). The code and data for the three examples in the paper can be found in the `gtsam-examples` directory, and the code for the analyses and figures in the paper can be found in the `gtsam-analyses` directory. Follow the instructions in the README files in those directories to run the examples and analyses.
+
+# Directory Structure
 
 latex/
 -contains the latex code for the manuscript
