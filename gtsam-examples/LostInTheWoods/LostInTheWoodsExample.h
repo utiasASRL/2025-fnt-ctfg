@@ -10,8 +10,8 @@
 #include <gtsam/nonlinear/Marginals.h>
 #include <gtsam/nonlinear/Values.h>
 #include <gtsam/nonlinear/WnoaFactor.h>
-#include <gtsam/nonlinear/WnoaInterpFactor.h>
 #include <gtsam/nonlinear/WnoaFactorGraph.h>
+#include <gtsam/nonlinear/WnoaInterpFactor.h>
 #include <gtsam/slam/BetweenFactor.h>
 #include <gtsam/slam/dataset.h>
 #include <gtsam/slam/expressions.h>
@@ -192,11 +192,9 @@ class DatasetLoader {
 };
 
 // --- Save Poses to CSV ---
-int saveResultToFile(
-    Values& result, NonlinearFactorGraph& graph, const std::string& filename,
-    bool save_landmarks = false,
-    std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map =
-        nullptr) {
+int saveResultToFile(Values& result, NonlinearFactorGraph& graph,
+                     const std::string& filename, bool save_landmarks = false,
+                     std::shared_ptr<InterpCovarianceMap> cov_map = nullptr) {
   std::cout << "Writing solve output to " << filename << std::endl;
   // Get marginals
   Marginals marginals(graph, result, Marginals::Factorization::QR);

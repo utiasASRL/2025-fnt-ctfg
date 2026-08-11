@@ -149,7 +149,7 @@ void runInterpExample(InterpExampleParams& p, bool run_full_opt = true) {
 
     // define covariance map
     auto cov_map_interp =
-        std::make_shared<Interpolator<Pose2>::CovarianceMap>();
+        std::make_shared<InterpCovarianceMap>();
     // recover interpolated values and covariances
     Values result_recov = updateInterpValues<Pose2>(
         graph_interp, result_interp, estimated_states, interpolated_states,

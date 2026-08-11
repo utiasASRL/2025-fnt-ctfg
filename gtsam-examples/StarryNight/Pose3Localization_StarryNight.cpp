@@ -26,7 +26,6 @@ auto WNOAPSD =
 size_t numPoses, numLandmarks, poseInterval;
 
 using StateDataSet = Interpolator<Pose3>::StateDataSet;
-using CovarianceMap = Interpolator<Pose3>::CovarianceMap;
 
 // Config files to use (the --config-file option)
 // for WNOA with no interpolation (Fig. 5.12 left): starryNightWNOA
@@ -299,7 +298,7 @@ optimize(const std::vector<std::pair<double, Vector6>>& inputs,
 }
 
 // Interpolate for in-between states not within the factor graph
-std::tuple<Values, std::shared_ptr<CovarianceMap>> interpolateAfterSolve(
+std::tuple<Values, std::shared_ptr<InterpCovarianceMap>> interpolateAfterSolve(
     const NonlinearFactorGraph& graphMainSolve, const Values& resultsMainSolve,
     const StateDataSet& mainSolveStateDataSet,
     const std::vector<std::pair<double, Vector6>>& inputs,
@@ -319,7 +318,7 @@ std::tuple<Values, std::shared_ptr<CovarianceMap>> interpolateAfterSolve(
     }
   }
   auto covarianceMap =
-      params.interpCovariance ? std::make_shared<CovarianceMap>() : nullptr;
+      params.interpCovariance ? std::make_shared<InterpCovarianceMap>() : nullptr;
 
   // Interpolate
   Values resultsAll = updateInterpValues<Pose3>(
@@ -353,7 +352,7 @@ int main(int argc, char** argv) {
                odomNoise, stereoNoise, params);
 
   // Interpolate after the main solve if enabled
-  std::shared_ptr<CovarianceMap> covarianceMap;
+  std::shared_ptr<InterpCovarianceMap> covarianceMap;
   if (params.interpAfterSolve) {
     std::tie(result, covarianceMap) =
         interpolateAfterSolve(graph, result, stateDataSet, inputs, params);

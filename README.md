@@ -1,21 +1,36 @@
-This repo contains latex and coded examples for a 2026 FnT Article
+# Smoothing Out the Edges: Dataset Repository 
+
+This repo contains latex and coded examples for a 2026 FnT Article:
 
 "Smoothing Out the Edges:  Continuous-Time Estimation with Gaussian Process Motion Priors on Factor Graphs"
+
+If you use any of the data or code in this repository, please cite the above article:
+```
+@article{holmes2026smoothing,
+  title={Smoothing Out the Edges: Continuous-Time Estimation with Gaussian Process Motion Priors on Factor Graphs},
+  author={Holmes, Connor and Lilge, Sven and Guo, Zi Cong and Dellaert, Frank and Barfoot, Timothy D},
+  journal={arXiv preprint arXiv:2605.09073},
+  year={2026}
+}
+```
+
+Additional information about the datasets (e.g. data collection, labelling, etc.) can be found in [this PDF](gtsam-examples/AssignmentDatasetDescription.pdf). The code and data for the three examples in the paper can be found in the `gtsam-examples` directory, and the code for the analyses and figures in the paper can be found in the `gtsam-analyses` directory. Follow the instructions in the README files in those directories to run the examples and analyses.
+
+# Directory Structure
 
 latex/
 -contains the latex code for the manuscript
 
 python/
--contain code for examples
+-contains python code for simple examples
 
 gtsam-analyses/
-- contains analysis code for GTSAM examples
-
-gtsam-ct-factors/
-- temporary submodule containing GTSAM CT Factor fork of GTSAM
+- contains analysis code for GTSAM examples and parameter files for the figures and analysis in the FnT article
+- Follow README in that folder for instructions on how to run the analyses
 
 gtsam-examples/
-- Contains GTSAM code and parameter files for the three sample datasets that were introduced in the FnT article.
+- Contains GTSAM code and data for the three sample datasets that were introduced in the FnT article.
+- Follow the instructions in the README in that folder to run the examples
 
 # Dev Container setup
 
@@ -29,12 +44,20 @@ If you want to run the steam regression test (`gtsam_analyses/steam-regression`)
 
 # GTSAM Setup
 
-To run the examples in the `gtsam_analyses` directory, you must first build GTSAM and make sure that it is available to be found by `cmake` in the analyses folder. Use the following script to do so:
+To run the examples in the `gtsam-analyses` or `gtsam-examples` directory, you must first build GTSAM and make sure that it is available to be found by `cmake` in the analyses folder. First clone the GTSAM repository into the `extern` folder:
 ```bash
-cd gtsam-ct-factors \
-&& mkdir build \
-&& cd build \
-&& cmake ..\ 
-&& make -j 
+cd extern \
+&& git clone https://github.com/borglab/gtsam.git
 ```
+Once the repository is cloned, you can build GTSAM using the following commands from within the `extern/gtsam` directory:
+```bash
+cmake -S . -B build
+cmake --build build --target install
+```
+More detailed build instructions can be found at [the GTSAM build page](https://gtsam.org/build/). Once built, GTSAM should be available to be found by `cmake` in the analyses folder. You may need to set the `GTSAM_DIR` environment variable to point to the location of the GTSAM build directory, which contains the `GTSAMConfig.cmake` file. For example:
+```bash
+export GTSAM_DIR=/path/to/gtsam/build
+```
+
+
 

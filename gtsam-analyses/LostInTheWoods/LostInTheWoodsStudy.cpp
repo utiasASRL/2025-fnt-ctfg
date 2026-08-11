@@ -240,7 +240,7 @@ int runLostInTheWoods(LostInTheWoodsParams& params) {
     cout << "Runtime for solve: " << t_runtime << " (micro-s)" << endl;
 
     // Recover interpolated means using interpolator
-    std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map;
+    std::shared_ptr<InterpCovarianceMap> cov_map;
     result = updateInterpValues<Pose2>(graph_interp, result_interp, estim,
                                        interp, sigma_wnoa, cov_map);
     // Save results

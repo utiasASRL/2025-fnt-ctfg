@@ -395,7 +395,7 @@ class FileUtils {
   static void saveMarginalsToFile(
       const Marginals& marginals, size_t numPoses, const std::string& filename,
       size_t poseInterval = 1,
-      std::shared_ptr<Interpolator<Pose3>::CovarianceMap> interpCovarianceMap =
+      std::shared_ptr<InterpCovarianceMap> interpCovarianceMap =
           nullptr) {
     std::ofstream marginalsFile(filename + ".csv");
     if (!marginalsFile.is_open()) {
@@ -440,7 +440,7 @@ class FileUtils {
   void saveAllResultsToFile(
       size_t numPoses, size_t numLandmarks, NonlinearFactorGraph& graph,
       Values& initialEstimate, Values& result, Marginals& marginals,
-      std::shared_ptr<Interpolator<Pose3>::CovarianceMap> covarianceMap,
+      std::shared_ptr<InterpCovarianceMap> covarianceMap,
       Values& groundtruth, size_t poseInterval) {
     // todo (Daniel): clean up the poseInterval logic...
     // Write to a .dot file - note: not currently used

@@ -29,12 +29,16 @@ latex/*.vrb
 *.swo
 .DS_Store
 *.log
+launch.json
+tasks.json
 
 # Analysis files
 gtsam-analyses/build/
 gtsam-analyses/results/
 gtsam-analyses/plots/
 
+# External gtsam repo
+extern/gtsam/
 
 # Example files
 gtsam-examples/build/

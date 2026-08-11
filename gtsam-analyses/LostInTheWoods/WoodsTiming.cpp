@@ -358,8 +358,7 @@ int runLostInTheWoods(TimingParams& params) {
        << " (micro-s)" << endl;
 
   // Recover interpolated means using interpolator
-  std::shared_ptr<typename Interpolator<Pose2>::CovarianceMap> cov_map =
-      std::make_shared<Interpolator<Pose2>::CovarianceMap>();
+  auto cov_map = std::make_shared<InterpCovarianceMap>();
 
   // Define interpolator
   Interpolator<Pose2> interpolator(sigma_wnoa);
