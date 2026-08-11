@@ -28,6 +28,8 @@ In addition, we provide functionality to compute the mean and covariance of cont
 \label{sec:imp}
 In the following, we present implementation details to support the use of \ac{GTSAM} Gaussian-process–based continuous-time estimation capabilities. We illustrate these concepts through a simple example showcasing the Gaussian Process Motion Prior Factor, along with both measurement-state and after-solve interpolation functionalities.
 
+The \ac{API} for the code that implements our Gaussian-process–based continuous-time estimation factors in \ac{GTSAM} (and other associated functionalities) is available in the repository associated with this document: \url{https://github.com/utiasASRL/2025-fnt-ctfg/tree/main/latex/api}
+
 \subsection{Gaussian Process Motion Prior Factor}
 
 As discussed in the preceding chapters, we have shown that, by assuming that the estimated trajectory of a robot is consistent with a given \ac{SDE}, the trajectory can be represented by a \ac{GP}.
