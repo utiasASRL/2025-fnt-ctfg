@@ -1,0 +1,20 @@
+% Standalone version of a code listing used in chap5.tex.
+% Rebuild with ./build_listings.sh (or build_listings.ps1).
+\documentclass[border=1pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{listingbox}
+\begin{lstlisting}[style=C++Style, firstnumber=67]
+ // Continues from Figure 5.4.
+ // Instead of using the covariances in covarianceMap, we can get more
+ // consistent covariances using Laplace's approximation.
+
+ // Build marginals from the original graph and the interpolated means.
+ Marginals marginals(graphOriginal, resultAll);
+
+ // Extrapolate interpolated covariance for, e.g., Pose 1.
+ Matrix cov_p1 = marginals.marginalCovariance(p1);
+\end{lstlisting}
+\end{listingbox}
+\end{document}

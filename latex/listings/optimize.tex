@@ -1,0 +1,29 @@
+% Standalone version of a code listing used in chap5.tex.
+% Rebuild with ./build_listings.sh (or build_listings.ps1).
+\documentclass[border=1pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{listingbox}
+\begin{lstlisting}[style=C++Style, firstnumber=49]
+// Continues from Figure 5.3.
+// Define some initial values for the optimizer.
+Values initialValues = ... 
+
+// Set up and run the optimizer.
+GaussNewtonOptimizer opt(graphInterp, initialValues);
+Values resultBorder = opt.optimize(); // only contains the border states.
+
+// Fill in the interpolated states using after-solve interpolation.
+// Construct an empty covariance map to hold the output
+auto covarianceMap = std::make_shared<CovarianceMap>();
+
+// Interpolate
+Values resultAll = updateInterpValues<Pose3>(graphInterp, resultBorder,
+borderStates, interpStates, Q_se3, covarianceMap);
+
+// The means and covariances for all states can be extracted from
+// resultsAll and covarianceMap, respectively.
+\end{lstlisting}
+\end{listingbox}
+\end{document}

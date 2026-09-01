@@ -1,0 +1,82 @@
+% ---------------------------------------------------------------------------
+% Shared preamble for the standalone code listings in this directory.
+%
+% The font sizes and the widths below mirror those set by nowfnt.cls /
+% main.tex so that the compiled PDFs can be dropped into the main document at
+% 1:1 scale.  See README.md.
+% ---------------------------------------------------------------------------
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Font size overrides copied from nowfnt.cls so that \scriptsize (basicstyle)
+% and \tiny (line numbers) match the main document exactly.
+\makeatletter
+\renewcommand\normalsize{\@setfontsize\normalsize\@xipt\@xivpt}
+\renewcommand\scriptsize{\@setfontsize\scriptsize\@viipt\@viiipt}
+\renewcommand\tiny{\@setfontsize\tiny\@vpt\@vipt}
+\makeatother
+\normalsize
+
+% --- Geometry --------------------------------------------------------------
+% A listing occupies three horizontal bands, only the middle of which is the
+% code itself:
+%
+%   |<- NumGutter ->|<---------- BodyWidth ---------->|<- Over ->|
+%   |   1 2 3 ...   |  // the code, frame=single      |          |
+%           |<-Over->|                                |
+%
+% The line numbers hang to the LEFT of the frame, and the frame rule is drawn
+% \lstFrameOver outside the body on BOTH sides.  Anything outside the
+% standalone bounding box is cropped away, so the box has to span all three
+% bands -- that is what \lstTotalWidth is for.
+
+% \textwidth of the ROB journal layout.  The code body keeps exactly this
+% measure, so line wrapping matches the old inline lstlisting output.
+\newlength{\lstBodyWidth}
+\setlength{\lstBodyWidth}{335.74251pt}
+
+% Room for the line numbers, which hang to the left of the frame.
+\newlength{\lstNumGutter}
+\setlength{\lstNumGutter}{20pt}
+
+% How far frame=single reaches outside the body: framesep + framerule.
+\newlength{\lstFrameOver}
+\setlength{\lstFrameOver}{3.4pt}
+
+\newlength{\lstTotalWidth}
+\setlength{\lstTotalWidth}{\lstBodyWidth}
+\addtolength{\lstTotalWidth}{\lstNumGutter}
+\addtolength{\lstTotalWidth}{\lstFrameOver}
+
+% Every listing goes inside this, which is exactly \lstTotalWidth wide, so that
+% standalone crops the page to the whole listing rather than to the code body
+% alone.  (Neither the standalone `varwidth' option nor a bare minipage is
+% enough: both end up measuring the width of the code body, leaving the
+% right-hand frame rule off the page.  The empty, zero-height \hbox pins the
+% box to its full width without adding any vertical space.)
+\newenvironment{listingbox}
+  {\begin{minipage}{\lstTotalWidth}}
+  {\par\nointerlineskip\hbox to \lstTotalWidth{}%
+   \end{minipage}}
+
+% c++ listing format (kept identical to the definition in main.tex, apart from
+% the two margins, which position the code within \lstTotalWidth)
+\lstdefinestyle{C++Style}{
+  language=C++,
+  basicstyle=\scriptsize\ttfamily, % Smaller monospaced font
+  keywordstyle=\color{blue}, % Keywords in blue
+  commentstyle=\color{green!50!black}, % Comments in dark green
+  stringstyle=\color{red}, % Strings in red
+  showstringspaces=false, % Don't show spaces in strings
+  numbers=left, % Line numbers on the left
+  numberstyle=\tiny\color{gray}, % Style for line numbers
+  frame=single, % Add a frame around the listing
+  breaklines=true, % Allow line breaking
+  backgroundcolor=\color{black!5}, % Light gray background
+  upquote=true,  % Don't convert ' into curly smart quotes
+  xleftmargin=\lstNumGutter,   % leave room for the line numbers
+  xrightmargin=\lstFrameOver,  % leave room for the right frame rule
+}

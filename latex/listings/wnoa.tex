@@ -1,0 +1,31 @@
+% Standalone version of a code listing used in chap5.tex.
+% Rebuild with ./build_listings.sh (or build_listings.ps1).
+\documentclass[border=1pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{listingbox}
+\begin{lstlisting}[style=C++Style]
+  // Suppose we have two poses and velocities with timestamps.
+  Key p0 = Symbol('x', 0);
+  Key v0 = Symbol('v', 0);
+  double t0 = 0.0;
+  // Defined similarly for p1, v1, t1.
+  
+  // Define states on (p0, v0) and (p1, v1) as timestamped pose-vel pairs.
+  StateData state0(p0, v0, t0);
+  StateData state1(p1, v1, t1);
+  
+  // Suppose that p0, p1 are 2D points.
+  // Define a Power Spectral Density matrix of appropriate dimensions.
+  auto Q_point2 = Vector4::Ones();
+  
+  // Define a WNOA factor for Point2.
+  WnoaMotionFactor<Point2> factor_P2(state0, state1, Q_point2);
+  
+  // If p0, p1 are SE(3) poses instead, we would define the factor as
+  auto Q_se3 = Vector6::Ones();
+  WnoaMotionFactor<Pose3> factor_SE3(state0, state1, Q_se3);
+\end{lstlisting}
+\end{listingbox}
+\end{document}

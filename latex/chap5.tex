@@ -28,7 +28,7 @@ In addition, we provide functionality to compute the mean and covariance of cont
 \label{sec:imp}
 In the following, we present implementation details to support the use of \ac{GTSAM} Gaussian-process–based continuous-time estimation capabilities. We illustrate these concepts through a simple example showcasing the Gaussian Process Motion Prior Factor, along with both measurement-state and after-solve interpolation functionalities.
 
-The \ac{API} for the code that implements our Gaussian-process–based continuous-time estimation factors in \ac{GTSAM} (and other associated functionalities) is available in the repository associated with this document: \url{https://github.com/utiasASRL/2025-fnt-ctfg/tree/main/latex/api}
+The full \ac{API} for the code that implements our Gaussian-process–based continuous-time estimation factors in \ac{GTSAM} (and other associated functionalities) is available in the repository associated with this document: \url{https://github.com/utiasASRL/2025-fnt-ctfg/tree/main/latex/api}
 
 \subsection{Gaussian Process Motion Prior Factor}
 
@@ -39,32 +39,16 @@ To enforce this relationship in a factor graph setting, we must first define a \
 We have implemented such a factor in \ac{GTSAM} for the \ac{WNOA} motion prior, leaving alternative motion models (e.g., \ac{WNOV}, \ac{WNOJ}) as future work. 
  
 Recall that the state variable for the \ac{WNOA} prior consists of a both a pose and a velocity variable, where the velocity lives in the Lie algebra of the pose variable.
-As seen in Listing~\ref{lst:wnoa}, we have defined a custom C\texttt{++} struct, \texttt{StateData}, to keep track of the variable keys (pose and velocity) and timestamp associated with a particular state.\footnote{This class has specific member functions that facilitate sorting states by time and comparing different states in a well-defined way. This allows efficient sorting for sets and maps, which are essential to some of the underlying operations in our implementation.}
+As seen in Figure~\ref{fig:lst-wnoa}, we have defined a custom C\texttt{++} struct, \texttt{StateData}, to keep track of the variable keys (pose and velocity) and timestamp associated with a particular state.\footnote{This class has specific member functions that facilitate sorting states by time and comparing different states in a well-defined way. This allows efficient sorting for sets and maps, which are essential to some of the underlying operations in our implementation.}
 
 Our implementation of the \ac{WNOA} requires two such state structures as well as the power spectral density matrix of the \ac{WNOA} prior. Alternatively, it can be defined directly on the \ac{GTSAM} keys as long as the time difference between the states is provided.
 
-\begin{lstlisting}[style=C++Style, label={lst:wnoa}, caption={Example setup for WNOA factors.}]
-  // Suppose we have two poses and velocities with timestamps.
-  Key p0 = Symbol('x', 0);
-  Key v0 = Symbol('v', 0);
-  double t0 = 0.0;
-  // Defined similarly for p1, v1, t1.
-  
-  // Define states on (p0, v0) and (p1, v1) as timestamped pose-vel pairs.
-  StateData state0(p0, v0, t0);
-  StateData state1(p1, v1, t1);
-  
-  // Suppose that p0, p1 are 2D points.
-  // Define a Power Spectral Density matrix of appropriate dimensions.
-  auto Q_point2 = Vector4::Ones();
-  
-  // Define a WNOA factor for Point2.
-  WnoaMotionFactor<Point2> factor_P2(state0, state1, Q_point2);
-  
-  // If p0, p1 are SE(3) poses instead, we would define the factor as
-  auto Q_se3 = Vector6::Ones();
-  WnoaMotionFactor<Pose3> factor_SE3(state0, state1, Q_se3);
-\end{lstlisting}
+\begin{figure}[ht!]
+	\centering
+	\listingfig{wnoa}
+	\caption{Example setup for WNOA factors.}
+	\label{fig:lst-wnoa}
+\end{figure}
 
 Note that in this example, our factor is templated on a 2D point and an $SE(3)$ pose. In general, \texttt{WnoaMotionFactor}, as well as most novel structures below, support any vector space or Lie group defined in \ac{GTSAM}. 
 
@@ -83,79 +67,25 @@ The resulting factor is defined only with respect to non-interpolated variables.
 
 Mathematically, our wrapper factor implements the conversion from a measurement factor defined on an interpolated state, $p(\mbf{y}_n|\mbf{x}_{\tau_n})$, to a measurement factor defined the bordering states (see~\eqref{eq:wrapped_meas}), but with two key generalizations. First, the development shown in Appendix~\ref{app:interp-during-solve} applies to variables defined in a vector space, but our implementation can be used with variables defined on Lie groups, using the development shown in Chapter~\ref{chapLieGroups} for continuous-time systems on Lie groups. Second, Appendix~\ref{app:interp-during-solve} is demonstrated for unary factors on the interpolated variables, but our wrapper factor implementation can be applied to any kind of \ac{GTSAM} factor. As we show below, our framework can be applied to factors defined on any number of interpolated and non-interpolated variables.
 
-\newpage
 
-\begin{lstlisting}[style=C++Style, label={lst:interp}, caption={Constructing an interpolated factor graph.}]
-  // Define (p0, v0, t0), ..., (p4, v4, t4) as in the previous listing.
-  StateData state0(p0, v0, t0); // Defined similarly for all other states.
-  // Assume all the poses are in SE(3).
-  
-  // Suppose we have a binary factor between p1 and p3. 
-  // Assume relPose_13 is the relative pose measurement between p1 and p3
-  const auto binaryNoiseModel = 
-    noiseModel::Diagonal::Sigmas(Vector6::Ones());
-  const auto binaryFactor = std::make_shared<BetweenFactor<Pose3>>(
-      p1, p3, relPose_13, binaryNoiseModel);
-  
-  // Suppose we also have a prior (unary factor) on p1.
-  const auto p1PriorValue = Pose3();  // origin
-  const auto unaryNoiseModel = 
-    noiseModel::Diagonal::Sigmas(Vector6::Ones());
-  const auto unaryFactor = std::make_shared<PriorFactor<Pose3>>(
-    p1, p1PriorValue, unaryNoiseModel);
-  
-  // Suppose all poses are connected via WNOA factors.
-  auto Q_se3 = Vector6::Ones();  // Power spectral density
-  
-  // Now, instead of defining WNOA factors and adding all the states into
-  // the graph, we want state1 and state3 to be interpolated.
-  
-  // Factor graph visualization before interpolation:
-  //       unary
-  //         |
-  //  0 ---- 1 ---- 2 ----- 3 ----- 4
-  //  b      i      b       i       b
-  //          --- between ---
-  
-  // Define the set of bordering states that will remain in the main solve.
-  set<StateData> borderStates = {state0, state2, state4};
-  
-  // All other states will be interpolated.
-  set<StateData> interpStates = {state1, state3};
-  
-  // Define the interpolation factors to wrap the two original factors.
-  // This also adds the WNOA factors to the states.
-  const auto binaryFactorWrapped = WnoaInterpFactor<Pose3>(
-    binaryFactor, borderStates, interpStates, Q_se3);
-  const auto unaryFactorWrapped = WnoaInterpFactor<Pose3>(
-    unaryFactor, borderStates, interpStates, Q_se3);
+\begin{figure}[ht!]
+	\centering
+	\listingfig{interp}
+	\caption{Constructing an interpolated factor graph.}
+	\label{fig:lst-interp}
+\end{figure}
 
-  // Create graph.
-  NonlinearFactorGraph graphInterp;
-  graphInterp.add(binaryFactorWrapped);
-  graphInterp.add(unaryFactorWrapped);
-  
-
-\end{lstlisting}
-
-In Listing~\ref{lst:interp}, we define two factors on the interpolated states for the first and third poses. These factors are then wrapped using our \texttt{WnoaInterpFactor} factor (templated on $SE(3)$) and added to the graph.
+In Figure~\ref{fig:lst-interp}, we define two factors on the interpolated states for the first and third poses. These factors are then wrapped using our \texttt{WnoaInterpFactor} factor (templated on $SE(3)$) and added to the graph.
 The resulting graph is defined only on the bordering states for the zeroth, second and fourth states (poses and velocities).
 These factors allow the user to exactly specify which states and factors they wish to convert.
-However, we also provide a function that automatically converts an entire factor graph into an equivalent, interpolated graph based on a list of interpolated states. In Listing~\ref{lst:convert}, the function \texttt{interpolateFactorGraph} effectively carries out the operations shown in Figure~\ref{fig:gausselim3b}: it replaces any factors defined on interpolated states with wrapped, interpolated factors and adds \ac{WNOA} motion models factors between adjacent border states. It will also remove any \ac{WNOA} motion model factors defined on interpolated states. The resulting output graph will not include any of the interpolated state variables and can be passed to any standard \ac{GTSAM} optimizer for solving.
+However, we also provide a function that automatically converts an entire factor graph into an equivalent, interpolated graph based on a list of interpolated states. In Figure~\ref{fig:lst-convert}, the function \texttt{interpolateFactorGraph} effectively carries out the operations shown in Figure~\ref{fig:gausselim3b}: it replaces any factors defined on interpolated states with wrapped, interpolated factors and adds \ac{WNOA} motion models factors between adjacent border states. It will also remove any \ac{WNOA} motion model factors defined on interpolated states. The resulting output graph will not include any of the interpolated state variables and can be passed to any standard \ac{GTSAM} optimizer for solving.
 
-\begin{lstlisting}[style=C++Style, label={lst:convert}, caption={Converting to an interpolated factor graph.}, firstnumber=38]
-  // Replaces lines 38-48 in Listing 5.2.
-  // Suppose we had first constructed the graph with the original factors.
-  NonlinearFactorGraph graphOriginal;
-  graphOriginal.add(binaryFactor);
-  graphOriginal.add(unaryFactor);
-
-  // Convert to an equivalent graph defined with interpolated factors.
-  // We use interpolateFactorGraph to automatically construct the
-  // necessary WnoaInterpFactors.
-  NonlinearFactorGraph graphInterp = interpolateFactorGraph<Pose3>(
-    graphOriginal, borderStates, interpStates, Q_se3);
-\end{lstlisting}
+\begin{figure}[ht!]
+	\centering
+	\listingfig{convert}
+	\caption{Converting to an interpolated factor graph.}
+	\label{fig:lst-convert}
+\end{figure}
 
 
 \subsection{After-Main-Solve Querying}\label{sec:post-query-implem}
@@ -163,36 +93,22 @@ Given the interpolated factor graph, we now show optimizing and using after-main
 A factor graph built on the factors we have defined herein can be optimized in the same way as any other \ac{GTSAM} factor graph.
 However, the result includes only values for the border states.
 To recover the means and covariances for the interpolated states, we use after-main-solve interpolation.
-As seen in Listing~\ref{lst:optimize}, this can be easily done using \texttt{updateInterpValues}.
+As seen in Figure~\ref{fig:lst-optimize}, this can be easily done using \texttt{updateInterpValues}.
 This function follows the procedure outlined in Section~\ref{sec:lie-after-query} to compute the interpolated means and covariances.
 
 We must caution the reader regarding the covariances generated by the interpolated graph in two regards. First, as noted in Appendix~\ref{app:interp-during-solve}, the independence assumption treats correlated states as if they are not correlated, leading to overconfident estimates. The degree of this overconfidence depends on how correlated the interpolated states are as well as the number of interpolated factors. Second, covariances that are interpolated using the after-main-solve can sometimes exhibit a variance `bubbling' effect,\footnote{By `bubbling', we refer to swelling of the state covariance (under-confidence) in the interpolated states that is due to the approximations introduced in Appendix~\ref{app:interp-during-solve}. This effect does not appear when this approximation is not made.} especially when estimated states are particularly far apart in time or the power spectral density matrix has large eigenvalues.
 
-\begin{lstlisting}[style=C++Style, label={lst:optimize}, caption={Optimization and after-main-solve interpolation.}, firstnumber=last]
-// Continues from Listing 5.3.
-// Define some initial values for the optimizer.
-Values initialValues = ... 
-
-// Set up and run the optimizer.
-GaussNewtonOptimizer opt(graphInterp, initialValues);
-Values resultBorder = opt.optimize(); // only contains the border states.
-
-// Fill in the interpolated states using after-solve interpolation.
-// Construct an empty covariance map to hold the output
-auto covarianceMap = std::make_shared<CovarianceMap>();
-
-// Interpolate
-Values resultAll = updateInterpValues<Pose3>(graphInterp, resultBorder,
-borderStates, interpStates, Q_se3, covarianceMap);
-
-// The means and covariances for all states can be extracted from
-// resultsAll and covarianceMap, respectively.
-\end{lstlisting}
+\begin{figure}[ht!]
+	\centering
+	\listingfig{optimize}
+	\caption{Optimization and after-main-solve interpolation.}
+	\label{fig:lst-optimize}
+\end{figure}
 
 Both of these phenomena are demonstrated in top two rows of Figure~\ref{fig:simple-se2-interp}. The figure provides a study of interpolation on a simple $SE(2)$ example. The ground-truth poses follow a constant velocity arc trajectory and no-noise unary measurements were generated at 60 equidistant poses along the trajectory. The figure shows a comparison of the solutions obtained by solving the full factor graph (green) versus interpolating all but three states at the beginning, middle and end. 
 
 The final row of the figure demonstrates an alternative method for finding the covariances at the interpolated states. In this method, we still find the means via the approximations in Appendix~\ref{app:interp-during-solve}, but compute their associated covariances from Laplace's approximation of the original graph about the interpolated means. 
-As seen in Listing~\ref{lst:cov-alt}, this can be accomplished quite easily using existing \ac{GTSAM} functions. 
+As seen in Figure~\ref{fig:lst-cov-alt}, this can be accomplished quite easily using existing \ac{GTSAM} functions. 
 
 Finally, we emphasize that these confidence issues are not due to the after-main-solve querying itself, but are a consequence of approximations in the main solve.
 
@@ -202,18 +118,12 @@ Finally, we emphasize that these confidence issues are not due to the after-main
 	\caption{A simple $SE(2)$ interpolation example demonstrating a full factor graph solve including all 60 states (green) compared to a reduced solve where only three of the 60 states are actually solved (blue). A unary factor is placed on each of the 60 states. The top row shows the estimated states in each case (with covariances). The bottom two rows show two different methods of interpolating the covariance of the interpolated states compared with the full solve. The middle row shows covariances interpolated via the after-main-solve equations, while the bottom row shows the covariances interpolated using the original graph with the interpolated means. The latter method provides covariances that match exactly with the full solve, while the former is subject to both overconfidence and `bubbling'.}
 	\label{fig:simple-se2-interp}
 \end{figure}
-\newpage
-\begin{lstlisting}[style=C++Style, label={lst:cov-alt}, caption={Alternative method of extracting covariances.}, firstnumber=last]
- // Continues from Listing 5.4.
- // Instead of using the covariances in covarianceMap, we can get more
- // consistent covariances using Laplace's approximation.
-
- // Build marginals from the original graph and the interpolated means.
- Marginals marginals(graphOriginal, resultAll);
-
- // Extrapolate interpolated covariance for, e.g., Pose 1.
- Matrix cov_p1 = marginals.marginalCovariance(p1);
-\end{lstlisting}
+\begin{figure}[ht!]
+	\centering
+	\listingfig{cov_alt}
+	\caption{Alternative method of extracting covariances.}
+	\label{fig:lst-cov-alt}
+\end{figure}
 
 
 \subsection{Speeding up Computation}
@@ -227,7 +137,7 @@ The convenience function, \texttt{interpolateFactorGraph}, has a second template
 The \texttt{WnoaFactorGraph} overrides the \texttt{error} and \texttt{linearize} methods to compute and cache interpolated state means and Jacobians once per iteration, then pass them by reference to all wrapper factors.
 Wrapper factors simply retrieve these cached values during their own evaluations.
 This eliminates redundant computation and yields substantial runtime improvements, particularly when multiple wrapper factors share the same interpolated states. Moreover, the existing \ac{GTSAM} optimizers do not need to be modified to leverage these overridden methods.
-Listing~\ref{lst:interp_wnoa} shows an example usage of this functionality.
+Figure~\ref{fig:lst-interp-wnoa} shows an example usage of this functionality.
 
 We can achieve additional computational speed-up by omitting the computation of the $\mbf{C} \mbf{\Sigma}_{\tau} \mbf{C}^T$ term in the measurement covariance computation of our wrapper factors in  \eqref{eq:wrapped_meas}, since the computation of $\mbf{\Sigma}_{\tau}$ ends up being costly.
 We discuss the implications of omitting this terms with respect to accuracy and computational speed later in this section.
@@ -235,66 +145,12 @@ We discuss the implications of omitting this terms with respect to accuracy and 
 Lastly, we note that it may be feasible to approximate the Lie group Jacobians as identity when the relative pose change between consecutive boundary states is small.
 This approximation can further reduce computational cost during derivative evaluation, while typically sacrificing only minimal accuracy and preserving overall convergence behavior.
 
-\newpage
-\begin{lstlisting}[style=C++Style, label={lst:interp_wnoa}, caption={Constructing an interpolated WNOA factor graph.}]
- // Define (p0, v0, t0), ..., (p4, v4, t4) as in the previous listing.
- StateData state0(p0, v0, t0); // Defined similarly for all other states.
- // Assume all the poses are in SE(3).
-	
- // Suppose we have several unary factors (e.g., priors or noisy measuremnts) on p0, p3.
- const Pose3 p0PriorValue( Rot3(), Point3(0.0, 0.0, 0.0) );  
- const Pose3 p3PriorValue1(Rot3(), Point3(1.0, 0.2, 0.0));   
- const Pose3 p3PriorValue2(Rot3(), Point3(1.0, -0.1, 0.0));   
-	
- const auto unaryNoiseModel = 
- noiseModel::Diagonal::Sigmas(Vector6::Ones());
- const auto unaryFactor1 = std::make_shared<PriorFactor<Pose3>>(
- p0, p0PriorValue, unaryNoiseModel);
- const auto unaryFactor2 = std::make_shared<PriorFactor<Pose3>>(
- p3, p3PriorValue1, unaryNoiseModel);
- const auto unaryFactor3 = std::make_shared<PriorFactor<Pose3>>(
- p3, p3PriorValue2, unaryNoiseModel);
-	
- // In addition, suppose all poses are connected via WNOA factors.
-	
- // Factor graph visualization before interpolation:
- // unary                 unary
- //   |                     |
- //   0 ---- 1 ---- 2 ----- 3 ----- 4
- //   b      i      b       i       b
- //                         |         
- //                       unary
-	
- // Define bordering and interpolated states
- set<StateData> borderStates = {state0, state2, state4};
- set<StateData> interpStates = {state1, state3};
-	
- // Define the interpolation factors to wrap the two original factors.
- auto Q_se3 = Vector6::Ones();  // Power spectral density
- const auto unaryFactorWrapped1 = WnoaInterpFactor<Pose3>(
- unaryFactor2, borderStates, interpStates, Q_se3);
- const auto unaryFactorWrapped2 = WnoaInterpFactor<Pose3>(
- unaryFactor3, borderStates, interpStates, Q_se3);
-	
- // Define interpolated to border states mapping
- unordered_map<StateData, pair<StateData, StateData>> interp_to_borders;
- interp_to_borders[state1] = pair(state0, state2);
- interp_to_borders[state3] = pair(state2, state4);
-
- // Create graph.
- WnoaFactorGraph<Pose3> graphInterp(interp_to_borders, Q_se3);
-
- graphInterp.add(unaryFactor1);
- graphInterp.add(unaryFactorWrapped1);
- graphInterp.add(unaryFactorWrapped2);
-
- // Pass to optimizer.
- Values initial = ...
- LevenbergMarquardtParams opt_params;
-
- Values result = LevenbergMarquardtOptimizer<Pose3>(graphInterp, initial, opt_params).optimize();
-
-\end{lstlisting}
+\begin{figure}[p]
+	\centering
+	\listingfig{interp_wnoa}
+	\caption{Constructing an interpolated WNOA factor graph.}
+	\label{fig:lst-interp-wnoa}
+\end{figure}
 
 \section{Implementation on Datasets}
 

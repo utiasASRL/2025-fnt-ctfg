@@ -34,6 +34,16 @@
 % Location of figures
  \graphicspath{{figs/}} 
 
+% Code listings live in listings/ as standalone PDFs, one per listing; see
+% listings/README.md.  Each carries a gutter on the left for the line numbers,
+% which hang outside the frame, plus a border and frame allowance on the right.
+% Overhanging the right edge by that allowance puts the code body exactly on the
+% text block, where it sat when these were inline lstlistings.
+\newlength{\lstfigoverhang}
+\setlength{\lstfigoverhang}{4.4pt}  % standalone border (1pt) + framesep + framerule
+\newcommand{\listingfig}[1]{%
+  \makebox[\textwidth][r]{\includegraphics{listings/#1.pdf}\kern-\lstfigoverhang}}
+
 % load the notation header
 \input{notation_header}
 

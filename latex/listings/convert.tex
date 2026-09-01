@@ -1,0 +1,22 @@
+% Standalone version of a code listing used in chap5.tex.
+% Rebuild with ./build_listings.sh (or build_listings.ps1).
+\documentclass[border=1pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{listingbox}
+\begin{lstlisting}[style=C++Style, firstnumber=38]
+  // Replaces lines 38-48 in Figure 5.2.
+  // Suppose we had first constructed the graph with the original factors.
+  NonlinearFactorGraph graphOriginal;
+  graphOriginal.add(binaryFactor);
+  graphOriginal.add(unaryFactor);
+
+  // Convert to an equivalent graph defined with interpolated factors.
+  // We use interpolateFactorGraph to automatically construct the
+  // necessary WnoaInterpFactors.
+  NonlinearFactorGraph graphInterp = interpolateFactorGraph<Pose3>(
+    graphOriginal, borderStates, interpStates, Q_se3);
+\end{lstlisting}
+\end{listingbox}
+\end{document}
